@@ -1,0 +1,504 @@
+/* Shared components: buttons, toggle chips, fields, pills, avatars, project chips, dialogs, toasts. */
+
+/* ---------------------------------------------------------------- view header */
+
+.view-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.view-head__text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.view-head h1 {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.view-head p {
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+/* ---------------------------------------------------------------- buttons */
+
+.btn {
+  height: var(--touch);
+  padding: 0 16px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  background: var(--surface-muted);
+  color: var(--ink);
+}
+
+.btn--primary {
+  border: 0;
+  padding: 0 18px;
+  background: var(--accent-button, var(--accent));
+  color: var(--on-accent);
+  font-weight: 600;
+}
+
+.btn--primary:hover {
+  background: var(--accent-hover);
+  color: var(--on-accent);
+}
+
+.btn--danger {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.btn:disabled {
+  opacity: 0.55;
+}
+
+.icon-btn {
+  width: var(--touch);
+  height: var(--touch);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--ink);
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.icon-btn:hover {
+  background: var(--hover);
+}
+
+/* ---------------------------------------------------------------- toggle chips (aria-pressed) */
+
+.chip-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.toggle-chip {
+  height: var(--touch);
+  padding: 0 14px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.toggle-chip[aria-pressed="true"] {
+  background: var(--pressed);
+  border-color: var(--pressed);
+  color: var(--on-pressed);
+}
+
+/* Segmented control ("Lead + helping" / "Lead only", "All" / "Updates only") */
+.segmented {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--radius-panel);
+  background: var(--segmented);
+}
+
+.segmented button {
+  height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.segmented button[aria-pressed="true"] {
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 600;
+  box-shadow: var(--shadow-card);
+}
+
+/* ---------------------------------------------------------------- fields */
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--touch);
+  width: 340px;
+  max-width: 100%;
+  padding: 0 12px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  color: var(--ink-2);
+}
+
+.search-box:focus-within {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 1px;
+}
+
+.search-box input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field--compact {
+  gap: 2px;
+}
+
+.field__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.input,
+.select {
+  height: var(--touch);
+  padding: 0 12px;
+}
+
+.select--compact {
+  height: 32px;
+  border-radius: var(--radius-small);
+  font-size: 13px;
+  padding: 0 8px;
+  min-width: 110px;
+}
+
+.textarea {
+  padding: 10px 12px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.form-error {
+  padding: 10px 12px;
+  border-radius: var(--radius-control);
+  background: var(--danger-soft);
+  color: var(--danger);
+  font-size: 13px;
+}
+
+/* ---------------------------------------------------------------- lifecycle pill */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  justify-self: start;
+}
+
+.pill--small {
+  height: 20px;
+  padding: 0 7px;
+  font-size: 11px;
+}
+
+.pill--idea {
+  background: var(--idea-bg);
+  color: var(--idea-ink);
+  border: 1px dashed var(--idea-border);
+}
+
+.pill--started {
+  background: var(--started-bg);
+  color: var(--started-ink);
+  border-color: var(--started-border);
+}
+
+.pill--done {
+  background: var(--done-bg);
+  color: var(--done-ink);
+  border-color: var(--done-border);
+}
+
+.pill--archived {
+  background: var(--archived-bg);
+  color: var(--archived-ink);
+  border-color: var(--archived-border);
+}
+
+/* ---------------------------------------------------------------- avatars */
+
+.avatar {
+  --size: 30px;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: var(--avatar-color, #6E6962);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 1;
+  user-select: none;
+}
+
+.avatar--small {
+  --size: 24px;
+  font-size: 10px;
+}
+
+.avatar--ring {
+  box-shadow: 0 0 0 2px var(--ring, var(--surface));
+}
+
+.avatar-stack {
+  display: flex;
+}
+
+.avatar-stack .avatar + .avatar {
+  margin-left: -6px;
+}
+
+/* ---------------------------------------------------------------- project chip */
+
+.project-chip {
+  --project-color: var(--ink-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  max-width: 100%;
+  padding: 0 8px;
+  border-radius: var(--radius-chip);
+  background: var(--surface-muted);
+  font-size: 12px;
+  color: var(--ink-chip);
+  white-space: nowrap;
+}
+
+.project-chip__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.project-chip__number {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+:root[data-theme="dark"] .project-dot {
+  background: color-mix(in oklab, var(--project-color), white var(--on-dark-mix));
+}
+
+/* ---------------------------------------------------------------- panels and states */
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  overflow: hidden;
+}
+
+.empty-state {
+  padding: 48px 20px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+.muted {
+  color: var(--ink-2);
+}
+
+.center-page {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 40px 16px;
+}
+
+.center-card {
+  width: min(420px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 28px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-card);
+}
+
+.center-card h1,
+.center-card h2 {
+  font-size: 20px;
+}
+
+/* ---------------------------------------------------------------- dialog */
+
+.dialog {
+  width: min(440px, calc(100vw - 32px));
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-pop);
+}
+
+.dialog::backdrop {
+  background: rgba(15, 18, 20, 0.45);
+}
+
+.dialog__form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 24px 24px;
+}
+
+.dialog__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dialog__head h2 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* ---------------------------------------------------------------- toasts */
+
+.toasts {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: min(420px, calc(100vw - 32px));
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 8px 12px 14px;
+  border-radius: var(--radius-control);
+  background: var(--ink);
+  color: var(--ground);
+  box-shadow: var(--shadow-pop);
+  font-size: 13px;
+}
+
+.toast--error {
+  background: var(--danger);
+  color: #fff;
+}
+
+.toast span {
+  flex: 1;
+}
+
+.toast button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-small);
+  display: grid;
+  place-items: center;
+}
+
+/* ---------------------------------------------------------------- layout helpers */
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.link-button {
+  border: 0;
+  padding: 4px 2px;
+  background: transparent;
+  color: var(--link);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.link-button:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}

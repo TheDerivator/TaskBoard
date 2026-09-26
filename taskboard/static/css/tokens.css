@@ -1,0 +1,174 @@
+/* Design tokens (DESIGN.md "Visual system") for the light theme, with dark-theme overrides. */
+
+:root {
+  color-scheme: light;
+
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+  /* Grounds and surfaces */
+  --ground: #F4F2EE;
+  --surface: #FFFFFF;
+  --surface-sunken: #FBFAF7;
+  --surface-muted: #F2EFEA;
+  --surface-header: #EFECE6;
+  --surface-disabled: #F7F5F1;
+  --lane: #EBE8E2;
+  --segmented: #E9E5DE;
+  --hover: rgba(29, 33, 36, 0.05);
+
+  /* Text */
+  --ink: #1D2124;
+  --ink-2: #5E5A54;
+  --ink-3: #6E6962;
+  --ink-chip: #3A3733;
+  --placeholder: #7A756D;
+  --link: #2D5BA8;
+  --link-hover: #1E4686;
+
+  /* Lines */
+  --border: #DDD8CF;
+  --border-strong: #CFCAC1;
+  --border-dashed: #948E84;
+  --divider: #E8E4DC;
+  --divider-soft: #F0EDE7;
+  --lane-divider: #DAD5CC;
+
+  /* Accent: primary actions and the top 3 ranks */
+  --accent: #B34A15;
+  --accent-hover: #9A3E10;
+  --on-accent: #FFFFFF;
+  --accent-soft: #FBEFE8;
+  --accent-soft-border: #F0D2C1;
+  --accent-soft-ink: #9A3E10;
+  --drop-line: #C4561C;
+  --focus-ring: #2D5BA8;
+
+  /* Pressed toggle chips */
+  --pressed: #1D2124;
+  --on-pressed: #FFFFFF;
+
+  /* Sidebar (dark in both themes) */
+  --sidebar: #1D2124;
+  --sidebar-ink: #E9E6E0;
+  --sidebar-ink-2: #D6D2CB;
+  --sidebar-muted: #9A968F;
+  --sidebar-count-active: #B8B4AD;
+  --sidebar-active: #30363A;
+  --sidebar-hover: #262B2F;
+  --sidebar-border: #353B40;
+  --sidebar-icon-active: #F08A55;
+  --brand: #C4561C;
+
+  /* Lifecycle pills */
+  --idea-bg: #FFFFFF;
+  --idea-ink: #57534D;
+  --idea-border: #948E84;
+  --started-bg: #DCE6F7;
+  --started-ink: #1E4686;
+  --started-border: #B9CBEB;
+  --started-solid: #1E4686;
+  --done-bg: #DCEEE2;
+  --done-ink: #1F5C37;
+  --done-border: #B5D8C1;
+  --archived-bg: #EEEBE5;
+  --archived-ink: #5E5A54;
+  --archived-border: #DDD8CF;
+
+  /* Feedback */
+  --danger: #B42318;
+  --danger-soft: #FDECEA;
+  --success: #1F5C37;
+
+  /* Shape and depth */
+  --radius-control: 8px;
+  --radius-panel: 10px;
+  --radius-small: 6px;
+  --radius-chip: 4px;
+  --radius-pill: 999px;
+  --shadow-card: 0 1px 2px rgba(29, 33, 36, 0.08);
+  --shadow-pop: 0 12px 32px rgba(29, 33, 36, 0.16);
+  --shadow-drawer: -12px 0 32px rgba(29, 33, 36, 0.12);
+
+  /* Sizes */
+  --touch: 44px;
+  --sidebar-width: 232px;
+  --sidebar-rail: 68px;
+  --page-pad-x: 40px;
+  --page-pad-y: 32px;
+
+  /* Project colours are stored for light surfaces; on the dark sidebar they are lightened. */
+  --on-dark-mix: 30%;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --ground: #15181A;
+  --surface: #1E2326;
+  --surface-sunken: #1A1E21;
+  --surface-muted: #272C30;
+  --surface-header: #22282B;
+  --surface-disabled: #1A1E21;
+  --lane: #1A1E21;
+  --segmented: #262B2F;
+  --hover: rgba(233, 230, 224, 0.06);
+
+  --ink: #ECE9E4;
+  --ink-2: #A9A49C;
+  --ink-3: #98938B;
+  --ink-chip: #D6D2CB;
+  --placeholder: #857F77;
+  --link: #8FB0E8;
+  --link-hover: #B4CBF2;
+
+  --border: #343A3F;
+  --border-strong: #454C52;
+  --border-dashed: #7A756D;
+  --divider: #2C3236;
+  --divider-soft: #262B2F;
+  --lane-divider: #2F353A;
+
+  --accent: #E07A45;
+  --accent-hover: #F08A55;
+  --on-accent: #FFFFFF;
+  --accent-soft: #3A2419;
+  --accent-soft-border: #5A3421;
+  --accent-soft-ink: #F3A57A;
+  --drop-line: #F08A55;
+  --focus-ring: #8FB0E8;
+
+  --pressed: #ECE9E4;
+  --on-pressed: #15181A;
+
+  --sidebar: #0F1214;
+  --sidebar-active: #252B2F;
+  --sidebar-hover: #1A1F22;
+  --sidebar-border: #262C30;
+
+  --idea-bg: transparent;
+  --idea-ink: #C9C4BC;
+  --idea-border: #7A756D;
+  --started-bg: #1C2E48;
+  --started-ink: #AFC7F1;
+  --started-border: #2D4A73;
+  --started-solid: #3B6BB8;
+  --done-bg: #183324;
+  --done-ink: #A3D6B6;
+  --done-border: #2A5139;
+  --archived-bg: #272C30;
+  --archived-ink: #A9A49C;
+  --archived-border: #3A4045;
+
+  --danger: #F28B82;
+  --danger-soft: #3A1E1C;
+  --success: #A3D6B6;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-pop: 0 12px 32px rgba(0, 0, 0, 0.5);
+  --shadow-drawer: -12px 0 32px rgba(0, 0, 0, 0.45);
+
+  /* The primary button keeps the design's solid orange, just dark enough for white text
+     (4.8:1, WCAG AA). */
+  --accent-button: #BC521A;
+}

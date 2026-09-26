@@ -1,7 +1,122 @@
 [project]
 name = "taskboard"
 version = "0.1.0"
-description = "Add your description here"
+description = "Team task board: one team-wide priority list, people lanes and project trees."
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "alembic>=1.20.0",
+    "argon2-cffi>=25.1.0",
+    "fastapi>=0.141.1",
+    "markdown-it-py>=4.2.0",
+    "nh3>=0.3.7",
+    "pydantic-settings>=2.15.0",
+    "pyjwt[crypto]>=2.15.0",
+    "python-multipart>=0.0.32",
+    "sqlalchemy>=2.1.1",
+    "uvicorn>=0.54.0",
+]
+
+[project.optional-dependencies]
+mssql = [
+    "pyodbc>=5.3.0",
+]
+
+[dependency-groups]
+dev = [
+    "axe-playwright-python>=0.1.8",
+    "httpx2>=2.13.1",
+    "hypothesis>=6.168.1",
+    "import-linter>=2.15",
+    "pyright>=1.1.414",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "pytest-playwright>=0.9.0",
+    "ruff>=0.16.9",
+]
+
+# ---------------------------------------------------------------- tooling
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+extend-exclude = ["team-tasks-design"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W", "F",   # pycodestyle, pyflakes
+    "I",             # import order
+    "B",             # bugbear
+    "UP",            # modern syntax
+    "SIM", "C4", "RET", "PTH",
+    "N",             # naming
+    "S",             # security (bandit)
+    "RUF",
+    "D100", "D104",  # every module and package has a docstring (feeds docs/CODEMAP.md)
+]
+
+# Typographic characters the UI uses on purpose (breadcrumb separator, ranges like "2–10").
+allowed-confusables = ["›", "–"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S105", "S106", "S311"]  # asserts, literal passwords, non-crypto random
+"taskboard/db/migrations/versions/**" = ["D100"]
+
+[tool.pyright]
+include = ["taskboard", "tests", "scripts", "app.py"]
+exclude = ["**/__pycache__", "team-tasks-design", ".venv"]
+pythonVersion = "3.14"
+typeCheckingMode = "standard"
+strict = ["taskboard"]
+reportMissingTypeStubs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = ["-ra", "--strict-markers", "--strict-config", "-m", "not e2e"]  # browser tests: -m e2e
+markers = [
+    "e2e: browser tests driven by Playwright (slow; need `playwright install chromium`)",
+]
+filterwarnings = ["error"]
+
+[tool.coverage.run]
+source = ["taskboard"]
+branch = true
+
+[tool.coverage.report]
+skip_covered = true
+show_missing = true
+
+# ---------------------------------------------------------------- architecture contracts
+# Checked by `lint-imports` and by tests/architecture/test_layers.py.
+
+[tool.importlinter]
+root_package = "taskboard"
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Layers: each layer only imports the layers below it"
+type = "layers"
+layers = [
+    "taskboard.cli",
+    "taskboard.web",
+    "taskboard.api",
+    "taskboard.services",
+    "taskboard.schemas",
+    "taskboard.identity",
+    "taskboard.db",
+    "taskboard.domain",
+]
+
+[[tool.importlinter.contracts]]
+name = "Domain is pure Python: no framework, no persistence, no config"
+type = "forbidden"
+source_modules = ["taskboard.domain"]
+forbidden_modules = ["taskboard.config", "sqlalchemy", "fastapi", "starlette", "pydantic"]
+
+[[tool.importlinter.contracts]]
+name = "Routers never touch the database directly: they call services"
+type = "forbidden"
+source_modules = ["taskboard.api.routers"]
+forbidden_modules = ["taskboard.db", "sqlalchemy"]
+allow_indirect_imports = true  # routers call services, which of course use the database

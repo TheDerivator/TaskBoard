@@ -1,0 +1,453 @@
+{
+  "departments": {
+    "STL": [
+      "Quality",
+      "Process",
+      "Maintenance"
+    ],
+    "R&D": [
+      "Coatings"
+    ]
+  },
+  "people": [
+    {
+      "code": "AC",
+      "name": "Anna Claes",
+      "color": "#2D5BA8",
+      "department": "STL",
+      "section": "Quality"
+    },
+    {
+      "code": "BP",
+      "name": "Bram Peeters",
+      "color": "#7A4A9C",
+      "department": "STL",
+      "section": "Process"
+    },
+    {
+      "code": "CM",
+      "name": "Chloé Martens",
+      "color": "#1F7A6E",
+      "department": "STL",
+      "section": "Quality"
+    },
+    {
+      "code": "DW",
+      "name": "Dries Wouters",
+      "color": "#A8431A",
+      "department": "STL",
+      "section": "Maintenance"
+    },
+    {
+      "code": "EJ",
+      "name": "Eva Janssens",
+      "color": "#56652A",
+      "department": "STL",
+      "section": "Quality"
+    },
+    {
+      "code": "FM",
+      "name": "Filip Maes",
+      "color": "#8A3A56",
+      "department": "STL",
+      "section": "Process"
+    }
+  ],
+  "projects": [
+    {
+      "id": "ASQ",
+      "name": "Action plan surface quality",
+      "color": "#C4561C"
+    },
+    {
+      "id": "P26",
+      "name": "Projects 2026",
+      "color": "#2D5BA8"
+    },
+    {
+      "id": "SAF",
+      "name": "Safety 2026",
+      "color": "#1F7A6E"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-104",
+      "rank": 1,
+      "title": "Root-cause analysis of surface defects on line 2",
+      "description": "Collect defect maps from the last three months and correlate them with roll changes.",
+      "lead": "AC",
+      "helpers": [
+        "DW"
+      ],
+      "department": "STL",
+      "section": "Quality",
+      "status": "started"
+    },
+    {
+      "id": "T-117",
+      "rank": 2,
+      "title": "Agree inspection criteria with customer panel",
+      "description": "Visual acceptance limits for class A surfaces, signed off by both sides.",
+      "lead": "CM",
+      "helpers": [
+        "AC",
+        "FM"
+      ],
+      "department": "STL",
+      "section": "Quality",
+      "status": "started"
+    },
+    {
+      "id": "T-098",
+      "rank": 3,
+      "title": "Tonnage-based work-roll regrinding",
+      "description": "Move from a fixed interval to regrinding after a set tonnage.",
+      "lead": "DW",
+      "helpers": [
+        "BP"
+      ],
+      "department": "STL",
+      "section": "Maintenance",
+      "status": "idea"
+    },
+    {
+      "id": "T-130",
+      "rank": 4,
+      "title": "Coating adhesion trial, batch 3",
+      "description": "Repeat the peel test with the revised pre-treatment.",
+      "lead": "CM",
+      "helpers": [
+        "FM"
+      ],
+      "department": "R&D",
+      "section": "Coatings",
+      "status": "started"
+    },
+    {
+      "id": "T-089",
+      "rank": 5,
+      "title": "Operator training: defect classification",
+      "description": "Two-hour session per shift using the new defect catalogue.",
+      "lead": "EJ",
+      "helpers": [
+        "CM"
+      ],
+      "department": "STL",
+      "section": "Quality",
+      "status": "started"
+    },
+    {
+      "id": "T-121",
+      "rank": 6,
+      "title": "Budget proposal for inline camera system",
+      "description": "Quotes, payback estimate and installation window.",
+      "lead": "BP",
+      "helpers": [],
+      "department": "STL",
+      "section": "Process",
+      "status": "idea"
+    },
+    {
+      "id": "T-133",
+      "rank": 7,
+      "title": "Roadmap workshop for next year",
+      "description": "Half-day session to collect and rank next year's projects.",
+      "lead": "BP",
+      "helpers": [
+        "AC",
+        "CM",
+        "DW"
+      ],
+      "department": "STL",
+      "section": "Process",
+      "status": "idea"
+    },
+    {
+      "id": "T-126",
+      "rank": 8,
+      "title": "Update SPC dashboards for thickness",
+      "description": "Add the new gauge and tighten control limits.",
+      "lead": "FM",
+      "helpers": [],
+      "department": "STL",
+      "section": "Process",
+      "status": "idea"
+    },
+    {
+      "id": "T-110",
+      "rank": 9,
+      "title": "Guard rail check at the coiler",
+      "description": "Inspection after the incident report from week 31.",
+      "lead": "DW",
+      "helpers": [
+        "FM"
+      ],
+      "department": "STL",
+      "section": "Maintenance",
+      "status": "done"
+    },
+    {
+      "id": "T-075",
+      "rank": 10,
+      "title": "Audit of coil handling damage",
+      "description": "Walk the route from line exit to warehouse and log contact points.",
+      "lead": "AC",
+      "helpers": [
+        "EJ",
+        "BP"
+      ],
+      "department": "STL",
+      "section": "Quality",
+      "status": "done"
+    },
+    {
+      "id": "T-062",
+      "rank": 11,
+      "title": "Clean up old non-conformance records",
+      "description": "Close or merge records older than two years.",
+      "lead": "EJ",
+      "helpers": [],
+      "department": "STL",
+      "section": "Quality",
+      "status": "archived"
+    }
+  ],
+  "posts": [
+    {
+      "task_id": "T-104",
+      "author": "AC",
+      "created_at": "2026-09-19T14:02",
+      "is_update": true,
+      "body_md": "**Week 38 status**\n\n- Defect maps pulled for weeks 26–38\n- Clear cluster right after the roll change on **4 Sep**\n- Next: overlay with grinding reports\n\n![defect map](uploads/defect-map-line2.png)"
+    },
+    {
+      "task_id": "T-104",
+      "author": "DW",
+      "created_at": "2026-09-19T16:40",
+      "is_update": false,
+      "body_md": "That roll change was the first set from the new supplier batch. Grinding reports are under `WR-2291`, I'll add them here tomorrow."
+    },
+    {
+      "task_id": "T-104",
+      "author": "CM",
+      "created_at": "2026-09-22T09:15",
+      "is_update": false,
+      "body_md": "@Anna can we show the map to the customer panel on Thursday? It supports the case for T-117."
+    },
+    {
+      "task_id": "T-104",
+      "author": "AC",
+      "created_at": "2026-09-22T10:03",
+      "is_update": false,
+      "body_md": "Yes, I'll add it to the slides."
+    }
+  ],
+  "events": [
+    {
+      "task_id": "T-104",
+      "actor": "AC",
+      "created_at": "2026-09-12T08:30",
+      "type": "status",
+      "from": "idea",
+      "to": "started"
+    }
+  ],
+  "project_nodes": [
+    {
+      "id": "ASQ:1",
+      "project_id": "ASQ",
+      "parent_id": null,
+      "position": 1,
+      "number": "1",
+      "name": "Measurement & inspection"
+    },
+    {
+      "id": "ASQ:1.1",
+      "project_id": "ASQ",
+      "parent_id": "ASQ:1",
+      "position": 1,
+      "number": "1.1",
+      "name": "Inspection criteria"
+    },
+    {
+      "id": "ASQ:1.2",
+      "project_id": "ASQ",
+      "parent_id": "ASQ:1",
+      "position": 2,
+      "number": "1.2",
+      "name": "Camera system"
+    },
+    {
+      "id": "ASQ:2",
+      "project_id": "ASQ",
+      "parent_id": null,
+      "position": 2,
+      "number": "2",
+      "name": "Line 2 defects"
+    },
+    {
+      "id": "ASQ:2.1",
+      "project_id": "ASQ",
+      "parent_id": "ASQ:2",
+      "position": 1,
+      "number": "2.1",
+      "name": "Root cause"
+    },
+    {
+      "id": "ASQ:2.2",
+      "project_id": "ASQ",
+      "parent_id": "ASQ:2",
+      "position": 2,
+      "number": "2.2",
+      "name": "Roll maintenance"
+    },
+    {
+      "id": "ASQ:2.2.1",
+      "project_id": "ASQ",
+      "parent_id": "ASQ:2.2",
+      "position": 1,
+      "number": "2.2.1",
+      "name": "Grinding"
+    },
+    {
+      "id": "ASQ:3",
+      "project_id": "ASQ",
+      "parent_id": null,
+      "position": 3,
+      "number": "3",
+      "name": "People & training"
+    },
+    {
+      "id": "P26:1",
+      "project_id": "P26",
+      "parent_id": null,
+      "position": 1,
+      "number": "1",
+      "name": "Investments"
+    },
+    {
+      "id": "P26:1.1",
+      "project_id": "P26",
+      "parent_id": "P26:1",
+      "position": 1,
+      "number": "1.1",
+      "name": "Inspection"
+    },
+    {
+      "id": "P26:2",
+      "project_id": "P26",
+      "parent_id": null,
+      "position": 2,
+      "number": "2",
+      "name": "Process"
+    },
+    {
+      "id": "P26:2.1",
+      "project_id": "P26",
+      "parent_id": "P26:2",
+      "position": 1,
+      "number": "2.1",
+      "name": "Coatings"
+    },
+    {
+      "id": "P26:2.2",
+      "project_id": "P26",
+      "parent_id": "P26:2",
+      "position": 2,
+      "number": "2.2",
+      "name": "SPC"
+    },
+    {
+      "id": "P26:3",
+      "project_id": "P26",
+      "parent_id": null,
+      "position": 3,
+      "number": "3",
+      "name": "Planning"
+    },
+    {
+      "id": "SAF:1",
+      "project_id": "SAF",
+      "parent_id": null,
+      "position": 1,
+      "number": "1",
+      "name": "Machine guarding"
+    },
+    {
+      "id": "SAF:1.1",
+      "project_id": "SAF",
+      "parent_id": "SAF:1",
+      "position": 1,
+      "number": "1.1",
+      "name": "Coiler"
+    }
+  ],
+  "placements": [
+    {
+      "task_id": "T-104",
+      "project_id": "ASQ",
+      "node_id": "ASQ:2.1"
+    },
+    {
+      "task_id": "T-117",
+      "project_id": "ASQ",
+      "node_id": "ASQ:1.1"
+    },
+    {
+      "task_id": "T-098",
+      "project_id": "ASQ",
+      "node_id": "ASQ:2.2.1"
+    },
+    {
+      "task_id": "T-098",
+      "project_id": "P26",
+      "node_id": "P26:2"
+    },
+    {
+      "task_id": "T-130",
+      "project_id": "P26",
+      "node_id": "P26:2.1"
+    },
+    {
+      "task_id": "T-089",
+      "project_id": "ASQ",
+      "node_id": "ASQ:3"
+    },
+    {
+      "task_id": "T-121",
+      "project_id": "ASQ",
+      "node_id": "ASQ:1.2"
+    },
+    {
+      "task_id": "T-121",
+      "project_id": "P26",
+      "node_id": "P26:1.1"
+    },
+    {
+      "task_id": "T-133",
+      "project_id": "P26",
+      "node_id": "P26:3"
+    },
+    {
+      "task_id": "T-126",
+      "project_id": "P26",
+      "node_id": "P26:2.2"
+    },
+    {
+      "task_id": "T-110",
+      "project_id": "SAF",
+      "node_id": "SAF:1.1"
+    },
+    {
+      "task_id": "T-075",
+      "project_id": "ASQ",
+      "node_id": "ASQ:2"
+    },
+    {
+      "task_id": "T-062",
+      "project_id": "ASQ",
+      "node_id": "ASQ:3"
+    }
+  ]
+}
