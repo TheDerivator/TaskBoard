@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Team Tasks – Priority</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1D2124;background:#F4F2EE}
+a{color:#2D5BA8}a:hover{color:#1E4686}
+input::placeholder{color:#7A756D}
+</style>
+</helmet>
+<div style="width: 1440px; height: 960px; display: flex; background: #F4F2EE; overflow: hidden">
+
+<nav aria-label="Main" style="width: 232px; flex-shrink: 0; background: #1D2124; color: #E9E6E0; display: flex; flex-direction: column; gap: 28px; padding: 24px 16px; box-sizing: border-box">
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 8px">
+<div style="width: 28px; height: 28px; border-radius: 6px; background: #C4561C; display: flex; align-items: center; justify-content: center">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h6"></path></svg>
+</div>
+<div style="font-weight: 700; font-size: 16px">Team Tasks</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #9A968F; padding: 0 8px 6px">Views</div>
+<a href="Main.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 6px; background: #30363A; color: #FFFFFF; text-decoration: none; font-size: 14px; font-weight: 600">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F08A55" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"></path></svg>
+<span style="flex-grow: 1">Priority</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #B8B4AD">11</span>
+</a>
+<a href="People.dc.html" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 6px; color: #D6D2CB; text-decoration: none; font-size: 14px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="5" height="16" rx="1"></rect><rect x="10" y="4" width="5" height="11" rx="1"></rect><rect x="17" y="4" width="4" height="14" rx="1"></rect></svg>
+<span style="flex-grow: 1">People</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #9A968F">6</span>
+</a>
+<a href="Projects.dc.html" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 6px; color: #D6D2CB; text-decoration: none; font-size: 14px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+<span style="flex-grow: 1">Projects</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #9A968F">3</span>
+</a>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #9A968F; padding: 0 8px 6px">Projects</div>
+<a href="Projects.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 34px; padding: 0 10px; color: #D6D2CB; text-decoration: none; font-size: 13px"><span style="width: 8px; height: 8px; border-radius: 2px; background: #E0733A; flex-shrink: 0"></span>Action plan surface quality</a>
+<a href="Projects.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 34px; padding: 0 10px; color: #D6D2CB; text-decoration: none; font-size: 13px"><span style="width: 8px; height: 8px; border-radius: 2px; background: #6C95DB; flex-shrink: 0"></span>Projects 2026</a>
+<a href="Projects.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 34px; padding: 0 10px; color: #D6D2CB; text-decoration: none; font-size: 13px"><span style="width: 8px; height: 8px; border-radius: 2px; background: #4FB0A1; flex-shrink: 0"></span>Safety 2026</a>
+</div>
+<div style="margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 12px 8px 0; border-top: 1px solid #353B40">
+<span style="width: 30px; height: 30px; border-radius: 50%; background: #2D5BA8; color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center">AC</span>
+<div style="display: flex; flex-direction: column"><span style="font-size: 13px; font-weight: 600">Anna Claes</span><span style="font-size: 12px; color: #9A968F">STL · Quality</span></div>
+</div>
+</nav>
+
+<main style="flex-grow: 1; display: flex; flex-direction: column; gap: 20px; padding: 32px 40px; box-sizing: border-box; min-width: 0">
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.01em">Priority</h1>
+<p style="margin: 0; font-size: 14px; color: #5E5A54">Every task the team owns, ranked. Drag a row to change its priority.</p>
+</div>
+<button type="button" style="height: 44px; padding: 0 18px; border: 0; border-radius: 8px; background: #B34A15; color: #FFFFFF; font: 600 14px 'IBM Plex Sans', sans-serif; display: flex; align-items: center; gap: 8px; cursor: pointer">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>New task</button>
+</div>
+
+<div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+<label style="display: flex; align-items: center; gap: 8px; height: 44px; width: 340px; padding: 0 12px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #CFCAC1; border-radius: 8px">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5E5A54" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Search title or description</span>
+<input type="search" value="{{q}}" onChange="{{onSearch}}" placeholder="Search title or description…" style="flex-grow: 1; border: 0; outline: none; background: transparent; font: 14px 'IBM Plex Sans', sans-serif; color: #1D2124; min-width: 0">
+</label>
+<div role="group" aria-label="Lifecycle" style="display: flex; gap: 6px">
+<sc-for list="{{chips}}" as="c" hint-placeholder-count="4">
+<button type="button" aria-pressed="{{c.pressed}}" onClick="{{c.toggle}}" style="{{c.style}}">{{c.label}}</button>
+</sc-for>
+</div>
+<div style="display: flex; gap: 8px; margin-left: auto">
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 11px; color: #5E5A54; font-family: 'IBM Plex Mono', monospace; text-transform: uppercase; letter-spacing: 0.06em">Department
+<select style="height: 32px; min-width: 110px; border: 1px solid #CFCAC1; border-radius: 6px; background: #fff; font: 13px 'IBM Plex Sans', sans-serif; color: #1D2124; padding: 0 8px"><option>All</option><option>STL</option><option>R&amp;D</option></select></label>
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 11px; color: #5E5A54; font-family: 'IBM Plex Mono', monospace; text-transform: uppercase; letter-spacing: 0.06em">Section
+<select style="height: 32px; min-width: 130px; border: 1px solid #CFCAC1; border-radius: 6px; background: #fff; font: 13px 'IBM Plex Sans', sans-serif; color: #1D2124; padding: 0 8px"><option>All</option><option>Quality</option><option>Process</option><option>Maintenance</option><option>Coatings</option></select></label>
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 11px; color: #5E5A54; font-family: 'IBM Plex Mono', monospace; text-transform: uppercase; letter-spacing: 0.06em">Project
+<select style="height: 32px; min-width: 150px; border: 1px solid #CFCAC1; border-radius: 6px; background: #fff; font: 13px 'IBM Plex Sans', sans-serif; color: #1D2124; padding: 0 8px"><option>All</option><option>Action plan surface quality</option><option>Projects 2026</option><option>Safety 2026</option></select></label>
+</div>
+</div>
+
+<div style="background: #FFFFFF; border: 1px solid #DDD8CF; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column">
+<div style="display: grid; grid-template-columns: 52px 20px minmax(0, 1fr) 250px 170px 140px 104px; gap: 16px; align-items: center; padding: 10px 20px; background: #EFECE6; border-bottom: 1px solid #DDD8CF; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">
+<span>Rank</span><span></span><span>Task</span><span>Projects</span><span>Lead · team</span><span>Dept · section</span><span>Lifecycle</span>
+</div>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
+<div draggable="true" onDragStart="{{r.onDragStart}}" onDragOver="{{r.onDragOver}}" onDrop="{{r.onDrop}}" onDragEnd="{{r.onDragEnd}}" style="{{r.rowStyle}}">
+<span style="{{r.rankStyle}}">{{r.rank}}</span>
+<svg width="14" height="20" viewBox="0 0 14 20" fill="#A39D93" aria-label="Drag to reorder"><circle cx="4" cy="4" r="1.6"></circle><circle cx="10" cy="4" r="1.6"></circle><circle cx="4" cy="10" r="1.6"></circle><circle cx="10" cy="10" r="1.6"></circle><circle cx="4" cy="16" r="1.6"></circle><circle cx="10" cy="16" r="1.6"></circle></svg>
+<div style="display: flex; flex-direction: column; gap: 3px; min-width: 0">
+<div style="display: flex; align-items: baseline; gap: 8px; min-width: 0">
+<a href="TaskDetail.dc.html" style="font-size: 15px; font-weight: 600; color: #1D2124; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.title}}</a>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6E6962; flex-shrink: 0">{{r.id}}</span>
+</div>
+<div style="font-size: 13px; color: #5E5A54; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.desc}}</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{r.projects}}" as="p" hint-placeholder-count="1">
+<span title="{{p.name}} › {{p.node}}" style="display: inline-flex; align-items: center; gap: 6px; height: 24px; max-width: 100%; box-sizing: border-box; padding: 0 8px; border-radius: 4px; background: #F2EFEA; font-size: 12px; color: #3A3733; white-space: nowrap"><span style="{{p.dot}}"></span><span style="overflow: hidden; text-overflow: ellipsis">{{p.name}}</span><span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; flex-shrink: 0">{{p.node}}</span></span>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; gap: 8px">
+<span title="Lead" style="{{r.leadStyle}}">{{r.lead}}</span>
+<span style="font-size: 13px; font-weight: 500">{{r.leadName}}</span>
+<div style="display: flex">
+<sc-for list="{{r.others}}" as="o" hint-placeholder-count="1">
+<span title="Also working on this" style="{{o.style}}">{{o.ini}}</span>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 1px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600">{{r.dept}}</span>
+<span style="font-size: 13px; color: #5E5A54">{{r.section}}</span>
+</div>
+<span style="{{r.statusStyle}}">{{r.statusLabel}}</span>
+</div>
+</sc-for>
+<sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+<div style="padding: 48px 20px; text-align: center; font-size: 14px; color: #5E5A54">No tasks match this search and lifecycle filter.</div>
+</sc-if>
+</div>
+<div style="font-size: 13px; color: #5E5A54">{{countLabel}}</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":960}}'>
+class Component extends DCLogic {
+  data() {
+    return {
+      people: {
+        AC: { name: 'Anna C.', color: '#2D5BA8' },
+        BP: { name: 'Bram P.', color: '#7A4A9C' },
+        CM: { name: 'Chloé M.', color: '#1F7A6E' },
+        DW: { name: 'Dries W.', color: '#A8431A' },
+        EJ: { name: 'Eva J.', color: '#56652A' },
+        FM: { name: 'Filip M.', color: '#8A3A56' }
+      },
+      projects: {
+        ASQ: { name: 'Action plan surface quality', color: '#C4561C' },
+        P26: { name: 'Projects 2026', color: '#2D5BA8' },
+        SAF: { name: 'Safety 2026', color: '#1F7A6E' }
+      },
+      tasks: [
+        { id: 'T-104', title: 'Root-cause analysis of surface defects on line 2', desc: 'Collect defect maps from the last three months and correlate them with roll changes.', lead: 'AC', others: ['DW'], projects: [['ASQ','2.1']], dept: 'STL', section: 'Quality', status: 'started' },
+        { id: 'T-117', title: 'Agree inspection criteria with customer panel', desc: 'Visual acceptance limits for class A surfaces, signed off by both sides.', lead: 'CM', others: ['AC', 'FM'], projects: [['ASQ','1.1']], dept: 'STL', section: 'Quality', status: 'started' },
+        { id: 'T-098', title: 'Tonnage-based work-roll regrinding', desc: 'Move from a fixed interval to regrinding after a set tonnage.', lead: 'DW', others: ['BP'], projects: [['ASQ','2.2.1'], ['P26','2']], dept: 'STL', section: 'Maintenance', status: 'idea' },
+        { id: 'T-130', title: 'Coating adhesion trial, batch 3', desc: 'Repeat the peel test with the revised pre-treatment.', lead: 'CM', others: ['FM'], projects: [['P26','2.1']], dept: 'R&D', section: 'Coatings', status: 'started' },
+        { id: 'T-089', title: 'Operator training: defect classification', desc: 'Two-hour session per shift using the new defect catalogue.', lead: 'EJ', others: ['CM'], projects: [['ASQ','3']], dept: 'STL', section: 'Quality', status: 'started' },
+        { id: 'T-121', title: 'Budget proposal for inline camera system', desc: 'Quotes, payback estimate and installation window.', lead: 'BP', others: [], projects: [['ASQ','1.2'], ['P26','1.1']], dept: 'STL', section: 'Process', status: 'idea' },
+        { id: 'T-133', title: 'Roadmap workshop for next year', desc: 'Half-day session to collect and rank next year’s projects.', lead: 'BP', others: ['AC', 'CM', 'DW'], projects: [['P26','3']], dept: 'STL', section: 'Process', status: 'idea' },
+        { id: 'T-126', title: 'Update SPC dashboards for thickness', desc: 'Add the new gauge and tighten control limits.', lead: 'FM', others: [], projects: [['P26','2.2']], dept: 'STL', section: 'Process', status: 'idea' },
+        { id: 'T-110', title: 'Guard rail check at the coiler', desc: 'Inspection after the incident report from week 31.', lead: 'DW', others: ['FM'], projects: [['SAF','1.1']], dept: 'STL', section: 'Maintenance', status: 'done' },
+        { id: 'T-075', title: 'Audit of coil handling damage', desc: 'Walk the route from line exit to warehouse and log contact points.', lead: 'AC', others: ['EJ', 'BP'], projects: [['ASQ','2']], dept: 'STL', section: 'Quality', status: 'done' },
+        { id: 'T-062', title: 'Clean up old non-conformance records', desc: 'Close or merge records older than two years.', lead: 'EJ', others: [], projects: [['ASQ','3']], dept: 'STL', section: 'Quality', status: 'archived' }
+      ]
+    };
+  }
+  statusStyle(s) {
+    const base = 'display: inline-flex; align-items: center; justify-content: center; height: 26px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 600; justify-self: start; ';
+    if (s === 'idea') return base + 'background: #FFFFFF; color: #57534D; border: 1px dashed #948E84;';
+    if (s === 'started') return base + 'background: #DCE6F7; color: #1E4686; border: 1px solid #B9CBEB;';
+    if (s === 'done') return base + 'background: #DCEEE2; color: #1F5C37; border: 1px solid #B5D8C1;';
+    return base + 'background: #EEEBE5; color: #5E5A54; border: 1px solid #DDD8CF;';
+  }
+  drop(targetId) {
+    const d = this.data();
+    const order = (this.state && this.state.order) || d.tasks.map((t) => t.id);
+    const from = this.state && this.state.dragId;
+    if (!from || from === targetId) { this.setState({ dragId: null, overId: null }); return; }
+    const next = order.slice();
+    const i = next.indexOf(from);
+    const j0 = next.indexOf(targetId);
+    next.splice(i, 1);
+    const j = next.indexOf(targetId);
+    next.splice(i < j0 ? j + 1 : j, 0, from);
+    this.setState({ order: next, dragId: null, overId: null });
+  }
+  renderVals() {
+    const d = this.data();
+    const st = this.state || {};
+    const order = st.order || d.tasks.map((t) => t.id);
+    const show = st.show || { idea: true, started: true, done: true, archived: false };
+    const q = st.q || '';
+    const byId = {};
+    d.tasks.forEach((t) => { byId[t.id] = t; });
+    const labels = { idea: 'Idea', started: 'Started', done: 'Done', archived: 'Archived' };
+    const needle = q.trim().toLowerCase();
+    const dragIdx = st.dragId ? order.indexOf(st.dragId) : -1;
+    const avatar = (code, size, overlap) => 'width: ' + size + 'px; height: ' + size + 'px; border-radius: 50%; background: ' + d.people[code].color + '; color: #FFFFFF; font-size: ' + (size > 26 ? 12 : 10) + 'px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 0 2px #FFFFFF;' + (overlap ? ' margin-left: -6px;' : '');
+    const rows = [];
+    order.forEach((id, idx) => {
+      const t = byId[id];
+      if (!show[t.status]) return;
+      if (needle && (t.title + ' ' + t.desc).toLowerCase().indexOf(needle) === -1) return;
+      const over = st.overId === id && st.dragId && st.dragId !== id;
+      let rowStyle = 'display: grid; grid-template-columns: 52px 20px minmax(0, 1fr) 250px 170px 140px 104px; gap: 16px; align-items: center; padding: 14px 20px; border-bottom: 1px solid #E8E4DC; background: #FFFFFF; cursor: grab;';
+      if (st.dragId === id) rowStyle += ' opacity: 0.4;';
+      if (over) rowStyle += dragIdx < idx ? ' box-shadow: inset 0 -3px 0 #C4561C;' : ' box-shadow: inset 0 3px 0 #C4561C;';
+      const rank = idx + 1;
+      rows.push({
+        id: t.id, title: t.title, desc: t.desc, dept: t.dept, section: t.section,
+        rank: rank < 10 ? '0' + rank : String(rank),
+        rankStyle: "font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 600; color: " + (rank <= 3 ? '#B34A15' : '#1D2124') + ';',
+        lead: t.lead, leadName: d.people[t.lead].name, leadStyle: avatar(t.lead, 30, false),
+        others: t.others.map((o, k) => ({ ini: o, style: avatar(o, 24, k > 0) })),
+        projects: t.projects.map((p) => ({ name: d.projects[p[0]].name, node: p[1], dot: 'width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; background: ' + d.projects[p[0]].color + ';' })),
+        statusLabel: labels[t.status], statusStyle: this.statusStyle(t.status),
+        rowStyle: rowStyle,
+        onDragStart: (e) => { try { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', t.id); } catch (_) {} this.setState({ dragId: t.id }); },
+        onDragOver: (e) => { e.preventDefault(); if ((this.state || {}).overId !== t.id) this.setState({ overId: t.id }); },
+        onDrop: (e) => { e.preventDefault(); this.drop(t.id); },
+        onDragEnd: () => this.setState({ dragId: null, overId: null })
+      });
+    });
+    const chips = ['idea', 'started', 'done', 'archived'].map((k) => ({
+      label: labels[k], pressed: show[k] ? 'true' : 'false',
+      style: "height: 44px; padding: 0 14px; border-radius: 8px; font: 500 13px 'IBM Plex Sans', sans-serif; cursor: pointer; " + (show[k] ? 'background: #1D2124; color: #FFFFFF; border: 1px solid #1D2124;' : 'background: #FFFFFF; color: #5E5A54; border: 1px solid #CFCAC1;'),
+      toggle: () => { const s = Object.assign({}, show); s[k] = !s[k]; this.setState({ show: s }); }
+    }));
+    return {
+      q: q, rows: rows, chips: chips, empty: rows.length === 0,
+      countLabel: 'Showing ' + rows.length + ' of ' + d.tasks.length + ' tasks · rank is team-wide, filters never change it',
+      onSearch: (e) => this.setState({ q: e.target.value })
+    };
+  }
+}
+</script>
+</body>
+</html>

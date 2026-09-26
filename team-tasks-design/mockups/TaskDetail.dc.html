@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Team Tasks – Task detail</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1D2124;background:#FFFFFF}
+a{color:#2D5BA8}a:hover{color:#1E4686}
+</style>
+</helmet>
+<aside aria-label="Task detail" style="width: 560px; height: 960px; box-sizing: border-box; background: #FFFFFF; border-left: 1px solid #DDD8CF; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 20px 28px; border-bottom: 1px solid #E8E4DC">
+<div style="display: flex; align-items: center; gap: 12px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; color: #5E5A54">T-104</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 6px; background: #FBEFE8; color: #9A3E10; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600">Rank 01 of 11</span>
+</div>
+<a href="Main.dc.html" aria-label="Close" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #1D2124">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+</header>
+
+<div role="tablist" aria-label="Task sections" style="display: flex; gap: 4px; padding: 0 20px; border-bottom: 1px solid #E8E4DC">
+<a href="TaskDetail.dc.html" role="tab" aria-selected="true" style="height: 46px; padding: 0 12px; display: flex; align-items: center; gap: 8px; color: #1D2124; text-decoration: none; font-size: 14px; font-weight: 600; box-shadow: inset 0 -2px 0 #B34A15">Details</a>
+<a href="TaskConversation.dc.html" role="tab" aria-selected="false" style="height: 46px; padding: 0 12px; display: flex; align-items: center; gap: 8px; color: #5E5A54; text-decoration: none; font-size: 14px; font-weight: 500">Conversation<span style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 999px; background: #1D2124; color: #FFFFFF; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center">4</span></a>
+</div>
+
+<div style="flex-grow: 1; overflow: auto; padding: 24px 28px; display: flex; flex-direction: column; gap: 24px">
+
+<label style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Title</span>
+<input type="text" value="Root-cause analysis of surface defects on line 2" style="height: 48px; padding: 0 12px; border: 1px solid #CFCAC1; border-radius: 8px; font: 600 18px 'IBM Plex Sans', sans-serif; color: #1D2124">
+</label>
+
+<label style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Description</span>
+<textarea rows="4" style="padding: 10px 12px; border: 1px solid #CFCAC1; border-radius: 8px; font: 14px/1.5 'IBM Plex Sans', sans-serif; color: #1D2124; resize: vertical">Collect defect maps from the last three months and correlate them with roll changes.</textarea>
+</label>
+
+<fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+<legend style="padding: 0 0 8px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Lifecycle</legend>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; background: #F2EFEA; padding: 4px; border-radius: 10px">
+<button type="button" aria-pressed="false" style="height: 44px; border: 0; border-radius: 7px; background: transparent; font: 500 14px 'IBM Plex Sans', sans-serif; color: #5E5A54; display: flex; align-items: center; justify-content: center; gap: 6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1F5C37" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>Idea</button>
+<button type="button" aria-pressed="true" style="height: 44px; border: 0; border-radius: 7px; background: #1E4686; font: 600 14px 'IBM Plex Sans', sans-serif; color: #FFFFFF">Started</button>
+<button type="button" aria-pressed="false" style="height: 44px; border: 0; border-radius: 7px; background: transparent; font: 500 14px 'IBM Plex Sans', sans-serif; color: #5E5A54">Done</button>
+<button type="button" aria-pressed="false" style="height: 44px; border: 0; border-radius: 7px; background: transparent; font: 500 14px 'IBM Plex Sans', sans-serif; color: #5E5A54">Archived</button>
+</div>
+</fieldset>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+<label style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Department</span>
+<select style="height: 44px; padding: 0 10px; border: 1px solid #CFCAC1; border-radius: 8px; background: #fff; font: 14px 'IBM Plex Sans', sans-serif; color: #1D2124"><option>STL</option><option>R&amp;D</option></select>
+</label>
+<label style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Section</span>
+<select style="height: 44px; padding: 0 10px; border: 1px solid #CFCAC1; border-radius: 8px; background: #fff; font: 14px 'IBM Plex Sans', sans-serif; color: #1D2124"><option>Quality</option><option>Process</option><option>Maintenance</option></select>
+</label>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Lead · exactly one</span>
+<button type="button" style="height: 52px; display: flex; align-items: center; gap: 12px; padding: 0 12px; border: 1px solid #CFCAC1; border-radius: 8px; background: #fff; font: 14px 'IBM Plex Sans', sans-serif; color: #1D2124; text-align: left">
+<span style="width: 32px; height: 32px; border-radius: 50%; background: #2D5BA8; color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center">AC</span>
+<span style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-weight: 600">Anna Claes</span><span style="font-size: 12px; color: #5E5A54">STL · Quality</span></span>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5E5A54" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+</button>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Also working on it</span>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<span style="display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 4px 0 4px; border-radius: 999px; background: #F2EFEA; font-size: 13px">
+<span style="width: 28px; height: 28px; border-radius: 50%; background: #A8431A; color: #fff; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center">DW</span>Dries Wouters
+<button type="button" aria-label="Remove Dries Wouters" style="width: 28px; height: 28px; border: 0; border-radius: 50%; background: transparent; color: #5E5A54; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</span>
+<button type="button" style="height: 36px; padding: 0 14px; border: 1px dashed #948E84; border-radius: 999px; background: #fff; font: 500 13px 'IBM Plex Sans', sans-serif; color: #3A3733">+ Add person</button>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Projects · one place per project</span>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 8px 6px 8px 12px; border: 1px solid #DDD8CF; border-radius: 8px">
+<span style="width: 10px; height: 10px; border-radius: 3px; background: #C4561C; flex-shrink: 0"></span>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; font-weight: 600">Action plan surface quality</span>
+<span style="font-size: 13px; color: #5E5A54"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px">2</span> Line 2 defects › <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px">2.1</span> Root cause</span>
+</div>
+<a href="ProjectPlacement.dc.html" style="height: 36px; padding: 0 12px; display: flex; align-items: center; border-radius: 6px; font-size: 13px; font-weight: 500; text-decoration: none">Move</a>
+<button type="button" aria-label="Remove from Action plan surface quality" style="width: 36px; height: 36px; border: 0; border-radius: 6px; background: transparent; color: #5E5A54; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<a href="ProjectPlacement.dc.html" style="align-self: flex-start; height: 36px; padding: 0 14px; display: flex; align-items: center; border: 1px dashed #948E84; border-radius: 6px; background: #fff; font-size: 13px; font-weight: 500; color: #3A3733; text-decoration: none">+ Add to another project</a>
+</div>
+</div>
+
+</div>
+
+<footer style="display: flex; justify-content: flex-end; gap: 10px; padding: 16px 28px; border-top: 1px solid #E8E4DC">
+<a href="Main.dc.html" style="height: 44px; padding: 0 18px; display: flex; align-items: center; border: 1px solid #CFCAC1; border-radius: 8px; color: #1D2124; text-decoration: none; font-size: 14px; font-weight: 500">Cancel</a>
+<a href="Main.dc.html" style="height: 44px; padding: 0 20px; display: flex; align-items: center; border-radius: 8px; background: #B34A15; color: #FFFFFF; text-decoration: none; font-size: 14px; font-weight: 600">Save task</a>
+</footer>
+</aside>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":560,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

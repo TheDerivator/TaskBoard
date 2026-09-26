@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Team Tasks – Projects</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1D2124;background:#F4F2EE}
+a{color:#2D5BA8}a:hover{color:#1E4686}
+</style>
+</helmet>
+<div style="width: 1440px; height: 960px; display: flex; background: #F4F2EE; overflow: hidden">
+
+<nav aria-label="Main" style="width: 232px; flex-shrink: 0; background: #1D2124; color: #E9E6E0; display: flex; flex-direction: column; gap: 28px; padding: 24px 16px; box-sizing: border-box">
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 8px">
+<div style="width: 28px; height: 28px; border-radius: 6px; background: #C4561C; display: flex; align-items: center; justify-content: center">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h6"></path></svg>
+</div>
+<div style="font-weight: 700; font-size: 16px">Team Tasks</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #9A968F; padding: 0 8px 6px">Views</div>
+<a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 6px; color: #D6D2CB; text-decoration: none; font-size: 14px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"></path></svg>
+<span style="flex-grow: 1">Priority</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #9A968F">11</span>
+</a>
+<a href="People.dc.html" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 6px; color: #D6D2CB; text-decoration: none; font-size: 14px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="5" height="16" rx="1"></rect><rect x="10" y="4" width="5" height="11" rx="1"></rect><rect x="17" y="4" width="4" height="14" rx="1"></rect></svg>
+<span style="flex-grow: 1">People</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #9A968F">6</span>
+</a>
+<a href="Projects.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 6px; background: #30363A; color: #FFFFFF; text-decoration: none; font-size: 14px; font-weight: 600">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F08A55" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+<span style="flex-grow: 1">Projects</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #B8B4AD">3</span>
+</a>
+</div>
+<div style="margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 12px 8px 0; border-top: 1px solid #353B40">
+<span style="width: 30px; height: 30px; border-radius: 50%; background: #2D5BA8; color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center">AC</span>
+<div style="display: flex; flex-direction: column"><span style="font-size: 13px; font-weight: 600">Anna Claes</span><span style="font-size: 12px; color: #9A968F">STL · Quality</span></div>
+</div>
+</nav>
+
+<div style="width: 300px; flex-shrink: 0; background: #FBFAF7; border-right: 1px solid #DDD8CF; display: flex; flex-direction: column; gap: 16px; padding: 32px 12px; box-sizing: border-box; overflow: auto">
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 0 8px">
+<h2 style="margin: 0; font-size: 18px; font-weight: 700">Projects</h2>
+<button type="button" aria-label="New project" style="width: 44px; height: 44px; border: 1px solid #CFCAC1; border-radius: 8px; background: #fff; color: #1D2124; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+</div>
+<div role="tree" aria-label="Projects and sections" style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{tree}}" as="n" hint-placeholder-count="8">
+<button type="button" role="treeitem" aria-selected="{{n.selected}}" aria-expanded="{{n.expanded}}" onClick="{{n.pick}}" style="{{n.style}}">
+<sc-if value="{{n.isProject}}" hint-placeholder-val="{{ true }}">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5E5A54" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{n.chevron}}"><path d="M9 6l6 6-6 6"></path></svg>
+<span style="{{n.dot}}"></span>
+</sc-if>
+<sc-if value="{{n.isNode}}" hint-placeholder-val="{{ false }}">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5E5A54; flex-shrink: 0">{{n.num}}</span>
+</sc-if>
+<span style="{{n.labelStyle}}">{{n.label}}</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5E5A54; flex-shrink: 0">{{n.count}}</span>
+</button>
+</sc-for>
+</div>
+</div>
+
+<main style="flex-grow: 1; display: flex; flex-direction: column; gap: 18px; padding: 32px 32px 24px; box-sizing: border-box; min-width: 0">
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+<nav aria-label="Breadcrumb" style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #5E5A54">
+<sc-for list="{{crumbs}}" as="c" hint-placeholder-count="2">
+<sc-if value="{{c.sep}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true">›</span></sc-if>
+<button type="button" onClick="{{c.pick}}" style="border: 0; background: transparent; padding: 4px 2px; font: 500 13px 'IBM Plex Sans', sans-serif; color: #2D5BA8; cursor: pointer">{{c.label}}</button>
+</sc-for>
+</nav>
+<div style="display: flex; align-items: center; gap: 10px"><span style="{{head.dot}}"></span>
+<h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.01em">{{head.title}}</h1></div>
+<div style="display: flex; align-items: center; gap: 12px; font-size: 14px; color: #5E5A54">
+<span>{{head.summary}}</span>
+<div style="display: flex">
+<sc-for list="{{head.people}}" as="a" hint-placeholder-count="3"><span style="{{a.style}}">{{a.ini}}</span></sc-for>
+</div>
+</div>
+</div>
+<div style="display: flex; gap: 8px; flex-shrink: 0">
+<button type="button" aria-pressed="{{archPressed}}" onClick="{{toggleArchived}}" style="{{archStyle}}">Show archived</button>
+<button type="button" style="height: 44px; padding: 0 14px; border: 1px solid #CFCAC1; border-radius: 8px; background: #FFFFFF; font: 500 14px 'IBM Plex Sans', sans-serif; color: #1D2124">Edit sections</button>
+<button type="button" style="height: 44px; padding: 0 18px; border: 0; border-radius: 8px; background: #B34A15; color: #FFFFFF; font: 600 14px 'IBM Plex Sans', sans-serif; display: flex; align-items: center; gap: 8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Add task here</button>
+</div>
+</div>
+
+<div style="flex-grow: 1; min-height: 0; overflow: auto; background: #FFFFFF; border: 1px solid #DDD8CF; border-radius: 10px; display: flex; flex-direction: column">
+<sc-for list="{{outline}}" as="o" hint-placeholder-count="10">
+<sc-if value="{{o.isSection}}" hint-placeholder-val="{{ true }}">
+<div style="{{o.rowStyle}}">
+<span style="{{o.numStyle}}">{{o.num}}</span>
+<span style="{{o.nameStyle}}">{{o.name}}</span>
+<span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5E5A54">{{o.count}}</span>
+</div>
+</sc-if>
+<sc-if value="{{o.isTask}}" hint-placeholder-val="{{ false }}">
+<a href="TaskDetail.dc.html" style="{{o.rowStyle}}">
+<span style="{{o.rankStyle}}">#{{o.rank}}</span>
+<span style="flex-grow: 1; min-width: 0; font-size: 14px; font-weight: 500; color: #1D2124; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{o.title}}</span>
+<sc-if value="{{o.alsoIn}}" hint-placeholder-val="{{ false }}">
+<span title="Also placed in another project" style="font-size: 12px; color: #5E5A54; white-space: nowrap">{{o.alsoLabel}}</span>
+</sc-if>
+<span style="{{o.leadStyle}}">{{o.lead}}</span>
+<span style="{{o.statusStyle}}">{{o.statusLabel}}</span>
+</a>
+</sc-if>
+</sc-for>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const colors = { AC: '#2D5BA8', BP: '#7A4A9C', CM: '#1F7A6E', DW: '#A8431A', EJ: '#56652A', FM: '#8A3A56' };
+    const projects = [
+      { id: 'ASQ', name: 'Action plan surface quality', color: '#C4561C', nodes: [
+        ['1', 'Measurement & inspection'], ['1.1', 'Inspection criteria'], ['1.2', 'Camera system'],
+        ['2', 'Line 2 defects'], ['2.1', 'Root cause'], ['2.2', 'Roll maintenance'], ['2.2.1', 'Grinding'],
+        ['3', 'People & training'] ] },
+      { id: 'P26', name: 'Projects 2026', color: '#2D5BA8', nodes: [
+        ['1', 'Investments'], ['1.1', 'Inspection'], ['2', 'Process'], ['2.1', 'Coatings'], ['2.2', 'SPC'], ['3', 'Planning'] ] },
+      { id: 'SAF', name: 'Safety 2026', color: '#1F7A6E', nodes: [ ['1', 'Machine guarding'], ['1.1', 'Coiler'] ] }
+    ];
+    const tasks = [
+      ['Root-cause analysis of surface defects on line 2', 'AC', { ASQ: '2.1' }, 'started'],
+      ['Agree inspection criteria with customer panel', 'CM', { ASQ: '1.1' }, 'started'],
+      ['Tonnage-based work-roll regrinding', 'DW', { ASQ: '2.2.1', P26: '2' }, 'idea'],
+      ['Coating adhesion trial, batch 3', 'CM', { P26: '2.1' }, 'started'],
+      ['Operator training: defect classification', 'EJ', { ASQ: '3' }, 'started'],
+      ['Budget proposal for inline camera system', 'BP', { P26: '1.1', ASQ: '1.2' }, 'idea'],
+      ['Roadmap workshop for next year', 'BP', { P26: '3' }, 'idea'],
+      ['Update SPC dashboards for thickness', 'FM', { P26: '2.2' }, 'idea'],
+      ['Guard rail check at the coiler', 'DW', { SAF: '1.1' }, 'done'],
+      ['Audit of coil handling damage', 'AC', { ASQ: '2' }, 'done'],
+      ['Clean up old non-conformance records', 'EJ', { ASQ: '3' }, 'archived']
+    ];
+    const st = this.state || {};
+    const selP = st.p || 'ASQ';
+    const selN = st.n === undefined ? '' : st.n;
+    const showArch = !!st.arch;
+    const labels = { idea: 'Idea', started: 'Started', done: 'Done', archived: 'Archived' };
+    const pill = (s) => {
+      const b = 'display: inline-flex; align-items: center; justify-content: center; min-width: 64px; height: 24px; padding: 0 9px; box-sizing: border-box; border-radius: 999px; font-size: 12px; font-weight: 600; flex-shrink: 0; ';
+      if (s === 'idea') return b + 'background: #FFFFFF; color: #57534D; border: 1px dashed #948E84;';
+      if (s === 'started') return b + 'background: #DCE6F7; color: #1E4686; border: 1px solid #B9CBEB;';
+      if (s === 'done') return b + 'background: #DCEEE2; color: #1F5C37; border: 1px solid #B5D8C1;';
+      return b + 'background: #EEEBE5; color: #5E5A54; border: 1px solid #DDD8CF;';
+    };
+    const inSub = (place, root) => place !== undefined && (root === '' || place === root || place.indexOf(root + '.') === 0);
+    const visible = (t) => showArch || t[3] !== 'archived';
+    const countIn = (pid, root) => tasks.filter((t) => visible(t) && inSub(t[2][pid], root)).length;
+    const depth = (n) => n === '' ? 0 : n.split('.').length;
+    const avatar = (c, size, overlap) => 'width: ' + size + 'px; height: ' + size + 'px; border-radius: 50%; background: ' + colors[c] + '; color: #FFFFFF; font-size: ' + (size > 26 ? 12 : 10) + 'px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 0 2px #F4F2EE;' + (overlap ? ' margin-left: -6px;' : '');
+
+    const tree = [];
+    projects.forEach((p) => {
+      const open = p.id === selP;
+      const sel = open && selN === '';
+      tree.push({
+        isProject: true, isNode: false, label: p.name, count: String(countIn(p.id, '')),
+        selected: sel ? 'true' : 'false', expanded: open ? 'true' : 'false',
+        chevron: open ? 'transform: rotate(90deg); flex-shrink: 0;' : 'flex-shrink: 0;',
+        dot: 'width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; background: ' + p.color + ';',
+        labelStyle: 'flex-grow: 1; min-width: 0; text-align: left; font-size: 14px; font-weight: 600; color: #1D2124; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;',
+        style: 'display: flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 10px; border-radius: 6px; cursor: pointer; font-family: inherit; ' + (sel ? 'background: #FFFFFF; border: 1px solid #1D2124;' : 'background: transparent; border: 1px solid transparent;'),
+        pick: () => this.setState({ p: p.id, n: '' })
+      });
+      if (!open) return;
+      p.nodes.forEach((nd) => {
+        const s2 = selN === nd[0];
+        tree.push({
+          isProject: false, isNode: true, num: nd[0], label: nd[1], count: String(countIn(p.id, nd[0])),
+          selected: s2 ? 'true' : 'false', expanded: 'false',
+          labelStyle: 'flex-grow: 1; min-width: 0; text-align: left; font-size: 13px; color: #1D2124; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' + (depth(nd[0]) === 1 ? ' font-weight: 600;' : ''),
+          style: 'display: flex; align-items: center; gap: 8px; min-height: 34px; padding: 0 10px 0 ' + (16 + depth(nd[0]) * 16) + 'px; border-radius: 6px; cursor: pointer; font-family: inherit; ' + (s2 ? 'background: #FFFFFF; border: 1px solid #1D2124;' : 'background: transparent; border: 1px solid transparent;'),
+          pick: () => this.setState({ p: p.id, n: nd[0] })
+        });
+      });
+    });
+
+    const P = projects.filter((p) => p.id === selP)[0];
+    const nodeName = {};
+    P.nodes.forEach((nd) => { nodeName[nd[0]] = nd[1]; });
+    const crumbs = [{ label: P.name, sep: false, pick: () => this.setState({ n: '' }) }];
+    if (selN) {
+      const parts = selN.split('.');
+      for (let i = 1; i <= parts.length; i++) {
+        const k = parts.slice(0, i).join('.');
+        crumbs.push({ label: k + ' ' + nodeName[k], sep: true, pick: () => this.setState({ n: k }) });
+      }
+    }
+    const base = depth(selN);
+    const outline = [];
+    const pushTasks = (nodeKey, ind) => {
+      tasks.forEach((t, i) => {
+        if (t[2][selP] !== nodeKey || !visible(t)) return;
+        const others = Object.keys(t[2]).filter((k) => k !== selP);
+        outline.push({
+          isTask: true, isSection: false, rank: i + 1 < 10 ? '0' + (i + 1) : String(i + 1), title: t[0],
+          rankStyle: "font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; flex-shrink: 0; width: 32px; color: " + (i < 3 ? '#B34A15' : '#3A3733') + ';',
+          lead: t[1], leadStyle: avatar(t[1], 26, false),
+          alsoIn: others.length > 0,
+          alsoLabel: others.length ? 'also in ' + others.map((k) => projects.filter((p) => p.id === k)[0].name).join(', ') : '',
+          statusLabel: labels[t[3]], statusStyle: pill(t[3]),
+          rowStyle: 'display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 20px 0 ' + (20 + ind * 24 + 24) + 'px; border-bottom: 1px solid #F0EDE7; text-decoration: none; color: #1D2124;'
+        });
+      });
+    };
+    if (selN === '') pushTasks('', -1);
+    P.nodes.forEach((nd) => {
+      if (!(selN === '' || nd[0] === selN || nd[0].indexOf(selN + '.') === 0)) return;
+      const ind = depth(nd[0]) - base - (selN === '' ? 1 : 0);
+      const d = depth(nd[0]);
+      outline.push({
+        isSection: true, isTask: false, num: nd[0], name: nd[1], count: countIn(selP, nd[0]) + ' tasks',
+        numStyle: "font-family: 'IBM Plex Mono', monospace; font-size: " + (d === 1 ? 14 : 12) + 'px; font-weight: 600; color: #5E5A54; flex-shrink: 0;',
+        nameStyle: 'font-size: ' + (d === 1 ? 16 : d === 2 ? 14 : 13) + 'px; font-weight: ' + (d === 1 ? 700 : 600) + '; color: #1D2124;',
+        rowStyle: 'display: flex; align-items: center; gap: 10px; min-height: ' + (d === 1 ? 48 : 40) + 'px; padding: 0 20px 0 ' + (20 + ind * 24) + 'px; ' + (d === 1 ? 'background: #F2EFEA; border-top: 1px solid #DDD8CF; border-bottom: 1px solid #DDD8CF;' : 'border-bottom: 1px solid #F0EDE7;')
+      });
+      pushTasks(nd[0], ind);
+    });
+
+    const sub = tasks.filter((t) => t[3] !== 'archived' && inSub(t[2][selP], selN));
+    const who = [];
+    sub.forEach((t) => { if (who.indexOf(t[1]) === -1) who.push(t[1]); });
+    return {
+      tree: tree, crumbs: crumbs, outline: outline,
+      head: {
+        title: selN ? selN + ' ' + nodeName[selN] : P.name,
+        dot: 'width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0; background: ' + P.color + ';',
+        summary: sub.length + ' open tasks in this ' + (selN ? 'section' : 'project') + ' · leads',
+        people: who.map((c, k) => ({ ini: c, style: avatar(c, 28, k > 0) }))
+      },
+      archPressed: showArch ? 'true' : 'false',
+      archStyle: "height: 44px; padding: 0 14px; border-radius: 8px; font: 500 14px 'IBM Plex Sans', sans-serif; cursor: pointer; " + (showArch ? 'background: #1D2124; color: #FFFFFF; border: 1px solid #1D2124;' : 'background: #FFFFFF; color: #1D2124; border: 1px solid #CFCAC1;'),
+      toggleArchived: () => this.setState({ arch: !showArch })
+    };
+  }
+}
+</script>
+</body>
+</html>

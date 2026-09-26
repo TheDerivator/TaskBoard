@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Team Tasks – Place task in project</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1D2124;background:#FFFFFF}
+a{color:#2D5BA8}a:hover{color:#1E4686}
+</style>
+</helmet>
+<div role="dialog" aria-label="Add T-104 to another project" style="width: 480px; height: 720px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #DDD8CF; border-radius: 12px; box-shadow: 0 12px 32px rgba(29,33,36,0.16); display: flex; flex-direction: column; overflow: hidden">
+
+<header style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 20px 24px 16px; border-bottom: 1px solid #E8E4DC">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h2 style="margin: 0; font-size: 18px; font-weight: 700">Add to another project</h2>
+<span style="font-size: 13px; color: #5E5A54"><span style="font-family: 'IBM Plex Mono', monospace">T-104</span> can sit in one section of each project.</span>
+</div>
+<a href="TaskDetail.dc.html" aria-label="Close" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #1D2124; flex-shrink: 0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+</header>
+
+<div style="flex-grow: 1; min-height: 0; overflow: auto; padding: 16px 24px; display: flex; flex-direction: column; gap: 20px">
+
+<fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px">
+<legend style="padding: 0 0 8px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">1 · Project</legend>
+<label style="display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 12px; border: 1px solid #E8E4DC; border-radius: 8px; background: #F7F5F1; color: #6E6962">
+<input type="radio" name="proj" disabled style="width: 18px; height: 18px; margin: 0">
+<span style="width: 10px; height: 10px; border-radius: 3px; background: #C4561C; opacity: 0.5"></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 500">Action plan surface quality</span><span style="font-size: 12px">Already in 2.1 Root cause. Use Move to change it.</span></span>
+</label>
+<label style="display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 12px; border: 1px solid #1D2124; border-radius: 8px">
+<input type="radio" name="proj" checked style="width: 18px; height: 18px; margin: 0; accent-color: #B34A15">
+<span style="width: 10px; height: 10px; border-radius: 3px; background: #2D5BA8"></span>
+<span style="font-size: 14px; font-weight: 600">Projects 2026</span>
+</label>
+<label style="display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 12px; border: 1px solid #E8E4DC; border-radius: 8px">
+<input type="radio" name="proj" style="width: 18px; height: 18px; margin: 0; accent-color: #B34A15">
+<span style="width: 10px; height: 10px; border-radius: 3px; background: #1F7A6E"></span>
+<span style="font-size: 14px; font-weight: 500">Safety 2026</span>
+</label>
+</fieldset>
+
+<fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px">
+<legend style="padding: 0 0 8px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">2 · Section in Projects 2026</legend>
+<label style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 12px; border-radius: 6px; font-size: 14px">
+<input type="radio" name="node" style="width: 18px; height: 18px; margin: 0; accent-color: #B34A15"><span style="color: #5E5A54; font-style: italic">Top level (no section)</span>
+</label>
+<label style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 12px; border-radius: 6px; font-size: 14px; font-weight: 600">
+<input type="radio" name="node" style="width: 18px; height: 18px; margin: 0; accent-color: #B34A15"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5E5A54">1</span>Investments
+</label>
+<label style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 12px 0 40px; border-radius: 6px; font-size: 14px; background: #FBEFE8; border: 1px solid #F0D2C1">
+<input type="radio" name="node" checked style="width: 18px; height: 18px; margin: 0; accent-color: #B34A15"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5E5A54">1.1</span>Inspection
+</label>
+<label style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 12px; border-radius: 6px; font-size: 14px; font-weight: 600">
+<input type="radio" name="node" style="width: 18px; height: 18px; margin: 0; accent-color: #B34A15"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5E5A54">2</span>Process
+</label>
+<label style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 12px 0 40px; border-radius: 6px; font-size: 14px">
+<input type="radio" name="node" style="width: 18px; height: 18px; margin: 0; accent-color: #B34A15"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5E5A54">2.1</span>Coatings
+</label>
+<label style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 12px 0 40px; border-radius: 6px; font-size: 14px">
+<input type="radio" name="node" style="width: 18px; height: 18px; margin: 0; accent-color: #B34A15"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5E5A54">2.2</span>SPC
+</label>
+<label style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 12px; border-radius: 6px; font-size: 14px; font-weight: 600">
+<input type="radio" name="node" style="width: 18px; height: 18px; margin: 0; accent-color: #B34A15"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5E5A54">3</span>Planning
+</label>
+</fieldset>
+</div>
+
+<footer style="display: flex; align-items: center; gap: 10px; padding: 16px 24px; border-top: 1px solid #E8E4DC">
+<span style="flex-grow: 1; font-size: 13px; color: #5E5A54">Projects 2026 › <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px">1.1</span> Inspection</span>
+<a href="TaskDetail.dc.html" style="height: 44px; padding: 0 16px; display: flex; align-items: center; border: 1px solid #CFCAC1; border-radius: 8px; color: #1D2124; text-decoration: none; font-size: 14px; font-weight: 500">Cancel</a>
+<a href="TaskDetail.dc.html" style="height: 44px; padding: 0 18px; display: flex; align-items: center; border-radius: 8px; background: #B34A15; color: #FFFFFF; text-decoration: none; font-size: 14px; font-weight: 600">Add</a>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":480,"height":720}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
