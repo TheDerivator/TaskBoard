@@ -157,13 +157,19 @@ server {
 
 ## Windows server
 
+New to IIS? [`IIS.md`](IIS.md) walks through all of this step by step, including a simpler
+variant in which IIS starts TaskBoard itself (no Windows service), and what tends to go wrong.
+
 ### Install
 
 1. Install [uv](https://docs.astral.sh/uv/) for all users, and put the code in e.g.
    `C:\TaskBoard\app`.
 2. In PowerShell: `cd C:\TaskBoard\app`, `$env:UV_PYTHON_INSTALL_DIR = "C:\TaskBoard\python"`,
-   then `uv sync --frozen --no-dev` (add `--extra mssql` for MS SQL). The install directory keeps
-   the Python that uv downloads out of your own profile, where the service could not run it.
+   `$env:UV_LINK_MODE = "copy"`, then `uv sync --frozen --no-dev` (add `--extra mssql` for MS
+   SQL). The install directory keeps the Python that uv downloads out of your own profile, where
+   the service could not run it. Copying (instead of uv's default hard links into its cache in
+   your profile) gives the packages the app folder's permissions. Set both again before every
+   later `uv sync`.
 3. Create `C:\ProgramData\TaskBoard` and give the service account (below) *Modify* rights on it
    and *Read & execute* on `C:\TaskBoard`.
 4. `C:\TaskBoard\app\.env`:

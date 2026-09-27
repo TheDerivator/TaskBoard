@@ -215,7 +215,8 @@ against a real Entra ID tenant or IIS: that needs your environment (M10 deployme
 - [x] Deployment guides in [`OPERATIONS.md`](OPERATIONS.md): (a) Windows server: WinSW service,
       IIS reverse proxy, `C:\ProgramData\TaskBoard`, MS SQL; (b) Linux demo: systemd, Caddy or
       nginx, `/var/lib/taskboard`, demo-data seeding; backups, restore, upgrades. Not yet tried
-      on real servers.
+      on real servers. Step-by-step IIS walkthrough for IIS beginners in [`IIS.md`](IIS.md)
+      (also IIS starting TaskBoard through HttpPlatformHandler, without a service).
 - [ ] Optional: live refresh when others change the board (polling or SSE). Not started: the
       board refreshes on your own changes and on reload.
 
