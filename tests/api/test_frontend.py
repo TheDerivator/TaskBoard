@@ -14,7 +14,16 @@ from taskboard.web import create_app
 
 
 @pytest.mark.parametrize(
-    "path", ["/", "/priority", "/people", "/projects/ASQ", "/t/K7Q2MX", "/t/K7Q2MX/conversation"]
+    "path",
+    [
+        "/",
+        "/priority",
+        "/people",
+        "/people/STL/Quality",
+        "/projects/ASQ",
+        "/t/K7Q2MX",
+        "/t/K7Q2MX/conversation",
+    ],
 )
 def test_app_routes_serve_the_page(client: TestClient, path: str) -> None:
     response = client.get(path)

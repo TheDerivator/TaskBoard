@@ -82,6 +82,63 @@ def test_a_card_opens_its_task(live_server: str, page: Page) -> None:
     expect(page.get_by_role("dialog", name="Task 110")).to_be_visible()
 
 
+def test_a_team_view_shows_only_its_people_and_has_its_own_link(
+    live_server: str, page: Page, console_errors: list[str]
+) -> None:
+    page.goto(f"{live_server}people")
+    expect(page.locator(".lane")).to_have_count(6)
+    team = page.get_by_role("combobox", name="Team")
+    team.select_option(label="STL · Quality")
+    expect(page).to_have_url(f"{live_server}people/STL/Quality")
+    expect(page.locator(".lane__name")).to_have_text(
+        ["Anna Claes", "Chloé Martens", "Eva Janssens"]
+    )
+    expect(page).to_have_title("People · STL · Quality · Team Tasks")
+    # The team picks the people; their lanes still hold all their tasks, whatever the section.
+    expect(ranks(lane(page, "Anna Claes"))).to_have_text(["#01", "#02", "#07", "#10"])
+
+    team.select_option(label="STL (whole department)")
+    expect(page).to_have_url(f"{live_server}people/STL")
+    expect(page.locator(".lane")).to_have_count(6)
+    team.select_option(label="R&D · Coatings")
+    expect(page).to_have_url(f"{live_server}people/R%26D/Coatings")
+    expect(page.locator(".empty-state")).to_have_text("No one in R&D · Coatings yet.")
+    team.select_option(label="Everyone")
+    expect(page).to_have_url(f"{live_server}people")
+    assert console_errors == []
+
+
+def test_a_bookmarked_team_opens_directly(live_server: str, page: Page) -> None:
+    page.context.grant_permissions(["clipboard-read", "clipboard-write"])
+    page.goto(f"{live_server}people/stl/process")  # typed by hand: the address is tidied up
+    expect(page).to_have_url(f"{live_server}people/STL/Process")
+    expect(page.locator(".lane__name")).to_have_text(["Bram Peeters", "Filip Maes"])
+    expect(page.get_by_role("combobox", name="Team")).to_have_value("people/STL/Process")
+
+    page.get_by_role("button", name="Copy link to STL · Process").click()
+    expect(page.get_by_role("status")).to_contain_text("Link copied.")
+    assert page.evaluate("navigator.clipboard.readText()") == f"{live_server}people/STL/Process"
+
+    # A task opens over the team and closes back to it; the sidebar's People link keeps the team.
+    lane(page, "Bram Peeters").locator(".card").first.click()
+    expect(page.get_by_role("dialog")).to_be_visible()
+    expect(page.locator(".lane")).to_have_count(2)
+    page.keyboard.press("Escape")
+    expect(page).to_have_url(f"{live_server}people/STL/Process")
+    sidebar = page.get_by_role("navigation", name="Main")
+    sidebar.get_by_role("link", name="Priority").click()
+    sidebar.get_by_role("link", name="People").click()
+    expect(page).to_have_url(f"{live_server}people/STL/Process")
+
+
+def test_an_unknown_team_says_so(live_server: str, page: Page) -> None:
+    page.goto(f"{live_server}people/STL/Welding")
+    expect(page.get_by_role("alert")).to_contain_text("There is no team “STL · Welding”")
+    expect(page.locator(".lane")).to_have_count(0)
+    page.get_by_role("combobox", name="Team").select_option(label="STL · Maintenance")
+    expect(page.locator(".lane__name")).to_have_text(["Dries Wouters"])
+
+
 # ---------------------------------------------------------------- projects
 
 

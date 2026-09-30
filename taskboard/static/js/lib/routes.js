@@ -17,7 +17,9 @@ export function parseRoute(pathname, search = "", base = "/") {
 
   if (parts.length === 0) return { name: "home", params: {} };
   if (head === "priority" && rest.length === 0) return { name: "priority", params: {} };
-  if (head === "people" && rest.length === 0) return { name: "people", params: {} };
+  if (head === "people" && rest.length <= 2) {
+    return { name: "people", params: { department: rest[0] ?? null, section: rest[1] ?? null } };
+  }
   if (head === "projects" && rest.length <= 1) {
     const node = query.get("node");
     return {
@@ -47,6 +49,13 @@ export function projectPath(key, nodeId = null) {
   return nodeId == null ? `projects/${encodeURIComponent(key)}` : `projects/${encodeURIComponent(key)}?node=${nodeId}`;
 }
 
+/** A team view: everyone, a department (by code) or one of its sections (by name). */
+export function peoplePath(departmentCode = null, sectionName = null) {
+  if (departmentCode == null) return "people";
+  const department = `people/${encodeURIComponent(departmentCode)}`;
+  return sectionName == null ? department : `${department}/${encodeURIComponent(sectionName)}`;
+}
+
 /** The app-relative path of a parsed route (the inverse of parseRoute for list views). */
 export function routePath(route) {
   switch (route.name) {
@@ -55,7 +64,7 @@ export function routePath(route) {
     case "task":
       return taskPath(route.params.key, route.params.tab);
     case "people":
-      return "people";
+      return peoplePath(route.params.department, route.params.section);
     case "admin":
       return `admin/${route.params.tab}`;
     default:

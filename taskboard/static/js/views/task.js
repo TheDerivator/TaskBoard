@@ -2,6 +2,7 @@
 import { api, ApiError } from "../api.js";
 import { Drawer } from "../components/drawer.js";
 import { ConversationPanel } from "../components/conversation.js";
+import { CopyLinkButton } from "../components/copy-link.js";
 import { CloseIcon } from "../components/icons.js";
 import { PlacementDialog } from "../components/placement-dialog.js";
 import {
@@ -20,29 +21,6 @@ import { taskPath } from "../lib/routes.js";
 import { href, navigate } from "../router.js";
 import { dataChanged, refreshBoot, useAppState } from "../store.js";
 import { html, useEffect, useRef, useState } from "../ui.js";
-
-const LinkIcon = () => html`
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-    <path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" />
-  </svg>
-`;
-
-/** Copy text; falls back to a hidden textarea where the Clipboard API is unavailable (plain HTTP). */
-async function copyText(text) {
-  if (navigator.clipboard && window.isSecureContext) {
-    await navigator.clipboard.writeText(text);
-    return;
-  }
-  const area = document.createElement("textarea");
-  area.value = text;
-  area.setAttribute("readonly", "");
-  area.style.position = "fixed";
-  area.style.opacity = "0";
-  document.body.append(area);
-  area.select();
-  document.execCommand("copy");
-  area.remove();
-}
 
 function draftOf(task) {
   return {
@@ -207,16 +185,6 @@ export function TaskPanel({ taskKey, tab, onClose, layout, dirtyRef }) {
     }
   };
 
-  const copyLink = async () => {
-    const url = new URL(href(taskPath(task.key)), location.origin).href;
-    try {
-      await copyText(url);
-      showToast("Link copied.");
-    } catch {
-      window.prompt("Copy this link:", url);
-    }
-  };
-
   // Links that change the URL (not an ARIA tab widget): the current one is marked as such.
   const tabLink = (name, label, extra = null) => html`
     <a
@@ -240,7 +208,7 @@ export function TaskPanel({ taskKey, tab, onClose, layout, dirtyRef }) {
           <span class="rank-badge">Rank ${padRank(task.rank)} of ${task.rank_total}</span>
         </div>
         <div class="task-panel__tools">
-          <button type="button" class="icon-btn" aria-label="Copy link to this task" title="Copy link" onClick=${copyLink}><${LinkIcon} /></button>
+          <${CopyLinkButton} path=${taskPath(task.key)} label="Copy link to this task" />
           ${onClose && html`<button type="button" class="icon-btn" aria-label="Close" onClick=${onClose}><${CloseIcon} /></button>`}
         </div>
       </header>

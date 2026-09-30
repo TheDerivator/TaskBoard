@@ -118,6 +118,7 @@ taskboard/                                  TaskBoard: a team task board with a 
         badges.js                           Small display components: person avatar, lifecycle pill, project chip.
         composer.js                         Markdown composer: Write/Preview, formatting toolbar, images by button, paste or drop.
         conversation.js                     The Conversation tab: events and posts in time order, own-post editing, and the composer.
+        copy-link.js                        "Copy link" button: puts the full URL of an app path on the clipboard (task permalinks, team views).
         dialog.js                           Modal dialogs on the native <dialog> element (focus trapping and backdrop for free).
         drawer.js                           Side drawer on a modal <dialog>: slides in from the right, Escape/backdrop close it.
         icons.js                            Inline SVG icons (paths from the design mockups). Decorative: hidden from screen readers.
@@ -137,6 +138,7 @@ taskboard/                                  TaskBoard: a team task board with a 
         routes.js                           Map URL paths to app routes and back. Pure: the deployment's base path is passed in.
         scopes.js                           Choices for "where does this role apply": everywhere, a department, or a section. Pure.
         signin.js                           Windows sign-in decisions: when the page tries it by itself, and which failures to mention. Pure.
+        teams.js                            Teams for the People view (pure): everyone, a department or a section; found from the URL.
       views/
         admin/
           audit.js                          Administration › Audit log: security-relevant actions, newest first, with "Show older".
@@ -146,7 +148,7 @@ taskboard/                                  TaskBoard: a team task board with a 
           people.js                         Administration › People: the people on the board (leads and helpers), active or not.
           roles.js                          Administration › Roles: built-in roles (read-only) and custom roles with chosen permissions.
           users.js                          Administration › Accounts: list, create (local or SSO pre-provisioned), edit, rights, passwords.
-        people.js                           People view: one lane per person, cards in team priority order (solid = lead, dashed = helping).
+        people.js                           People view: one lane per person of a team (everyone, a department or a section), cards in team priority order.
         priority.js                         Priority view: every visible task in one team-wide ranked list, with search and filters.
         projects.js                         Projects view: project tree on the left, the selected project or section unfolded as an outline.
         simple.js                           Small full-page views: not found, login required, error, and views still to be built.
@@ -222,6 +224,7 @@ tests/                                      Test suite: unit/ (pure logic), api/
     routes.test.mjs                         Unit tests for static/js/lib/routes.js (run: node --test tests/js/*.test.mjs).
     scopes.test.mjs                         Unit tests for static/js/lib/scopes.js: scope choices for role assignments.
     signin.test.mjs                         Unit tests for static/js/lib/signin.js: when Windows sign-in is tried, and what is said when it fails.
+    teams.test.mjs                          Unit tests for static/js/lib/teams.js: finding a team from its URL, its label, members and path.
   unit/                                     Fast tests of pure logic: no database, no HTTP.
     test_access_policy.py                   The access policy matrix: who may view, edit, comment and manage, in which section.
     test_cli.py                             Command line: argument parsing, and the database commands end to end.

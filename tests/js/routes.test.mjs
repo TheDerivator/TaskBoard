@@ -2,12 +2,22 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { parseRoute, projectPath, taskPath } from "../../taskboard/static/js/lib/routes.js";
+import { parseRoute, peoplePath, projectPath, taskPath } from "../../taskboard/static/js/lib/routes.js";
 
 test("views", () => {
   assert.deepEqual(parseRoute("/"), { name: "home", params: {} });
   assert.deepEqual(parseRoute("/priority"), { name: "priority", params: {} });
-  assert.deepEqual(parseRoute("/people/"), { name: "people", params: {} });
+  assert.deepEqual(parseRoute("/people/"), { name: "people", params: { department: null, section: null } });
+});
+
+test("team views: a department, or one of its sections", () => {
+  assert.deepEqual(parseRoute("/people/STL").params, { department: "STL", section: null });
+  assert.deepEqual(parseRoute("/people/STL/Quality").params, { department: "STL", section: "Quality" });
+  assert.deepEqual(parseRoute("/people/R%26D/Surface%20coatings").params, {
+    department: "R&D",
+    section: "Surface coatings",
+  });
+  assert.equal(parseRoute("/people/STL/Quality/extra").name, "notFound");
 });
 
 test("projects with optional key and node", () => {
@@ -54,11 +64,14 @@ test("building paths", () => {
   assert.equal(projectPath("ASQ"), "projects/ASQ");
   assert.equal(projectPath("ASQ", 7), "projects/ASQ?node=7");
   assert.equal(projectPath(null), "projects");
+  assert.equal(peoplePath(), "people");
+  assert.equal(peoplePath("STL"), "people/STL");
+  assert.equal(peoplePath("R&D", "Surface coatings"), "people/R%26D/Surface%20coatings");
 });
 
 test("routePath inverts parseRoute", async () => {
   const { routePath } = await import("../../taskboard/static/js/lib/routes.js");
-  for (const path of ["priority", "people", "projects/ASQ?node=7", "projects", "t/104/conversation", "admin/roles"]) {
+  for (const path of ["priority", "people", "people/STL", "people/R%26D/Coatings", "projects/ASQ?node=7", "projects", "t/104/conversation", "admin/roles"]) {
     const [pathname, search = ""] = path.split("?");
     assert.equal(routePath(parseRoute(`/${pathname}`, search ? `?${search}` : "")), path);
   }

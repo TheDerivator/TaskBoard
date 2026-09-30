@@ -9,6 +9,17 @@
   flex-wrap: wrap;
 }
 
+/* Team picker with its "Copy link" button, centred on the (compact) select. */
+.people-filters__team {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.people-filters__team .icon-btn {
+  margin-bottom: calc((32px - var(--touch)) / 2);
+}
+
 .lanes {
   flex: 1;
   min-height: 0;

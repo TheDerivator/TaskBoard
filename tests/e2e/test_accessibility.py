@@ -17,6 +17,7 @@ from tests.e2e.conftest import log_in
 VIEWS = [
     "priority",
     "people",
+    "people/STL/Quality",
     "projects",
     "t/104",
     "t/104/conversation",

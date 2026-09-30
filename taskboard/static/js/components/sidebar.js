@@ -1,6 +1,7 @@
 /** Left navigation: views with counts, projects, the signed-in user, theme and collapse toggles. */
 import { api } from "../api.js";
 import { projectPath } from "../lib/routes.js";
+import { findTeam, teamPath } from "../lib/teams.js";
 import { href } from "../router.js";
 import { refreshBoot } from "../store.js";
 import { useTheme } from "../theme.js";
@@ -22,6 +23,9 @@ import {
   SunIcon,
 } from "./icons.js";
 import { showError, showToast } from "./toasts.js";
+
+// "People" returns to the team shown last during this visit (like the filters; a reload forgets it).
+let peopleLink = "people";
 
 function NavItem({ path, label, icon, count, current }) {
   return html`
@@ -75,6 +79,8 @@ export function Sidebar({ boot, lookup, route, collapsed, onToggleCollapsed, onL
   };
 
   const activePeople = boot.people.filter((p) => p.active).length;
+  const team = route.name === "people" ? findTeam(boot.departments, route.params) : null;
+  if (team) peopleLink = teamPath(team);
   return html`
     <nav class="sidebar" aria-label="Main">
       <div class="sidebar__brand">
@@ -95,7 +101,7 @@ export function Sidebar({ boot, lookup, route, collapsed, onToggleCollapsed, onL
       <div class="sidebar__group">
         <div class="sidebar__heading">Views</div>
         <${NavItem} path="priority" label="Priority" icon=${html`<${PriorityIcon} />`} count=${boot.task_total} current=${route.name === "priority"} />
-        <${NavItem} path="people" label="People" icon=${html`<${PeopleIcon} />`} count=${activePeople} current=${route.name === "people"} />
+        <${NavItem} path=${peopleLink} label="People" icon=${html`<${PeopleIcon} />`} count=${activePeople} current=${route.name === "people"} />
         <${NavItem}
           path="projects"
           label="Projects"

@@ -150,6 +150,8 @@ the placement dialog disables projects the task is already in; a viewer cannot e
 
 - [x] Beyond plan: project settings in the section editor (rename, colour, archive, delete),
       "Show archived" on the People view, lanes scroll horizontally when there are many people.
+- [x] Added 2026-09-30: **team views** in People: a Team dropdown (everyone, a department, or a
+      section) with a bookmarkable link per team, `/people/STL/Quality`, and "Copy link" (D-077, D-078).
 
 **Acceptance gate**: API and Playwright tests reproduce the counts and numbering from the mockups
 for the sample data; editing sections renumbers the outline.

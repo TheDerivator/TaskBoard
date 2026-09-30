@@ -38,7 +38,7 @@ function View({ route, boot, lookup, background = null }) {
     case "priority":
       return html`<${PriorityView} boot=${boot} lookup=${lookup} />`;
     case "people":
-      return html`<${PeopleView} boot=${boot} lookup=${lookup} />`;
+      return html`<${PeopleView} boot=${boot} lookup=${lookup} route=${route} />`;
     case "projects":
       return html`<${ProjectsView} boot=${boot} lookup=${lookup} route=${route} />`;
     case "admin":

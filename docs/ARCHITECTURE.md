@@ -81,8 +81,8 @@ static/js/
   views/              one module per screen
 ```
 
-- **Routes** (`lib/routes.js`): `/priority`, `/people`, `/projects/{key}?node={id}`, `/t/{key}`,
-  `/t/{key}/conversation`. The server returns index.html for these paths (`web/frontend.py`).
+- **Routes** (`lib/routes.js`): `/priority`, `/people`, `/people/{department}[/{section}]` (team
+  views, D-078), `/projects/{key}?node={id}`, `/t/{key}`, `/t/{key}/conversation`. The server returns index.html for these paths (`web/frontend.py`).
 - **Base path**: `<base href>` is filled in from `TASKBOARD_BASE_PATH`; all URLs are relative to it.
 - **Styling**: `css/tokens.css` defines every colour/size as a custom property; the dark theme
   only overrides tokens (`[data-theme="dark"]`). Components never hard-code colours.
