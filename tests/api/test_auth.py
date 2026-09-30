@@ -31,7 +31,7 @@ def test_visitors_are_anonymous_and_can_view_by_default(client: TestClient) -> N
     assert me["is_anonymous"] is True
     assert me["permissions"]["task.view"] == {"everywhere": True, "section_ids": []}
     assert me["permissions"]["task.edit"] == {"everywhere": False, "section_ids": []}
-    assert me["login"] == {"password": True, "providers": []}
+    assert me["login"] == {"password": True, "providers": [], "windows": None}
 
 
 def test_admin_logs_in_with_a_session_cookie(client: TestClient) -> None:

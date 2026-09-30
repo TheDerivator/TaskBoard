@@ -23,6 +23,9 @@ browser ──HTTPS──> reverse proxy (Caddy / nginx / IIS) ──HTTP──>
 - **Only the proxy reaches the app.** TaskBoard listens on `127.0.0.1` (the default
   `TASKBOARD_HOST`). The proxy is listed in `TASKBOARD_TRUSTED_PROXIES` (default `127.0.0.1,::1`),
   so the client's address and scheme come from its `X-Forwarded-*` headers.
+- **The exception: Windows sign-in.** There, browsers reach TaskBoard directly
+  (`TASKBOARD_HOST=0.0.0.0`, no proxy) and it can serve HTTPS itself: see
+  [*Windows sign-in, without IIS*](#windows-sign-in-without-iis).
 - **One data folder** (`TASKBOARD_DATA_DIR`): `taskboard.sqlite3` (plus `-wal`/`-shm` files while
   running), `uploads/` (post images) and, by default, `backups/`. Only the service account needs
   access to it: it holds password and session hashes.
@@ -42,6 +45,7 @@ Settings that matter in production:
 | `TASKBOARD_BASE_PATH` | When published under a prefix, e.g. `/taskboard/` (the proxy strips it). |
 | `TASKBOARD_TRUSTED_PROXIES` | If the proxy runs on another machine: its address. |
 | `TASKBOARD_PUBLIC_URL` | For SSO redirect URIs (see AUTH.md). |
+| `TASKBOARD_TLS_CERTFILE`, `TASKBOARD_TLS_KEYFILE` | Only without a proxy: HTTPS by the app itself (PEM files). |
 
 Do not start Uvicorn with its own `--proxy-headers` (its default when you run `uvicorn app:app`):
 the app handles forwarded headers itself (D-061). `python -m taskboard serve` gets this right;
@@ -159,6 +163,8 @@ server {
 
 New to IIS? [`IIS.md`](IIS.md) walks through all of this step by step, including a simpler
 variant in which IIS starts TaskBoard itself (no Windows service), and what tends to go wrong.
+Want people signed in with their Windows account? That works without IIS:
+[`WINDOWS-SIGNIN.md`](WINDOWS-SIGNIN.md), also step by step.
 
 ### Install
 
@@ -213,7 +219,7 @@ a generated `admin` password would appear there (Uvicorn logs to the error strea
 Install the IIS modules *URL Rewrite* and *Application Request Routing* (ARR). In IIS Manager:
 server node › *Application Request Routing Cache* › *Server Proxy Settings* › *Enable proxy*. Keep
 "Preserve client IP in the following header: X-Forwarded-For" on. In *URL Rewrite › View Server
-Variables*, allow `HTTP_X_FORWARDED_PROTO` (and `HTTP_X_REMOTE_USER` for Windows sign-in).
+Variables*, allow `HTTP_X_FORWARDED_PROTO`.
 
 The site (HTTPS binding with the corporate certificate) gets this `web.config`:
 
@@ -250,8 +256,36 @@ Under a prefix (`https://intranet.corp.example/taskboard/`): match `^taskboard/(
 action, and set `TASKBOARD_BASE_PATH=/taskboard/` and
 `TASKBOARD_PUBLIC_URL=https://intranet.corp.example/taskboard/`.
 
-Windows sign-in (IIS Windows authentication passing the user to TaskBoard) and Microsoft Entra
-ID: see [`AUTH.md`](AUTH.md).
+Microsoft Entra ID sign-in: see [`AUTH.md`](AUTH.md).
+
+### Windows sign-in, without IIS
+
+People are signed in as their Windows account (Kerberos or NTLM) by TaskBoard itself. IIS cannot
+pass the Windows user on to TaskBoard with its own modules (URL Rewrite runs before IIS
+authenticates: [`AUTH.md`](AUTH.md#configuring-a-trusted-header-an-authenticating-proxy)), so in
+this setup no proxy is in front. Walkthrough: [`WINDOWS-SIGNIN.md`](WINDOWS-SIGNIN.md).
+
+```
+browser ──HTTP or HTTPS──> TaskBoard (the Windows service above) on 0.0.0.0:<port>
+                           Negotiate handshake on /api/auth/windows, checked by Windows (SSPI)
+```
+
+```ini
+TASKBOARD_HOST=0.0.0.0
+TASKBOARD_PORT=8080
+TASKBOARD_WINDOWS_AUTH=true
+# HTTPS (PEM files; the certificate first, then its intermediates; the key without a password):
+TASKBOARD_TLS_CERTFILE=C:\TaskBoard\tls\cert.pem
+TASKBOARD_TLS_KEYFILE=C:\TaskBoard\tls\key.pem
+```
+
+- Run the service as its own account (`sc.exe config TaskBoard obj= "NT SERVICE\TaskBoard"`):
+  it acts as the computer on the network, which Kerberos needs, and no SPN has to be registered.
+- TaskBoard needs a port of its own (no URL prefix, no sharing of 80/443 with IIS sites), opened
+  in the firewall.
+- No proxy means no HSTS header and no upload size limit in front; the app enforces its own
+  limits.
+- Accounts, browsers' intranet zone and troubleshooting: the walkthrough.
 
 ### MS SQL (later)
 
@@ -341,7 +375,8 @@ two processes never migrate at the same time.
 
 ## Security checklist
 
-- TLS and HSTS at the proxy; the app only on `127.0.0.1`.
+- TLS and HSTS at the proxy; the app only on `127.0.0.1`. (With Windows sign-in and no proxy:
+  TLS by the app, and the private key readable by the service account only.)
 - `TASKBOARD_TRUSTED_PROXIES` lists the proxy and nothing else.
 - The `admin` password is changed (it is the break-glass account).
 - The data folder and the `.env` file are readable by the service account only.

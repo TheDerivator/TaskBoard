@@ -30,6 +30,7 @@ export function Toasts() {
   const [items, setItems] = useState(toasts);
   useEffect(() => {
     listeners.add(setItems);
+    setItems(toasts); // whatever was shown between the first render and this effect
     return () => listeners.delete(setItems);
   }, []);
   return html`

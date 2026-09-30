@@ -150,7 +150,7 @@ def test_custom_role_organization_and_people(
 def test_sso_group_mappings(live_server: str, page: Page, console_errors: list[str]) -> None:
     open_admin(page, live_server)
     page.locator(".admin-tabs").get_by_role("link", name="SSO groups").click()
-    expect(page.get_by_text("No SSO provider is configured")).to_be_visible()  # the demo server
+    expect(page.get_by_text("No SSO provider that reports groups is configured")).to_be_visible()
     form = page.get_by_role("form", name="New group mapping")
     form.get_by_label("Provider", exact=True).fill("proxy")
     form.get_by_label("Group (as the provider sends it").fill("STL-Maintenance")

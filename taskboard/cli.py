@@ -19,11 +19,17 @@ from taskboard.services.backup import BackupError, create_backup, restore_backup
 from taskboard.services.sample_data import load_sample_data
 from taskboard.services.setup import prepare_database
 
+# Windows issues tickets of up to 48,000 bytes (MaxTokenSize), sent base64-encoded: 64 kB.
+NEGOTIATE_HEADER_LIMIT = 128 * 1024
+
 
 def _serve(args: argparse.Namespace) -> int:
     import uvicorn  # imported lazily: other commands don't need the server
 
     settings = get_settings()
+    if bool(settings.tls_certfile) != bool(settings.tls_keyfile):
+        print("HTTPS needs both TASKBOARD_TLS_CERTFILE and TASKBOARD_TLS_KEYFILE.")
+        return 1
     uvicorn.run(
         "taskboard.web:create_app",
         factory=True,
@@ -31,6 +37,11 @@ def _serve(args: argparse.Namespace) -> int:
         port=args.port or settings.port,
         reload=args.reload,
         proxy_headers=False,  # the app reads forwarded headers itself (taskboard/api/client.py)
+        ssl_certfile=str(settings.tls_certfile) if settings.tls_certfile else None,
+        ssl_keyfile=str(settings.tls_keyfile) if settings.tls_keyfile else None,
+        # Windows sign-in: a Kerberos ticket travels in a request header, and grows with the
+        # user's group memberships well past the default limit of 16 kB for all headers.
+        h11_max_incomplete_event_size=NEGOTIATE_HEADER_LIMIT if settings.windows_auth else None,
     )
     return 0
 

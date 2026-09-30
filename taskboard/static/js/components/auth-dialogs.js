@@ -1,16 +1,23 @@
 /** Login form (dialog or full page) and the password-change dialog. */
 import { api } from "../api.js";
+import { windowsSignInMessage } from "../lib/signin.js";
 import { refreshBoot, useAppState } from "../store.js";
 import { html, useState } from "../ui.js";
+import { windowsSignIn } from "../windows-signin.js";
 import { Dialog } from "./dialog.js";
 import { showToast } from "./toasts.js";
 
-/** "Sign in with Microsoft" etc.: a full-page redirect that returns to the current page. */
-function SsoButtons({ providers }) {
-  if (!providers?.length) return null;
+/**
+ * "Sign in with Microsoft" etc.: a full-page redirect that returns to the current page.
+ * "Sign in with Windows" stays on the page: the browser proves the Windows login in the background.
+ */
+function SsoButtons({ login, busy, onWindows }) {
+  const providers = login?.providers ?? [];
+  if (!providers.length && !login?.windows) return null;
   const next = location.pathname + location.search;
   return html`
     <div class="stack" style=${{ gap: "8px" }}>
+      ${login.windows && html`<button type="button" class="btn" disabled=${busy} onClick=${onWindows}>Sign in with Windows</button>`}
       ${providers.map(
         (p) => html`<a
           key=${p.name}
@@ -31,25 +38,29 @@ export function LoginForm({ onDone, autofocus = true }) {
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
 
-  const submit = async (event) => {
-    event.preventDefault();
+  const attempt = async (signIn, describe = (err) => err.message) => {
     setBusy(true);
     setError(null);
     try {
-      const me = await api.post("/auth/login", { username, password });
+      const me = await signIn();
       await refreshBoot();
       showToast(`Welcome, ${me.display_name}.`);
       onDone?.();
     } catch (err) {
-      setError(err.message);
+      setError(describe(err));
     } finally {
       setBusy(false);
     }
   };
 
+  const submit = (event) => {
+    event.preventDefault();
+    attempt(() => api.post("/auth/login", { username, password }));
+  };
+
   return html`
     <form class="stack" onSubmit=${submit}>
-      <${SsoButtons} providers=${boot?.me.login.providers} />
+      <${SsoButtons} login=${boot?.me.login} busy=${busy} onWindows=${() => attempt(windowsSignIn, windowsSignInMessage)} />
       ${error && html`<div class="form-error" role="alert">${error}</div>`}
       <label class="field">
         <span class="field__label">Username</span>

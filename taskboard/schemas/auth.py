@@ -30,9 +30,15 @@ class LoginProvider(BaseModel):
     display_name: str
 
 
+class WindowsLogin(BaseModel):
+    automatic: bool  # the page tries it by itself when it loads, without being asked
+
+
 class LoginOptions(BaseModel):
     password: bool
     providers: list[LoginProvider]
+    # Windows sign-in by the app itself (POST /api/auth/windows), when it is switched on.
+    windows: WindowsLogin | None = None
 
 
 class Me(BaseModel):
@@ -72,5 +78,8 @@ class Me(BaseModel):
                     LoginProvider(name=p.name, display_name=p.display_name)
                     for p in providers.redirect.values()
                 ],
+                windows=WindowsLogin(automatic=providers.negotiate.automatic)
+                if providers.negotiate
+                else None,
             ),
         )

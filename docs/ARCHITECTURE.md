@@ -36,7 +36,8 @@ taskboard/
   cli.py, __main__.py   python -m taskboard serve | db upgrade | seed | create-admin
   static/               index.html, css/, js/ (views/, components/, lib/), vendor/, fonts/
 tests/                  unit/, integration/, api/, architecture/, e2e/, js/
-docs/                   PLAN, ARCHITECTURE (this), DECISIONS, AUTH, CODEMAP (generated)
+docs/                   PLAN, ARCHITECTURE (this), DECISIONS, AUTH, OPERATIONS, CODEMAP (generated),
+                        walkthroughs: IIS, WINDOWS-SIGNIN
 scripts/                check.py (quality gate), gen_codemap.py
 ```
 
@@ -141,10 +142,13 @@ Details, including SSO configuration: [`AUTH.md`](AUTH.md).
 
 ### SSO
 
-- `IdentityProvider` protocol in two shapes: *redirect* (OIDC: login URL + callback; Microsoft
-  Entra ID, `identity/providers/oidc.py`) and *ambient* (a trusted reverse proxy passes the
-  authenticated user in a header, e.g. IIS Windows authentication, `identity/providers/header.py`).
-  Both produce an `ExternalIdentity(provider, subject, email, name, groups, username)`.
+- `IdentityProvider` protocol in three shapes: *redirect* (OIDC: login URL + callback; Microsoft
+  Entra ID, `identity/providers/oidc.py`), *negotiate* (Windows sign-in: the browser proves the
+  Windows login to the app itself in a Kerberos or NTLM handshake on `POST /api/auth/windows`,
+  verified by Windows SSPI; `identity/providers/negotiate.py`) and *ambient* (a trusted reverse
+  proxy passes the authenticated user in a header, `identity/providers/header.py`).
+  All produce an `ExternalIdentity(provider, subject, email, name, groups, username)`. The first
+  two end in an ordinary session; an ambient identity is read from every request.
 - **Pre-provisioning**: an admin creates a user in advance (email/UPN, status *pending*) and
   assigns roles. At first external login the identity `(provider, subject)` is linked to that
   user, who becomes active with exactly the rights prepared for them. Unknown identities are
@@ -163,10 +167,12 @@ Details, including SSO configuration: [`AUTH.md`](AUTH.md).
 
 | Target | Auth | Database | Hosting |
 |---|---|---|---|
-| Windows server, corporate | Built-in accounts + Entra ID SSO and/or IIS Windows sign-in | SQLite, later MS SQL | Windows service behind IIS |
+| Windows server, corporate | Built-in accounts + Entra ID SSO and/or Windows sign-in | SQLite, later MS SQL | Windows service behind IIS; with Windows sign-in: the service alone, reached directly |
 | Linux server, demo | Built-in accounts only | SQLite | systemd service behind nginx/Caddy; internet-facing |
 
-Code stays OS-neutral: `pathlib` everywhere, all locations come from settings, no OS-specific calls.
+Code stays OS-neutral: `pathlib` everywhere, all locations come from settings, no OS-specific
+calls. The one exception is opt-in: Windows sign-in asks Windows (SSPI, through pyspnego) to
+verify tokens, and refuses to start elsewhere.
 
 ## Portability rules (SQLite now, MS SQL later)
 

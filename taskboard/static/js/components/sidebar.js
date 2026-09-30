@@ -5,6 +5,7 @@ import { href } from "../router.js";
 import { refreshBoot } from "../store.js";
 import { useTheme } from "../theme.js";
 import { html } from "../ui.js";
+import { holdWindowsSignIn } from "../windows-signin.js";
 import { Avatar } from "./badges.js";
 import { adminTabs } from "../views/admin/index.js";
 import {
@@ -65,6 +66,7 @@ export function Sidebar({ boot, lookup, route, collapsed, onToggleCollapsed, onL
   const logout = async () => {
     try {
       await api.post("/auth/logout");
+      holdWindowsSignIn();
       await refreshBoot();
       showToast("You are logged out.");
     } catch (error) {

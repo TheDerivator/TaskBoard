@@ -90,6 +90,13 @@ class Settings(BaseSettings):
     trusted_header_groups: str | None = None  # a comma-separated list in one header
     trusted_header_strip_domain: bool = True  # CORP\jdoe → username hint "jdoe"
 
+    # Windows sign-in by the app itself, without IIS in front (docs/WINDOWS-SIGNIN.md): the browser
+    # proves who is logged in to Windows (HTTP Negotiate: Kerberos or NTLM), and Windows checks
+    # it. Needs a Windows server; people reach the app directly, not through a proxy.
+    windows_auth: bool = False
+    windows_auth_automatic: bool = True  # the page tries it by itself; false: only on request
+    windows_auth_strip_domain: bool = True  # CORP\jdoe → username hint "jdoe"
+
     # Reverse proxies (addresses or networks, comma-separated) whose X-Forwarded-For/-Proto headers
     # are believed: the client address and scheme then come from them. Also decides who may
     # assert identities for `trusted_header`.
@@ -102,6 +109,10 @@ class Settings(BaseSettings):
     # For `python -m taskboard serve`.
     host: str = "127.0.0.1"
     port: int = 8000
+    # HTTPS by the app itself, for when no proxy in front does it: the certificate (PEM, followed
+    # by its intermediate certificates) and its private key (PEM, not password-protected).
+    tls_certfile: Path | None = None
+    tls_keyfile: Path | None = None
 
     @property
     def resolved_database_url(self) -> str:

@@ -6,7 +6,7 @@ import { Toasts, showError } from "./components/toasts.js";
 import { canSomewhere } from "./lib/lookup.js";
 import { readPref, writePref } from "./prefs.js";
 import { navigate, useRoute } from "./router.js";
-import { refreshBoot, useAppState } from "./store.js";
+import { refreshBoot, startUp, useAppState } from "./store.js";
 import { html, useEffect, useState } from "./ui.js";
 import { AdminView } from "./views/admin/index.js";
 import { PeopleView } from "./views/people.js";
@@ -62,7 +62,7 @@ export function App() {
   const [background, setBackground] = useState(null); // the list view a task drawer opens over
 
   useEffect(() => {
-    refreshBoot();
+    startUp().then((refusal) => refusal && showError(new Error(`Windows sign-in: ${refusal.message}`)));
     // A failed SSO sign-in comes back as ?sso_error=...: show it once, then tidy the address.
     const url = new URL(location.href);
     const ssoError = url.searchParams.get("sso_error");

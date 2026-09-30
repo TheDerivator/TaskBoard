@@ -1,13 +1,15 @@
 """The contract every SSO provider fulfils, and the registry of configured providers.
 
-Two shapes exist:
+Three shapes exist:
 - *ambient*: infrastructure in front of the app already authenticated the user and says so in a
   trusted request header (IIS Windows authentication, oauth2-proxy, ...). Checked per request.
 - *redirect*: the browser is sent to the provider and comes back with proof (OpenID Connect).
-Both produce an ExternalIdentity; `taskboard.identity.provisioning` maps it to a local user.
+- *negotiate*: the browser proves the Windows login to the app itself, in a short handshake on
+  one endpoint (HTTP Negotiate: Kerberos or NTLM). No proxy, no redirect.
+All produce an ExternalIdentity; `taskboard.identity.provisioning` maps it to a local user.
 """
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Hashable, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Protocol, Self
 
@@ -54,16 +56,38 @@ class RedirectIdentityProvider(Protocol):
         ...
 
 
+@dataclass(frozen=True, slots=True)
+class NegotiateStep:
+    """One answer in a Negotiate handshake."""
+
+    identity: ExternalIdentity | None  # who it is, once the handshake has finished
+    token: bytes | None  # to send back to the browser (the next challenge, or the last word)
+
+
+class NegotiateIdentityProvider(Protocol):
+    name: str
+    display_name: str
+    automatic: bool  # the page tries to sign in by itself (otherwise only when asked)
+
+    def step(self, connection: Hashable, token: bytes) -> NegotiateStep:
+        """Take the handshake on `connection` one step further with the browser's token.
+
+        Raises InvalidCredentialsError when the token is refused.
+        """
+        ...
+
+
 @dataclass(frozen=True)
 class IdentityProviders:
     ambient: Sequence[AmbientIdentityProvider] = ()
     redirect: Mapping[str, RedirectIdentityProvider] = field(
         default_factory=dict[str, RedirectIdentityProvider]
     )
+    negotiate: NegotiateIdentityProvider | None = None
 
     @property
     def any(self) -> bool:
-        return bool(self.ambient or self.redirect)
+        return bool(self.ambient or self.redirect or self.negotiate)
 
     @classmethod
     def from_settings(cls, settings: Settings) -> Self:
@@ -73,9 +97,14 @@ class IdentityProviders:
 
         ambient: list[AmbientIdentityProvider] = []
         redirect: dict[str, RedirectIdentityProvider] = {}
+        negotiate: NegotiateIdentityProvider | None = None
         if settings.oidc_client_id and settings.oidc_issuer:
             config = OidcConfig.from_settings(settings)
             redirect[config.name] = OidcProvider(config)
         if settings.trusted_header:
             ambient.append(TrustedHeaderProvider.from_settings(settings))
-        return cls(ambient=ambient, redirect=redirect)
+        if settings.windows_auth:
+            from taskboard.identity.providers.negotiate import NegotiateProvider
+
+            negotiate = NegotiateProvider.from_settings(settings)
+        return cls(ambient=ambient, redirect=redirect, negotiate=negotiate)

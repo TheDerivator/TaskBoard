@@ -12,6 +12,7 @@ dependencies = [
     "nh3>=0.3.7",
     "pydantic-settings>=2.15.0",
     "pyjwt[crypto]>=2.15.0",
+    "pyspnego>=0.12.3",
     "python-multipart>=0.0.32",
     "sqlalchemy>=2.1.1",
     "uvicorn>=0.54.0",

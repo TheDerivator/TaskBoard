@@ -109,8 +109,8 @@ function NewUserDialog({ open, onClose, roles, boot, onCreated }) {
                 <input class="input" required value=${form.username} onInput=${(e) => set({ username: e.currentTarget.value })} /></label>
               <label class="field"><span class="field__label">Display name</span>
                 <input class="input" required value=${form.display_name} onInput=${(e) => set({ display_name: e.currentTarget.value })} /></label>
-              <label class="field field--wide"><span class="field__label">Email (SSO accounts are matched on it)</span>
-                <input class="input" type="email" value=${form.email} required=${form.method === "sso"} onInput=${(e) => set({ email: e.currentTarget.value })} /></label>
+              <label class="field field--wide"><span class="field__label">Email (SSO accounts are matched on it; not needed for Windows sign-in)</span>
+                <input class="input" type="email" value=${form.email} required=${form.method === "sso" && !boot.me.login.windows} onInput=${(e) => set({ email: e.currentTarget.value })} /></label>
             </div>
             <fieldset class="choice-list"><legend class="field__label">Sign-in</legend>
               <div class="choice-row">

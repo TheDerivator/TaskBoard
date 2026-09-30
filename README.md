@@ -35,8 +35,9 @@ Environment variables prefixed `TASKBOARD_` (or a `.env` file; see [`.env.exampl
 | `TASKBOARD_BASE_PATH` | `/` | URL prefix when published under one, e.g. `/taskboard/`. |
 | `TASKBOARD_TRUSTED_PROXIES` | `127.0.0.1,::1` | Reverse proxies whose `X-Forwarded-*` headers are believed. |
 
-SSO (Microsoft Entra ID, Windows sign-in through IIS) is off unless configured: see
-[accounts and SSO](docs/AUTH.md).
+SSO (Microsoft Entra ID, Windows sign-in) is off unless configured: see
+[accounts and SSO](docs/AUTH.md). Step-by-step guides for Windows servers:
+[behind IIS](docs/IIS.md), and [with Windows sign-in, without IIS](docs/WINDOWS-SIGNIN.md).
 
 ## Development
 

@@ -27,6 +27,7 @@ taskboard/                                  TaskBoard: a team task board with a 
       reference.py                          Reference endpoints: the bootstrap document and the people list.
       sso.py                                SSO endpoints for redirect providers: start a sign-in, and the provider's callback.
       tasks.py                              Task endpoints: list/filter, read, create, edit, move in the ranking, delete, placements.
+      windows.py                            Windows sign-in endpoint: the HTTP Negotiate handshake (Kerberos or NTLM) with the browser.
     client.py                               Who is on the other end of a request: the client, and the trusted reverse proxy in between.
     cookies.py                              Setting and clearing the session cookie (shared by password login and SSO sign-in).
     deps.py                                 FastAPI dependencies: one DB session per request, the current principal, and services.
@@ -64,6 +65,7 @@ taskboard/                                  TaskBoard: a team task board with a 
     providers/                              External identity providers (SSO). None are configured by default: built-in accounts only.
       base.py                               The contract every SSO provider fulfils, and the registry of configured providers.
       header.py                             SSO through a trusted reverse proxy that authenticates users and passes them in headers.
+      negotiate.py                          Windows sign-in by the app itself: HTTP Negotiate (Kerberos or NTLM), checked by Windows SSPI.
       oidc.py                               OpenID Connect sign-in (authorization code flow with PKCE), e.g. Microsoft Entra ID.
     password_login.py                       Username + password login for built-in accounts, with throttling against password guessing.
     passwords.py                            Password hashing (argon2id), verification, rehash checks, and generated initial passwords.
@@ -93,7 +95,7 @@ taskboard/                                  TaskBoard: a team task board with a 
     sample_data.py                          Load the design's sample data (departments, people, projects, tasks, posts) into an empty board.
     seed.py                                 Built-in data that must always exist: lock rows, built-in roles, the admin and anonymous users.
     setup.py                                Bring a database up to date: apply migrations, then create the built-in data.
-    sso.py                                  Sign-in through a redirect provider (OpenID Connect): start it, and finish it on return.
+    sso.py                                  SSO sign-ins that start a session: the OpenID Connect round trip, and Windows sign-in.
     tasks.py                                Task use cases: list (filtered, visible only), read, create, edit, re-rank, delete, placements.
     users.py                                User administration: accounts, passwords, role assignments, custom roles, the audit log.
     visibility.py                           The one place that decides which tasks a principal can see; every task query goes through it.
@@ -134,6 +136,7 @@ taskboard/                                  TaskBoard: a team task board with a 
         lookup.js                           Index the bootstrap document by id (people, sections, departments, projects, nodes). Pure.
         routes.js                           Map URL paths to app routes and back. Pure: the deployment's base path is passed in.
         scopes.js                           Choices for "where does this role apply": everywhere, a department, or a section. Pure.
+        signin.js                           Windows sign-in decisions: when the page tries it by itself, and which failures to mention. Pure.
       views/
         admin/
           audit.js                          Administration › Audit log: security-relevant actions, newest first, with "Show older".
@@ -160,6 +163,7 @@ taskboard/                                  TaskBoard: a team task board with a 
       theme-boot.js                         Applies the saved (or the system's) colour theme before the first paint, to avoid a flash.
       theme.js                              Light/dark theme: follows the system until the user picks one, then remembers the choice.
       ui.js                                 Preact + htm in one place: components import `html` and the hooks from here.
+      windows-signin.js                     Windows sign-in (HTTP Negotiate): one request; the browser answers the server's challenges itself.
     index.html                              The single page of the app. The server fills in the base path; all URLs below are relative to it.
   web/                                      Web layer: builds the ASGI application (API, static frontend, middleware).
     app_factory.py                          `create_app()`: assembles the FastAPI application from settings, API routers and static files.
@@ -186,6 +190,7 @@ tests/                                      Test suite: unit/ (pure logic), api/
     test_sso_provisioning.py                SSO readiness: pre-provisioned accounts get exactly the rights an admin prepared.
     test_tasks.py                           Task API on the sample board: listing and filters, keys, create, edit, events, delete, access.
     test_trusted_header.py                  SSO through a trusted reverse proxy header (e.g. IIS Windows authentication).
+    test_windows_auth.py                    Windows sign-in by the app itself (HTTP Negotiate): challenges, the handshake, the session.
   architecture/                             Tests that keep the codebase's structure honest (layers, docs that must not go stale).
     test_structure.py                       Layer contracts hold, the code map is fresh, and app.py stays a thin entrypoint.
   e2e/                                      Browser (end-to-end) tests with Playwright against a live server.
@@ -198,6 +203,7 @@ tests/                                      Test suite: unit/ (pure logic), api/
     test_shell.py                           The app shell and the Priority view in a real browser: filters, theme, sidebar, login.
     test_sso.py                             SSO sign-in in a real browser (milestone M9): the full redirect round trip.
     test_tasks.py                           Priority interactions and the task drawer in a real browser (milestone M5).
+    test_windows_signin.py                  Windows sign-in in a real browser: Chromium answers the Negotiate challenge through SSPI.
   integration/                              Tests against a real (migrated) database: schema, constraints, seeding, sample data.
     test_backup.py                          Backup and restore: one archive with a consistent database snapshot and the uploaded images.
     test_constraints.py                     The database itself guards the core invariants (so no code path can break them).
@@ -215,18 +221,21 @@ tests/                                      Test suite: unit/ (pure logic), api/
     lanes.test.mjs                          Unit tests for static/js/lib/lanes.js: people lanes from the sample board's first tasks.
     routes.test.mjs                         Unit tests for static/js/lib/routes.js (run: node --test tests/js/*.test.mjs).
     scopes.test.mjs                         Unit tests for static/js/lib/scopes.js: scope choices for role assignments.
+    signin.test.mjs                         Unit tests for static/js/lib/signin.js: when Windows sign-in is tried, and what is said when it fails.
   unit/                                     Fast tests of pure logic: no database, no HTTP.
     test_access_policy.py                   The access policy matrix: who may view, edit, comment and manage, in which section.
     test_cli.py                             Command line: argument parsing, and the database commands end to end.
     test_config.py                          Settings defaults and environment overrides.
     test_forwarded_headers.py               X-Forwarded-For/-Proto: believed only from trusted proxies, which are remembered.
     test_markdown.py                        Post rendering: Markdown features, mentions and task links, and sanitizing (XSS vectors).
+    test_negotiate.py                       Windows sign-in (Negotiate): handshakes per connection, their expiry, and the identity.
     test_oidc_tokens.py                     ID token verification against signature-algorithm attacks (none, HMAC with the public key).
     test_outline.py                         Project outlines: numbering, order, subtrees, counts including descendants, cycle checks.
     test_ranking.py                         Team-wide ranking: moves relative to a target row, and the equivalent database rank shift.
     test_task_keys.py                       Short task keys: alphabet, length, forgiving input, display, collision retry.
   conftest.py                               Shared pytest fixtures: isolated settings and databases, sessions, sample data, an HTTP client.
   fake_idp.py                               An in-process OpenID Connect provider for tests: discovery, keys, authorization, tokens.
+  fake_negotiate.py                         A stand-in for Windows SSPI in tests: accepts made-up Kerberos-like and NTLM-like tokens.
   helpers.py                                Test helpers: create users with given roles, log in through the API.
   scale.py                                  A big board for performance checks: thousands of generated tasks on top of the sample board.
 scripts/                                    Developer scripts: quality gate (check.py) and code map generator (gen_codemap.py).

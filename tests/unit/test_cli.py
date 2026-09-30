@@ -23,6 +23,44 @@ def test_serve_leaves_forwarded_headers_to_the_app(monkeypatch: pytest.MonkeyPat
     monkeypatch.setattr(uvicorn, "run", lambda *args, **kwargs: calls.append(kwargs))
     assert main(["serve", "--port", "9000"]) == 0
     assert calls[0]["proxy_headers"] is False and calls[0]["port"] == 9000
+    assert calls[0]["h11_max_incomplete_event_size"] is None  # Uvicorn's default limit
+    assert calls[0]["ssl_certfile"] is None and calls[0]["ssl_keyfile"] is None  # plain HTTP
+
+
+def _serve_with(monkeypatch: pytest.MonkeyPatch, **env: str) -> tuple[int, list[dict[str, object]]]:
+    """Run `serve` with these TASKBOARD_ settings; the exit code and what Uvicorn was asked."""
+    import uvicorn
+
+    calls: list[dict[str, object]] = []
+    monkeypatch.setattr(uvicorn, "run", lambda *args, **kwargs: calls.append(kwargs))
+    for name, value in env.items():
+        monkeypatch.setenv(f"TASKBOARD_{name}", value)
+    get_settings.cache_clear()
+    try:
+        return main(["serve"]), calls
+    finally:
+        get_settings.cache_clear()
+
+
+def test_serve_makes_room_for_kerberos_tickets(monkeypatch: pytest.MonkeyPatch) -> None:
+    """With Windows sign-in, a ticket of Windows' maximum size must fit in the request headers."""
+    code, calls = _serve_with(monkeypatch, WINDOWS_AUTH="true")
+    limit = calls[0]["h11_max_incomplete_event_size"]
+    assert code == 0 and isinstance(limit, int) and limit > 48_000 * 4 / 3  # base64-encoded
+
+
+def test_serve_can_do_https_itself(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    cert, key = tmp_path / "cert.pem", tmp_path / "key.pem"
+    code, calls = _serve_with(monkeypatch, TLS_CERTFILE=str(cert), TLS_KEYFILE=str(key))
+    assert code == 0
+    assert (calls[0]["ssl_certfile"], calls[0]["ssl_keyfile"]) == (str(cert), str(key))
+
+    monkeypatch.delenv("TASKBOARD_TLS_KEYFILE")
+    code, calls = _serve_with(monkeypatch, TLS_CERTFILE=str(cert))
+    assert code == 1 and calls == []  # half a configuration must not silently mean plain HTTP
+    assert "TASKBOARD_TLS_KEYFILE" in capsys.readouterr().out
 
 
 def test_a_command_is_required() -> None:

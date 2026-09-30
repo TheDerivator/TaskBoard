@@ -13,6 +13,7 @@ from starlette.requests import Request
 from starlette.types import ASGIApp, Receive, Scope, Send
 
 PROXY_KEY = "taskboard.proxy"  # ASGI scope key: the trusted proxy the request came through
+PEER_KEY = "taskboard.peer"  # ASGI scope key: the (address, port) the connection comes from
 
 type _Network = ipaddress.IPv4Network | ipaddress.IPv6Network
 
@@ -63,6 +64,7 @@ class ForwardedHeadersMiddleware:
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] == "http":
             client: tuple[str, int] | None = scope.get("client")
+            scope[PEER_KEY] = client
             if client and client[0] in self.trusted:
                 self._apply(scope, client[0])
         await self.app(scope, receive, send)
@@ -97,3 +99,15 @@ def proxy_host(request: Request) -> str | None:
     """The trusted proxy the request came through, or None when it came directly."""
     scope: dict[str, Any] = request.scope  # type: ignore[assignment]
     return scope.get(PROXY_KEY)
+
+
+def connection_id(request: Request) -> tuple[tuple[Any, ...], tuple[Any, ...]]:
+    """Names the network connection a request arrived on, the same for all its requests.
+
+    The peer's address and port as the socket saw them (not what X-Forwarded-For claims), plus
+    the address they connected to. Windows sign-in's NTLM handshake spans two requests on one
+    connection and is remembered under this.
+    """
+    scope: dict[str, Any] = request.scope  # type: ignore[assignment]
+    peer = scope.get(PEER_KEY) or scope.get("client") or ()
+    return tuple(peer), tuple(scope.get("server") or ())

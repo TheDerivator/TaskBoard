@@ -50,7 +50,7 @@ export function GroupsTab({ boot }) {
       </div>
     </div>
     ${providers.data.length === 0 &&
-    html`<div class="notice"><p>No SSO provider is configured, so only built-in accounts sign in. Mappings take effect once SSO is set up (see docs/AUTH.md).</p></div>`}
+    html`<div class="notice"><p>No SSO provider that reports groups is configured (Microsoft Entra ID, or a proxy that passes them on). Mappings take effect once one is set up (see docs/AUTH.md).</p></div>`}
     <div class="panel table-wrap">
       <table class="data-table">
         <thead><tr><th>Provider</th><th>Group</th><th>Role</th><th>Where</th><th><span class="visually-hidden">Remove</span></th></tr></thead>

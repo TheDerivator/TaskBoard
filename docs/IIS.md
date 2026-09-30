@@ -8,6 +8,11 @@ to go wrong.
 > Not yet tried on a real IIS. The Python side is tested; the IIS steps follow Microsoft's
 > documentation. If something differs, note what you changed.
 
+This guide gives TaskBoard its own login (user name and password). To sign people in with their
+**Windows account** instead, IIS is the wrong tool: it cannot pass the Windows user on to
+TaskBoard. [`WINDOWS-SIGNIN.md`](WINDOWS-SIGNIN.md) sets that up without IIS, and its section 8
+starts from a finished route B of this guide.
+
 Assumed: Windows Server with IIS, `git` and `uv` installed, and an **administrator** Windows
 PowerShell (right-click › *Run as administrator*). Use local paths only (`C:\...`): drive letters
 mapped to network shares do not exist for the accounts that run web apps, and SQLite must not
@@ -308,7 +313,8 @@ Day to day: `Restart-Service TaskBoard`. Upgrade as in 5A with `Stop-Service` / 
   company policy prefers HTTPS: type `http://` explicitly, or try the short server name without
   the domain. If the policy is enforced, you need HTTPS (below).
 - Sign-in with Microsoft Entra ID ([`AUTH.md`](AUTH.md)), should you want it later, requires
-  HTTPS; Windows sign-in through IIS does not.
+  HTTPS. Windows sign-in does not, but it is set up without IIS
+  ([`WINDOWS-SIGNIN.md`](WINDOWS-SIGNIN.md)).
 
 **HTTPS.** The certificate the other site already uses usually works for the same server name on another
 port. IIS Manager › *Sites* › TaskBoard › *Bindings...* › *Add*: type `https`, port e.g. 8443,
@@ -337,7 +343,7 @@ Look in this order:
 | **500.50** URL Rewrite error | `HTTP_X_FORWARDED_PROTO` is not in the allowed server variables (5B step 3). |
 | A **404** in IIS's style (route B) | ARR's *Enable proxy* is off (5B step 2). |
 | **503** Service Unavailable | The application pool is stopped: start it, then check the log for why. |
-| The browser asks for a **Windows** user name | Windows Authentication is on for the site. Site › *Authentication*: *Anonymous* enabled, *Windows* disabled (TaskBoard has its own login). |
+| The browser asks for a **Windows** user name | Windows Authentication is on for the site. Site › *Authentication*: *Anonymous* enabled, *Windows* disabled (TaskBoard has its own login; IIS's would not reach it: see the top of this guide). |
 | Log in "works" but you stay logged out, or `csrf_failed` | A Secure cookie over plain http: remove `TASKBOARD_COOKIE_SECURE=true`, or use https. |
 | `unable to open database file`, `readonly database` | The data folder's permissions. |
 | Page loads without styling (prefix setup) | `TASKBOARD_BASE_PATH` doesn't match the prefix. |

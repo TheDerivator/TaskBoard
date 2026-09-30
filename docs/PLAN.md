@@ -185,7 +185,8 @@ working; revoking anonymous view makes the board require login; a non-admin cann
 ### M9 · External identity provider (SSO)
 - [x] Microsoft Entra ID via OIDC as the first concrete provider (Windows server target). Built on
       PyJWT + the standard library instead of Authlib (D-056).
-- [x] Trusted-header provider (IIS / reverse proxy passing the authenticated user) as a fallback.
+- [x] Trusted-header provider (a reverse proxy passing the authenticated user) as a fallback.
+      IIS turned out unable to fill the header with its own modules: see Windows sign-in below.
 - [x] Optional IdP-group → role mappings (Administration › SSO groups).
 - [x] Configuration guide for Entra ID and IIS in [`AUTH.md`](AUTH.md).
 
@@ -194,6 +195,13 @@ working; revoking anonymous view makes the board require login; a non-admin cann
       Windows sign-in; D-061). Windows-signed-in visitors see no "Log out" (D-062).
 - [x] Beyond plan: pre-provisioned accounts also match on the Windows login name (no email
       needed); SSO sign-in returns to the page it started from.
+- [x] Beyond plan, after the first real IIS: **Windows sign-in by the app itself** (Negotiate:
+      Kerberos or NTLM through Windows SSPI, `TASKBOARD_WINDOWS_AUTH`), because IIS cannot pass
+      the Windows user to a proxied app (URL Rewrite runs before authentication, so the trusted
+      header arrives empty; D-072 to D-076). `serve` can do HTTPS itself for that deployment.
+      Walkthrough for beginners: [`WINDOWS-SIGNIN.md`](WINDOWS-SIGNIN.md). Tested against real
+      SSPI on a stand-alone Windows PC (API, and a real browser over NTLM); **not yet tried in a
+      domain** (Kerberos, the service's own account): that needs your environment.
 
 **Acceptance gate**: tests against an in-process mock IdP: a pre-provisioned account logs in and
 gets its rights; an unknown account is handled per config; a suspended account is refused.

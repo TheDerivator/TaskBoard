@@ -5,7 +5,7 @@ from typing import Any
 
 import pytest
 
-from taskboard.api.client import PROXY_KEY, ForwardedHeadersMiddleware, TrustedProxies
+from taskboard.api.client import PEER_KEY, PROXY_KEY, ForwardedHeadersMiddleware, TrustedProxies
 
 
 def run(coroutine: Coroutine[Any, Any, None]) -> None:
@@ -60,6 +60,7 @@ def test_a_trusted_proxy_gives_the_client_address_and_scheme() -> None:
     assert scope["client"] == ("203.0.113.5", 0)
     assert scope["scheme"] == "https"
     assert scope[PROXY_KEY] == "127.0.0.1"
+    assert scope[PEER_KEY] == ("127.0.0.1", 50000)  # the connection itself is not forgotten
 
 
 def test_a_trusted_proxy_without_forwarded_headers_is_still_remembered() -> None:
@@ -73,6 +74,7 @@ def test_headers_from_anyone_else_are_ignored() -> None:
     assert scope["client"] == ("192.0.2.1", 50000)
     assert scope["scheme"] == "http"
     assert PROXY_KEY not in scope
+    assert scope[PEER_KEY] == ("192.0.2.1", 50000)
 
 
 def test_the_client_is_the_nearest_address_that_is_not_a_proxy() -> None:

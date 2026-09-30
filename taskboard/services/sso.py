@@ -1,8 +1,9 @@
-"""Sign-in through a redirect provider (OpenID Connect): start it, and finish it on return.
+"""SSO sign-ins that start a session: the OpenID Connect round trip, and Windows sign-in.
 
-Each sign-in gets a random state (stored hashed, single use, 10 minutes), a nonce bound into the
-ID token, and a PKCE code verifier. The finished identity goes through the same provisioning as
-every SSO login (pre-provisioned accounts, suspension, group mappings).
+Each redirect sign-in gets a random state (stored hashed, single use, 10 minutes), a nonce bound
+into the ID token, and a PKCE code verifier. The finished identity goes through the same
+provisioning as every SSO login (pre-provisioned accounts, suspension, group mappings). So does
+an identity that Windows sign-in (Negotiate) has verified: `sign_in` starts its session.
 """
 
 import base64
@@ -15,10 +16,15 @@ from sqlalchemy.orm import Session
 
 from taskboard.config import Settings
 from taskboard.db.base import utcnow
-from taskboard.db.models import SsoRequest
+from taskboard.db.models import SsoRequest, User
 from taskboard.domain.errors import InvalidCredentialsError, NotFoundError
 from taskboard.identity import provisioning, sessions
-from taskboard.identity.providers import IdentityProviders, RedirectIdentityProvider
+from taskboard.identity.principal import Principal, principal_for_user
+from taskboard.identity.providers import (
+    ExternalIdentity,
+    IdentityProviders,
+    RedirectIdentityProvider,
+)
 from taskboard.services import audit
 
 REQUEST_LIFETIME = timedelta(minutes=10)
@@ -112,6 +118,22 @@ class SsoService:
         identity = provider.complete(
             code=code, redirect_uri=redirect_uri, code_verifier=verifier, nonce=nonce
         )
+        _, token = self._start_session(identity, ip_address=ip_address, user_agent=user_agent)
+        return token, return_to
+
+    def sign_in(
+        self, identity: ExternalIdentity, *, ip_address: str | None, user_agent: str | None
+    ) -> tuple[Principal, str]:
+        """Start a session for an identity its provider has verified (Windows sign-in).
+
+        Returns the principal and the cookie token.
+        """
+        user, token = self._start_session(identity, ip_address=ip_address, user_agent=user_agent)
+        return principal_for_user(self.session, user), token
+
+    def _start_session(
+        self, identity: ExternalIdentity, *, ip_address: str | None, user_agent: str | None
+    ) -> tuple[User, str]:
         user, outcome = provisioning.resolve_user(
             self.session, identity, self.settings.sso_unknown_users
         )
@@ -127,8 +149,8 @@ class SsoService:
             self.session,
             "auth.login",
             actor_user_id=user.id,
-            method=provider_name,
+            method=identity.provider,
             account=outcome,
         )
         self.session.commit()
-        return token, return_to
+        return user, token
