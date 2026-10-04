@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Team Tasks – Change conversation</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1D2124;background:#FFFFFF}
+a{color:#2D5BA8}a:hover{color:#1E4686}
+input::placeholder,textarea::placeholder{color:#7A756D}
+</style>
+</helmet>
+<aside aria-label="Process change conversation" style="width: 560px; height: 1180px; box-sizing: border-box; background: #FFFFFF; border-left: 1px solid #DDD8CF; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 20px 28px; border-bottom: 1px solid #E8E4DC">
+<div style="display: flex; align-items: center; gap: 12px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; color: #5E5A54">LM-07</span>
+<span style="display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 999px; background: #FBEFE8; color: #9A3E10; border: 1px solid #F0D2C1; font-size: 12px; font-weight: 600">In effect since 21 Apr</span>
+</div>
+<a href="ChangesList.dc.html" aria-label="Close" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #1D2124">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+</header>
+
+<div role="tablist" aria-label="Change sections" style="display: flex; gap: 4px; padding: 0 20px; border-bottom: 1px solid #E8E4DC">
+<a href="ChangeDetail.dc.html" role="tab" aria-selected="false" style="height: 46px; padding: 0 12px; display: flex; align-items: center; color: #5E5A54; text-decoration: none; font-size: 14px; font-weight: 500">Details</a>
+<a href="ChangeConversation.dc.html" role="tab" aria-selected="true" style="height: 46px; padding: 0 12px; display: flex; align-items: center; gap: 8px; color: #1D2124; text-decoration: none; font-size: 14px; font-weight: 600; box-shadow: inset 0 -2px 0 #B34A15">Conversation<span style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 999px; background: #1D2124; color: #FFFFFF; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center">5</span></a>
+<div role="group" aria-label="Show" style="margin-left: auto; align-self: center; display: flex; gap: 2px; background: #F2EFEA; padding: 3px; border-radius: 8px">
+<button type="button" aria-pressed="true" style="height: 30px; padding: 0 10px; border: 0; border-radius: 6px; background: #FFFFFF; font: 600 12px 'IBM Plex Sans', sans-serif; color: #1D2124">All</button>
+<button type="button" aria-pressed="false" style="height: 30px; padding: 0 10px; border: 0; border-radius: 6px; background: transparent; font: 500 12px 'IBM Plex Sans', sans-serif; color: #5E5A54">Periods only</button>
+</div>
+</div>
+
+<div style="flex-grow: 1; min-height: 0; overflow: auto; padding: 20px 28px; display: flex; flex-direction: column; gap: 18px">
+
+<article style="display: flex; gap: 12px">
+<span style="width: 32px; height: 32px; border-radius: 50%; background: #2D5BA8; color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0">AC</span>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; border: 1px solid #C3D3EE; border-radius: 10px; overflow: hidden">
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #E3EBF8">
+<span style="width: 22px; height: 10px; border-radius: 3px; background: #3A6FC4; flex-shrink: 0"></span>
+<span style="font-size: 14px; font-weight: 700; color: #1E4686">Test</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #1E4686">14 Apr 2026 · 1 day</span>
+<button type="button" style="margin-left: auto; height: 28px; padding: 0 8px; border: 0; border-radius: 4px; background: transparent; font: 500 12px 'IBM Plex Sans', sans-serif; color: #1E4686">Edit period</button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 14px">
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<span style="display: inline-flex; align-items: center; height: 22px; padding: 0 7px; border-radius: 4px; background: #F2EFEA; border: 1px solid #E1DCD3; font-size: 12px; color: #3A3733">IF-01</span>
+<span style="display: inline-flex; align-items: center; height: 22px; padding: 0 7px; border-radius: 4px; background: #F2EFEA; border: 1px solid #E1DCD3; font-size: 12px; color: #3A3733">Heats 41230–41236</span>
+<span style="display: inline-flex; align-items: center; height: 22px; padding: 0 7px; border-radius: 4px; background: #F2EFEA; border: 1px solid #E1DCD3; font-size: 12px; color: #3A3733">LF2</span>
+</div>
+<p style="margin: 0; font-size: 14px; line-height: 1.55">Trial on the first heats of IF-01 in the morning shift, argon setpoint [NEW FLOW] during trim.</p>
+<span style="font-size: 12px; color: #5E5A54">Anna Claes · 10 Apr, 15:20</span>
+</div>
+</div>
+</article>
+
+<article style="display: flex; gap: 12px">
+<span style="width: 32px; height: 32px; border-radius: 50%; background: #A8431A; color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0">DW</span>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 2px 0">
+<div style="display: flex; align-items: center; gap: 8px"><span style="font-size: 14px; font-weight: 600">Dries Wouters</span><span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5E5A54">14 Apr, 13:05</span></div>
+<p style="margin: 0; font-size: 14px; line-height: 1.55">Heat 41233 had a delayed argon start, I’d exclude it. Process data: <a href="#">ladle-data-14apr.xlsx</a></p>
+</div>
+</article>
+
+<article style="display: flex; gap: 12px">
+<span style="width: 32px; height: 32px; border-radius: 50%; background: #2D5BA8; color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0">AC</span>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; border: 1px solid #C3D3EE; border-radius: 10px; overflow: hidden">
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #E3EBF8">
+<span style="width: 22px; height: 10px; border-radius: 3px; background: #3A6FC4; flex-shrink: 0"></span>
+<span style="font-size: 14px; font-weight: 700; color: #1E4686">Follow-up test</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #1E4686">16 Apr 2026 · 1 day</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 14px">
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<span style="display: inline-flex; align-items: center; height: 22px; padding: 0 7px; border-radius: 4px; background: #F2EFEA; border: 1px solid #E1DCD3; font-size: 12px; color: #3A3733">All ULC grades</span>
+<span style="display: inline-flex; align-items: center; height: 22px; padding: 0 7px; border-radius: 4px; background: #F2EFEA; border: 1px solid #E1DCD3; font-size: 12px; color: #3A3733">LF2</span>
+</div>
+<p style="margin: 0; font-size: 14px; line-height: 1.55">Widening to all ULC grades for one day to check the effect on temperature loss.</p>
+<span style="font-size: 12px; color: #5E5A54">Anna Claes · 15 Apr, 09:40</span>
+</div>
+</div>
+</article>
+
+<article style="display: flex; gap: 12px">
+<span style="width: 32px; height: 32px; border-radius: 50%; background: #1F7A6E; color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0">CM</span>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 2px 0">
+<div style="display: flex; align-items: center; gap: 8px"><span style="font-size: 14px; font-weight: 600">Chloé Martens</span><span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5E5A54">17 Apr, 11:22</span></div>
+<p style="margin: 0; font-size: 14px; line-height: 1.55">Inclusion counts on both test days look good. Report: <a href="#">QA-report-0417.pdf</a></p>
+</div>
+</article>
+
+<article style="display: flex; gap: 12px">
+<span style="width: 32px; height: 32px; border-radius: 50%; background: #2D5BA8; color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0">AC</span>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; border: 1px solid #F0D2C1; border-radius: 10px; overflow: hidden">
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #FBEFE8">
+<span style="display: flex; align-items: center"><span style="width: 16px; height: 10px; border-radius: 3px 0 0 3px; background: #C4561C"></span><svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M0 0L6 5L0 10z" fill="#C4561C"></path></svg></span>
+<span style="font-size: 14px; font-weight: 700; color: #9A3E10">Process change</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #9A3E10">from 21 Apr 2026</span>
+<button type="button" style="margin-left: auto; height: 28px; padding: 0 8px; border: 0; border-radius: 4px; background: transparent; font: 500 12px 'IBM Plex Sans', sans-serif; color: #9A3E10">Set end date</button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 14px">
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<span style="display: inline-flex; align-items: center; height: 22px; padding: 0 7px; border-radius: 4px; background: #F2EFEA; border: 1px solid #E1DCD3; font-size: 12px; color: #3A3733">All ULC grades</span>
+<span style="display: inline-flex; align-items: center; height: 22px; padding: 0 7px; border-radius: 4px; background: #F2EFEA; border: 1px solid #E1DCD3; font-size: 12px; color: #3A3733">LF1</span>
+<span style="display: inline-flex; align-items: center; height: 22px; padding: 0 7px; border-radius: 4px; background: #F2EFEA; border: 1px solid #E1DCD3; font-size: 12px; color: #3A3733">LF2</span>
+</div>
+<p style="margin: 0; font-size: 14px; line-height: 1.55">Approved in the quality meeting of 18 Apr. Work instruction <code style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; background: #F2EFEA; padding: 1px 5px; border-radius: 4px">WI-LM-112</code> updated.</p>
+<span style="font-size: 12px; color: #5E5A54">Anna Claes · 18 Apr, 16:10</span>
+</div>
+</div>
+</article>
+</div>
+
+<form style="display: flex; flex-direction: column; gap: 10px; padding: 14px 28px 18px; border-top: 1px solid #E8E4DC; background: #FBFAF7">
+<div role="tablist" aria-label="Post type" style="display: flex; gap: 2px; align-self: flex-start; background: #ECE8E1; padding: 3px; border-radius: 8px">
+<button type="button" role="tab" aria-selected="false" style="height: 32px; padding: 0 12px; border: 0; border-radius: 6px; background: transparent; font: 500 13px 'IBM Plex Sans', sans-serif; color: #5E5A54">Comment</button>
+<button type="button" role="tab" aria-selected="true" style="height: 32px; padding: 0 12px; border: 0; border-radius: 6px; background: #FFFFFF; font: 600 13px 'IBM Plex Sans', sans-serif; color: #1D2124; display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 8px; border-radius: 2px; background: #3A6FC4"></span>Period</button>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 12px; border: 1px solid #CFCAC1; border-radius: 10px; background: #FFFFFF">
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 132px 132px; gap: 8px">
+<label style="display: flex; flex-direction: column; gap: 4px; font-size: 11px; font-family: 'IBM Plex Mono', monospace; text-transform: uppercase; letter-spacing: 0.06em; color: #5E5A54">Label
+<input type="text" value="Extension test" style="height: 40px; min-width: 0; padding: 0 10px; border: 1px solid #CFCAC1; border-radius: 6px; font: 14px 'IBM Plex Sans', sans-serif; color: #1D2124; text-transform: none; letter-spacing: 0"></label>
+<label style="display: flex; flex-direction: column; gap: 4px; font-size: 11px; font-family: 'IBM Plex Mono', monospace; text-transform: uppercase; letter-spacing: 0.06em; color: #5E5A54">From
+<input type="date" value="2026-10-12" style="height: 40px; min-width: 0; padding: 0 6px; border: 1px solid #CFCAC1; border-radius: 6px; font: 13px 'IBM Plex Mono', monospace; color: #1D2124"></label>
+<label style="display: flex; flex-direction: column; gap: 4px; font-size: 11px; font-family: 'IBM Plex Mono', monospace; text-transform: uppercase; letter-spacing: 0.06em; color: #5E5A54">To
+<input type="date" value="2026-10-16" style="height: 40px; min-width: 0; padding: 0 6px; border: 1px solid #CFCAC1; border-radius: 6px; font: 13px 'IBM Plex Mono', monospace; color: #1D2124"></label>
+</div>
+<label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #3A3733; min-height: 32px">
+<input type="checkbox" style="width: 18px; height: 18px; margin: 0; accent-color: #B34A15">No end date: this is a permanent process change
+</label>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 11px; font-family: 'IBM Plex Mono', monospace; text-transform: uppercase; letter-spacing: 0.06em; color: #5E5A54">Scope · optional, anything goes</span>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-height: 40px; padding: 4px 6px; box-sizing: border-box; border: 1px solid #CFCAC1; border-radius: 6px">
+<span style="display: inline-flex; align-items: center; gap: 2px; height: 28px; padding: 0 2px 0 8px; border-radius: 4px; background: #F2EFEA; border: 1px solid #E1DCD3; font-size: 12px; color: #3A3733">IF-02<button type="button" aria-label="Remove IF-02" style="width: 22px; height: 22px; border: 0; background: transparent; color: #5E5A54; display: flex; align-items: center; justify-content: center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></span>
+<span style="display: inline-flex; align-items: center; gap: 2px; height: 28px; padding: 0 2px 0 8px; border-radius: 4px; background: #F2EFEA; border: 1px solid #E1DCD3; font-size: 12px; color: #3A3733">CC2 sequences only<button type="button" aria-label="Remove CC2 sequences only" style="width: 22px; height: 22px; border: 0; background: transparent; color: #5E5A54; display: flex; align-items: center; justify-content: center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></span>
+<input type="text" aria-label="Add scope tag" placeholder="Caster, grade, heats… Enter adds" style="flex-grow: 1; min-width: 140px; height: 28px; border: 0; outline: none; font: 13px 'IBM Plex Sans', sans-serif; color: #1D2124">
+</div>
+<span style="font-size: 12px; color: #5E5A54">Suggestions as you type: LF1 · LF2 · CC1 · CC2 · IF-01 · All ULC grades</span>
+</div>
+<label style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 11px; font-family: 'IBM Plex Mono', monospace; text-transform: uppercase; letter-spacing: 0.06em; color: #5E5A54">Details · Markdown</span>
+<textarea rows="2" style="padding: 8px 10px; border: 1px solid #CFCAC1; border-radius: 6px; font: 13px/1.5 'IBM Plex Mono', monospace; color: #1D2124; resize: none">Same setpoint on IF-02, only heats cast on CC2.</textarea>
+</label>
+</div>
+
+<div style="display: flex; align-items: center; gap: 12px">
+<span style="font-size: 12px; color: #5E5A54">Appears on the timeline as a test from 12 to 16 Oct</span>
+<button type="button" style="margin-left: auto; height: 44px; padding: 0 20px; border: 0; border-radius: 8px; background: #B34A15; color: #FFFFFF; font: 600 14px 'IBM Plex Sans', sans-serif">Post period</button>
+</div>
+</form>
+</aside>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":560,"height":1180}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

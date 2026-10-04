@@ -449,5 +449,1302 @@
       "project_id": "ASQ",
       "node_id": "ASQ:3"
     }
-  ]
+  ],
+  "processes": [
+    {
+      "id": "CV",
+      "department": "STL",
+      "name": "Convertor"
+    },
+    {
+      "id": "LM",
+      "department": "STL",
+      "name": "Ladle metallurgy"
+    },
+    {
+      "id": "CC",
+      "department": "STL",
+      "name": "Continuous casting"
+    }
+  ],
+  "changes": [
+    {
+      "id": "LM-07",
+      "process_id": "LM",
+      "title": "Argon stirring rate during trim",
+      "why": "Reduce inclusions in ultra-low-carbon grades.",
+      "owner": "AC"
+    },
+    {
+      "id": "LM-08",
+      "process_id": "LM",
+      "title": "Desulphurisation flux, new supplier",
+      "why": "Second source for flux: cost and supply security.",
+      "owner": "BP"
+    },
+    {
+      "id": "LM-09",
+      "process_id": "LM",
+      "title": "Ladle preheating +50 °C",
+      "why": "Fewer skull problems at the start of a sequence.",
+      "owner": "DW"
+    },
+    {
+      "id": "LM-10",
+      "process_id": "LM",
+      "title": "Lower superheat for slab grades",
+      "why": "Less centre segregation in slabs.",
+      "owner": "CM"
+    },
+    {
+      "id": "LM-11",
+      "process_id": "LM",
+      "title": "Calcium wire feeding sequence",
+      "why": "Avoid nozzle clogging on Al-killed grades.",
+      "owner": "FM"
+    },
+    {
+      "id": "LM-12",
+      "process_id": "LM",
+      "title": "Temperature probe position",
+      "why": "Readings drift at low ladle fill level.",
+      "owner": "EJ"
+    },
+    {
+      "id": "CV-21",
+      "process_id": "CV",
+      "title": "Oxygen lance height profile",
+      "why": "Shorter blow time.",
+      "owner": "DW"
+    },
+    {
+      "id": "CV-22",
+      "process_id": "CV",
+      "title": "More shredded scrap in the mix",
+      "why": "Lower hot-metal ratio.",
+      "owner": "BP"
+    },
+    {
+      "id": "CV-23",
+      "process_id": "CV",
+      "title": "Slag splashing duration",
+      "why": "Longer refractory life.",
+      "owner": "EJ"
+    },
+    {
+      "id": "CV-24",
+      "process_id": "CV",
+      "title": "Bottom stirring gas flow",
+      "why": "Better end-point control.",
+      "owner": "FM"
+    },
+    {
+      "id": "CC-31",
+      "process_id": "CC",
+      "title": "Mould powder type B",
+      "why": "Fewer surface defects (see T-104).",
+      "owner": "AC"
+    },
+    {
+      "id": "CC-32",
+      "process_id": "CC",
+      "title": "Casting speed ramp at sequence start",
+      "why": "Reduce breakout risk.",
+      "owner": "DW"
+    },
+    {
+      "id": "CC-33",
+      "process_id": "CC",
+      "title": "Secondary cooling pattern",
+      "why": "Less corner cracking.",
+      "owner": "CM"
+    },
+    {
+      "id": "CC-34",
+      "process_id": "CC",
+      "title": "Tundish nozzle immersion depth",
+      "why": "Meniscus stability.",
+      "owner": "FM"
+    }
+  ],
+  "change_periods": [
+    {
+      "change_id": "LM-07",
+      "start_date": "2026-04-14",
+      "end_date": "2026-04-14",
+      "label": "Test",
+      "scope_tags": [
+        "IF-01",
+        "Heats 41230–41236",
+        "LF2"
+      ],
+      "body_md": "Trial on the first heats of IF-01 in the morning shift.",
+      "author": "AC"
+    },
+    {
+      "change_id": "LM-07",
+      "start_date": "2026-04-16",
+      "end_date": "2026-04-16",
+      "label": "Follow-up test",
+      "scope_tags": [
+        "All ULC grades",
+        "LF2"
+      ],
+      "body_md": "Widening to all ULC grades for one day.",
+      "author": "AC"
+    },
+    {
+      "change_id": "LM-07",
+      "start_date": "2026-04-21",
+      "end_date": null,
+      "label": "Process change",
+      "scope_tags": [
+        "All ULC grades",
+        "LF1",
+        "LF2"
+      ],
+      "body_md": "Approved in the quality meeting of 18 Apr. Work instruction `WI-LM-112` updated.",
+      "author": "AC"
+    },
+    {
+      "change_id": "LM-08",
+      "start_date": "2026-05-05",
+      "end_date": "2026-05-16",
+      "label": "Trial batch 1",
+      "scope_tags": [],
+      "body_md": "",
+      "author": null
+    },
+    {
+      "change_id": "LM-08",
+      "start_date": "2026-06-02",
+      "end_date": "2026-06-13",
+      "label": "Trial batch 2",
+      "scope_tags": [],
+      "body_md": "",
+      "author": null
+    },
+    {
+      "change_id": "LM-09",
+      "start_date": "2026-05-12",
+      "end_date": null,
+      "label": "Process change",
+      "scope_tags": [],
+      "body_md": "",
+      "author": null
+    },
+    {
+      "change_id": "LM-10",
+      "start_date": "2026-07-08",
+      "end_date": "2026-07-10",
+      "label": "Test",
+      "scope_tags": [],
+      "body_md": "",
+      "author": null
+    },
+    {
+      "change_id": "LM-10",
+      "start_date": "2026-08-01",
+      "end_date": null,
+      "label": "Process change",
+      "scope_tags": [],
+      "body_md": "",
+      "author": null
+    },
+    {
+      "change_id": "LM-11",
+      "start_date": "2026-08-25",
+      "end_date": "2026-09-05",
+      "label": "Test",
+      "scope_tags": [],
+      "body_md": "",
+      "author": null
+    },
+    {
+      "change_id": "LM-11",
+      "start_date": "2026-09-22",
+      "end_date": "2026-10-03",
+      "label": "Follow-up test",
+      "scope_tags": [
+        "CC2 sequences only"
+      ],
+      "body_md": "",
+      "author": null
+    },
+    {
+      "change_id": "LM-12",
+      "start_date": "2026-10-13",
+      "end_date": "2026-10-17",
+      "label": "Planned test",
+      "scope_tags": [],
+      "body_md": "",
+      "author": null
+    },
+    {
+      "change_id": "CV-21",
+      "start_date": "2026-04-07",
+      "end_date": "2026-04-11",
+      "label": "Test",
+      "scope_tags": [],
+      "body_md": "",
+      "author": null
+    },
+    {
+      "change_id": "CV-21",
+      "start_date": "2026-05-04",
+      "end_date": null,
+      "label": "Process change",
+      "scope_tags": [],
+      "body_md": "",
+      "author": null
+    },
+    {
+      "change_id": "CV-22",
+      "start_date": "2026-06-01",
+      "end_date": "2026-06-30",
+      "label": "Test",
+      "scope_tags": [],
+      "body_md": "",
+      "author": null
+    },
+    {
+      "change_id": "CV-23",
+      "start_date": "2026-07-15",
+      "end_date": null,
+      "label": "Process change",
+      "scope_tags": [],
+      "body_md": "",
+      "author": null
+    },
+    {
+      "change_id": "CV-24",
+      "start_date": "2026-09-01",
+      "end_date": "2026-09-05",
+      "label": "Test",
+      "scope_tags": [],
+      "body_md": "",
+      "author": null
+    },
+    {
+      "change_id": "CV-24",
+      "start_date": "2026-09-15",
+      "end_date": "2026-09-19",
+      "label": "Follow-up test",
+      "scope_tags": [],
+      "body_md": "",
+      "author": null
+    },
+    {
+      "change_id": "CC-31",
+      "start_date": "2026-04-20",
+      "end_date": "2026-04-30",
+      "label": "Test",
+      "scope_tags": [],
+      "body_md": "",
+      "author": null
+    },
+    {
+      "change_id": "CC-31",
+      "start_date": "2026-05-18",
+      "end_date": null,
+      "label": "Process change",
+      "scope_tags": [],
+      "body_md": "",
+      "author": null
+    },
+    {
+      "change_id": "CC-32",
+      "start_date": "2026-06-09",
+      "end_date": "2026-06-09",
+      "label": "Test",
+      "scope_tags": [
+        "First 3 heats of each sequence"
+      ],
+      "body_md": "",
+      "author": null
+    },
+    {
+      "change_id": "CC-32",
+      "start_date": "2026-06-11",
+      "end_date": "2026-06-11",
+      "label": "Test",
+      "scope_tags": [],
+      "body_md": "",
+      "author": null
+    },
+    {
+      "change_id": "CC-32",
+      "start_date": "2026-06-16",
+      "end_date": "2026-06-16",
+      "label": "Test",
+      "scope_tags": [],
+      "body_md": "",
+      "author": null
+    },
+    {
+      "change_id": "CC-33",
+      "start_date": "2026-08-03",
+      "end_date": null,
+      "label": "Process change",
+      "scope_tags": [],
+      "body_md": "",
+      "author": null
+    },
+    {
+      "change_id": "CC-34",
+      "start_date": "2026-09-28",
+      "end_date": "2026-10-09",
+      "label": "Test",
+      "scope_tags": [
+        "Caster 1 only"
+      ],
+      "body_md": "",
+      "author": null
+    }
+  ],
+  "box_kinds": [
+    {
+      "id": "step",
+      "name": "Process step",
+      "field_schema": {}
+    },
+    {
+      "id": "know",
+      "name": "Knowledge",
+      "field_schema": {}
+    },
+    {
+      "id": "ref",
+      "name": "Reference",
+      "field_schema": {}
+    },
+    {
+      "id": "rule",
+      "name": "Rule",
+      "field_schema": {}
+    },
+    {
+      "id": "fm",
+      "name": "Failure mode",
+      "field_schema": {}
+    },
+    {
+      "id": "defect",
+      "name": "Defect",
+      "field_schema": {}
+    }
+  ],
+  "link_types": [
+    {
+      "id": "leads_to",
+      "forward_name": "leads to",
+      "backward_name": "caused by",
+      "field_schema": {}
+    },
+    {
+      "id": "restricts",
+      "forward_name": "restricts",
+      "backward_name": "restricted by",
+      "field_schema": {}
+    },
+    {
+      "id": "prevents",
+      "forward_name": "prevents",
+      "backward_name": "prevented by",
+      "field_schema": {}
+    },
+    {
+      "id": "explains",
+      "forward_name": "explains",
+      "backward_name": "explained by",
+      "field_schema": {}
+    },
+    {
+      "id": "documented_in",
+      "forward_name": "documented in",
+      "backward_name": "documents",
+      "field_schema": {}
+    },
+    {
+      "id": "see_also",
+      "forward_name": "see also",
+      "backward_name": "see also",
+      "field_schema": {}
+    }
+  ],
+  "boxes": [
+    {
+      "id": "cc",
+      "process_id": "CC",
+      "kind_id": "step",
+      "parent_id": null,
+      "name": "Continuous casting",
+      "body_md": "Liquid steel flows from the ladle through the tundish into a water-cooled copper mould. The strand is cooled further, unbent and cut into slabs.",
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "overview",
+      "process_id": "CC",
+      "kind_id": "know",
+      "parent_id": "cc",
+      "name": "Caster overview",
+      "body_md": "General figures for orientation. For actual limits, the planning system is the reference.",
+      "facts": {
+        "Strands": "2",
+        "Slab thickness": "[THICKNESS] mm",
+        "Slab width": "[MIN]–[MAX] mm",
+        "Metallurgical length": "[LENGTH] m"
+      },
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "speeds",
+      "process_id": "CC",
+      "kind_id": "ref",
+      "parent_id": "cc",
+      "name": "Casting speeds & grades",
+      "main_url": "https://speeds.plant.local/cc",
+      "body_md": "Speed windows per grade family and slab format, maintained by process engineering.",
+      "facts": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "plan",
+      "process_id": "CC",
+      "kind_id": "rule",
+      "parent_id": "cc",
+      "name": "Planning restrictions",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "r-peri",
+      "process_id": "CC",
+      "kind_id": "rule",
+      "parent_id": "plan",
+      "name": "Peritectic grades not first in a sequence",
+      "body_md": "The first heat after a tundish change runs slower with a cold tundish; peritectic grades are crack-sensitive in exactly those conditions.",
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "r-tund",
+      "process_id": "CC",
+      "kind_id": "rule",
+      "parent_id": "plan",
+      "name": "Max [N] heats per tundish",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "r-width",
+      "process_id": "CC",
+      "kind_id": "rule",
+      "parent_id": "plan",
+      "name": "Width change max [X] mm per heat",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "tun",
+      "process_id": "CC",
+      "kind_id": "step",
+      "parent_id": "cc",
+      "name": "Tundish",
+      "step_no": "OP10",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "tun-flow",
+      "process_id": "CC",
+      "kind_id": "step",
+      "parent_id": "tun",
+      "name": "Flow control",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "fm-clog",
+      "process_id": "CC",
+      "kind_id": "fm",
+      "parent_id": "tun-flow",
+      "name": "Nozzle clogging",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "tun-slag",
+      "process_id": "CC",
+      "kind_id": "step",
+      "parent_id": "tun",
+      "name": "Slag & refractory",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "fm-slag",
+      "process_id": "CC",
+      "kind_id": "fm",
+      "parent_id": "tun-slag",
+      "name": "Slag carry-over",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "mould",
+      "process_id": "CC",
+      "kind_id": "step",
+      "parent_id": "cc",
+      "name": "Mould",
+      "step_no": "OP20",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "m-level",
+      "process_id": "CC",
+      "kind_id": "step",
+      "parent_id": "mould",
+      "name": "Mould level control",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "fm-level",
+      "process_id": "CC",
+      "kind_id": "fm",
+      "parent_id": "m-level",
+      "name": "Mould level fluctuation",
+      "body_md": "Waves at the meniscus pull mould powder and inclusions into the solidifying shell. After rolling they show up as **sliver lines**.\n\n- Typical triggers: nozzle clogging and release, speed changes, argon flow too high\n- Worst at sequence start and after a ladle change",
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "m-powder",
+      "process_id": "CC",
+      "kind_id": "step",
+      "parent_id": "mould",
+      "name": "Mould powder",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "fm-powder",
+      "process_id": "CC",
+      "kind_id": "fm",
+      "parent_id": "m-powder",
+      "name": "Powder entrapment",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "ref-powder",
+      "process_id": "CC",
+      "kind_id": "ref",
+      "parent_id": "m-powder",
+      "name": "Powder datasheets",
+      "main_url": "https://supplier-portal.example.com/powders",
+      "body_md": null,
+      "facts": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "m-osc",
+      "process_id": "CC",
+      "kind_id": "step",
+      "parent_id": "mould",
+      "name": "Oscillation",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "k-osc",
+      "process_id": "CC",
+      "kind_id": "know",
+      "parent_id": "m-osc",
+      "name": "How oscillation works",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "fm-osc",
+      "process_id": "CC",
+      "kind_id": "fm",
+      "parent_id": "m-osc",
+      "name": "Deep oscillation marks",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "sec",
+      "process_id": "CC",
+      "kind_id": "step",
+      "parent_id": "cc",
+      "name": "Secondary cooling",
+      "step_no": "OP30",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "sec-spray",
+      "process_id": "CC",
+      "kind_id": "step",
+      "parent_id": "sec",
+      "name": "Spray zones",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "fm-spray",
+      "process_id": "CC",
+      "kind_id": "fm",
+      "parent_id": "sec-spray",
+      "name": "Uneven spray cooling",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "bow",
+      "process_id": "CC",
+      "kind_id": "step",
+      "parent_id": "cc",
+      "name": "Bow / unbending",
+      "step_no": "OP40",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "bow-unb",
+      "process_id": "CC",
+      "kind_id": "step",
+      "parent_id": "bow",
+      "name": "Unbending point",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "fm-duct",
+      "process_id": "CC",
+      "kind_id": "fm",
+      "parent_id": "bow-unb",
+      "name": "Unbending in ductility trough",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "cut",
+      "process_id": "CC",
+      "kind_id": "step",
+      "parent_id": "cc",
+      "name": "Cutting",
+      "step_no": "OP50",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "cut-torch",
+      "process_id": "CC",
+      "kind_id": "step",
+      "parent_id": "cut",
+      "name": "Torch cutting",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "fm-burr",
+      "process_id": "CC",
+      "kind_id": "fm",
+      "parent_id": "cut-torch",
+      "name": "Burr at cut edge",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "d-sliver",
+      "process_id": null,
+      "kind_id": "defect",
+      "parent_id": null,
+      "name": "Sliver lines",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "d-blisters",
+      "process_id": null,
+      "kind_id": "defect",
+      "parent_id": null,
+      "name": "Blisters",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "d-incl",
+      "process_id": null,
+      "kind_id": "defect",
+      "parent_id": null,
+      "name": "Inclusions",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "d-trans",
+      "process_id": null,
+      "kind_id": "defect",
+      "parent_id": null,
+      "name": "Transverse cracks",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "d-long",
+      "process_id": null,
+      "kind_id": "defect",
+      "parent_id": null,
+      "name": "Longitudinal cracks",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "d-corner",
+      "process_id": null,
+      "kind_id": "defect",
+      "parent_id": null,
+      "name": "Corner cracks",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    },
+    {
+      "id": "d-edge",
+      "process_id": null,
+      "kind_id": "defect",
+      "parent_id": null,
+      "name": "Edge defects",
+      "body_md": null,
+      "facts": null,
+      "main_url": null,
+      "step_no": null,
+      "fields": {},
+      "owner": "CM",
+      "reviewed_at": "2026-03-14"
+    }
+  ],
+  "links": [
+    {
+      "id": "L1",
+      "from_box": "fm-clog",
+      "type_id": "leads_to",
+      "to_box": "d-sliver",
+      "note_md": "A clog that breaks loose causes a sudden level jump in the mould.",
+      "fields": {}
+    },
+    {
+      "id": "L2",
+      "from_box": "fm-slag",
+      "type_id": "leads_to",
+      "to_box": "d-sliver",
+      "note_md": "Tundish slag reaches the mould during a ladle change.",
+      "fields": {}
+    },
+    {
+      "id": "L3",
+      "from_box": "fm-slag",
+      "type_id": "leads_to",
+      "to_box": "d-incl",
+      "note_md": "",
+      "fields": {}
+    },
+    {
+      "id": "L4",
+      "from_box": "fm-level",
+      "type_id": "leads_to",
+      "to_box": "d-sliver",
+      "note_md": "Meniscus waves fold powder into the shell as it forms.",
+      "fields": {}
+    },
+    {
+      "id": "L5",
+      "from_box": "fm-level",
+      "type_id": "leads_to",
+      "to_box": "d-long",
+      "note_md": "Uneven shell growth.",
+      "fields": {}
+    },
+    {
+      "id": "L6",
+      "from_box": "fm-powder",
+      "type_id": "leads_to",
+      "to_box": "d-sliver",
+      "note_md": "Liquid powder is dragged under when the flow near the meniscus is too strong.",
+      "fields": {}
+    },
+    {
+      "id": "L7",
+      "from_box": "fm-powder",
+      "type_id": "leads_to",
+      "to_box": "d-blisters",
+      "note_md": "",
+      "fields": {}
+    },
+    {
+      "id": "L8",
+      "from_box": "fm-osc",
+      "type_id": "leads_to",
+      "to_box": "d-trans",
+      "note_md": "Cracks start in the bottom of deep marks.",
+      "fields": {}
+    },
+    {
+      "id": "L9",
+      "from_box": "fm-spray",
+      "type_id": "leads_to",
+      "to_box": "d-corner",
+      "note_md": "",
+      "fields": {}
+    },
+    {
+      "id": "L10",
+      "from_box": "fm-duct",
+      "type_id": "leads_to",
+      "to_box": "d-trans",
+      "note_md": "",
+      "fields": {}
+    },
+    {
+      "id": "L11",
+      "from_box": "fm-burr",
+      "type_id": "leads_to",
+      "to_box": "d-edge",
+      "note_md": "",
+      "fields": {}
+    },
+    {
+      "id": "L12",
+      "from_box": "fm-clog",
+      "type_id": "leads_to",
+      "to_box": "fm-level",
+      "note_md": "Clog release causes level jumps.",
+      "fields": {}
+    },
+    {
+      "id": "L13",
+      "from_box": "r-peri",
+      "type_id": "prevents",
+      "to_box": "fm-level",
+      "note_md": "",
+      "fields": {}
+    },
+    {
+      "id": "L14",
+      "from_box": "r-peri",
+      "type_id": "documented_in",
+      "to_box": "speeds",
+      "note_md": "",
+      "fields": {}
+    },
+    {
+      "id": "L15",
+      "from_box": "k-osc",
+      "type_id": "explains",
+      "to_box": "fm-osc",
+      "note_md": "",
+      "fields": {}
+    },
+    {
+      "id": "L16",
+      "from_box": "fm-powder",
+      "type_id": "documented_in",
+      "to_box": "ref-powder",
+      "note_md": "",
+      "fields": {}
+    },
+    {
+      "id": "L17",
+      "from_box": "overview",
+      "type_id": "see_also",
+      "to_box": "speeds",
+      "note_md": "",
+      "fields": {}
+    }
+  ],
+  "controls": [
+    {
+      "id": "C1",
+      "box_id": "fm-level",
+      "type": "prevent",
+      "text": "Level control loop tuned per slab format",
+      "fields": {}
+    },
+    {
+      "id": "C2",
+      "box_id": "fm-level",
+      "type": "prevent",
+      "text": "Level sensor calibrated every [INTERVAL]",
+      "fields": {}
+    },
+    {
+      "id": "C3",
+      "box_id": "fm-level",
+      "type": "detect",
+      "text": "Alarm above [LIMIT] mm fluctuation; affected slabs flagged for inspection",
+      "fields": {}
+    },
+    {
+      "id": "C4",
+      "box_id": "fm-powder",
+      "type": "prevent",
+      "text": "Powder type chosen per grade family",
+      "fields": {}
+    },
+    {
+      "id": "C5",
+      "box_id": "fm-powder",
+      "type": "detect",
+      "text": "Powder consumption tracked per heat",
+      "fields": {}
+    },
+    {
+      "id": "C6",
+      "box_id": "fm-clog",
+      "type": "prevent",
+      "text": "Calcium treatment in ladle metallurgy",
+      "fields": {}
+    },
+    {
+      "id": "C7",
+      "box_id": "fm-clog",
+      "type": "detect",
+      "text": "Stopper position trend",
+      "fields": {}
+    },
+    {
+      "id": "C8",
+      "box_id": "fm-slag",
+      "type": "prevent",
+      "text": "Minimum tundish weight during ladle change",
+      "fields": {}
+    },
+    {
+      "id": "C9",
+      "box_id": "fm-slag",
+      "type": "detect",
+      "text": "Slag detection on the ladle shroud",
+      "fields": {}
+    }
+  ],
+  "external_links": [
+    {
+      "owner_type": "control",
+      "owner_id": "C1",
+      "kind": "dashboard",
+      "label": "Mould level – live",
+      "url": "https://grafana.plant.local/d/mould-level",
+      "pass_box_param": false
+    },
+    {
+      "owner_type": "control",
+      "owner_id": "C2",
+      "kind": "calibration",
+      "label": "Eddy-current level sensor",
+      "url": "https://docs.plant.local/cc/calibration/level-sensor",
+      "pass_box_param": false
+    },
+    {
+      "owner_type": "control",
+      "owner_id": "C3",
+      "kind": "graph",
+      "label": "Level fluctuation vs. sliver rate",
+      "url": "https://shiny.qa.local/level-vs-sliver",
+      "pass_box_param": false
+    },
+    {
+      "owner_type": "control",
+      "owner_id": "C4",
+      "kind": "document",
+      "label": "Powder selection table",
+      "url": "https://docs.plant.local/cc/powder-selection",
+      "pass_box_param": false
+    },
+    {
+      "owner_type": "control",
+      "owner_id": "C5",
+      "kind": "graph",
+      "label": "Powder consumption per heat",
+      "url": "https://shiny.qa.local/powder-consumption",
+      "pass_box_param": false
+    },
+    {
+      "owner_type": "control",
+      "owner_id": "C7",
+      "kind": "dashboard",
+      "label": "Stopper position",
+      "url": "https://grafana.plant.local/d/stopper",
+      "pass_box_param": false
+    },
+    {
+      "owner_type": "control",
+      "owner_id": "C8",
+      "kind": "dashboard",
+      "label": "Tundish weight",
+      "url": "https://grafana.plant.local/d/tundish-weight",
+      "pass_box_param": false
+    },
+    {
+      "owner_type": "control",
+      "owner_id": "C9",
+      "kind": "calibration",
+      "label": "Slag detector",
+      "url": "https://docs.plant.local/cc/calibration/slag-detector",
+      "pass_box_param": false
+    },
+    {
+      "owner_type": "box",
+      "owner_id": "mould",
+      "kind": "dashboard",
+      "label": "Mould overview",
+      "url": "https://grafana.plant.local/d/mould",
+      "pass_box_param": true
+    },
+    {
+      "owner_type": "box",
+      "owner_id": "overview",
+      "kind": "document",
+      "label": "General arrangement drawing",
+      "url": "https://docs.plant.local/cc/ga-drawing",
+      "pass_box_param": false
+    }
+  ],
+  "references": [
+    {
+      "source_type": "change",
+      "source_id": "CC-31",
+      "box_id": "m-powder",
+      "role": "affects"
+    },
+    {
+      "source_type": "change",
+      "source_id": "CC-32",
+      "box_id": "m-level",
+      "role": "affects"
+    },
+    {
+      "source_type": "change",
+      "source_id": "CC-33",
+      "box_id": "sec-spray",
+      "role": "affects"
+    },
+    {
+      "source_type": "change",
+      "source_id": "CC-34",
+      "box_id": "tun-flow",
+      "role": "affects"
+    },
+    {
+      "source_type": "task",
+      "source_id": "T-104",
+      "box_id": "fm-level",
+      "role": "related"
+    }
+  ],
+  "releases": [
+    {
+      "id": "R1",
+      "process_id": "CC",
+      "number": "v1",
+      "status": "approved",
+      "note": "First version",
+      "created_by": "AC",
+      "approved_by": "BP",
+      "approved_at": "2025-11-18"
+    },
+    {
+      "id": "R2",
+      "process_id": "CC",
+      "number": "v2",
+      "status": "approved",
+      "note": "Oscillation and cutting added",
+      "created_by": "AC",
+      "approved_by": "BP",
+      "approved_at": "2026-03-03"
+    },
+    {
+      "id": "R3",
+      "process_id": "CC",
+      "number": "v3",
+      "status": "approved",
+      "note": "After mould powder change CC-31",
+      "created_by": "AC",
+      "approved_by": "BP",
+      "approved_at": "2026-09-12"
+    }
+  ],
+  "_notes": "Invented sample data. [BRACKETED] values are placeholders. Revisions/release items are not included; each release would list (object, revision) pairs."
 }

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Team Tasks – Search everything</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1D2124;background:#FFFFFF}
+a{color:#2D5BA8}a:hover{color:#1E4686}
+mark{background:#F7DCC9;color:inherit;border-radius:2px;padding:0 1px}
+</style>
+</helmet>
+<div role="dialog" aria-label="Search everything" style="width: 720px; height: 700px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #DDD8CF; border-radius: 12px; box-shadow: 0 16px 40px rgba(29,33,36,0.2); display: flex; flex-direction: column; overflow: hidden">
+
+<div style="display: flex; align-items: center; gap: 12px; padding: 0 20px; height: 64px; border-bottom: 1px solid #E8E4DC">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5E5A54" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+<input type="search" aria-label="Search tasks, process changes, knowledge and defects" value="mould powder" style="flex-grow: 1; border: 0; outline: none; font: 500 18px 'IBM Plex Sans', sans-serif; color: #1D2124">
+<a href="Main.dc.html" style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 2px 6px; border: 1px solid #CFCAC1; border-radius: 4px; color: #5E5A54; text-decoration: none">Esc</a>
+</div>
+
+<div role="group" aria-label="Filter results" style="display: flex; gap: 6px; padding: 12px 20px; border-bottom: 1px solid #EEEAE3">
+<button type="button" aria-pressed="true" style="height: 32px; padding: 0 12px; border: 1px solid #1D2124; border-radius: 999px; background: #1D2124; color: #FFFFFF; font: 500 13px 'IBM Plex Sans', sans-serif">All · 7</button>
+<button type="button" aria-pressed="false" style="height: 32px; padding: 0 12px; border: 1px solid #CFCAC1; border-radius: 999px; background: #FFFFFF; color: #3A3733; font: 500 13px 'IBM Plex Sans', sans-serif">Knowledge · 3</button>
+<button type="button" aria-pressed="false" style="height: 32px; padding: 0 12px; border: 1px solid #CFCAC1; border-radius: 999px; background: #FFFFFF; color: #3A3733; font: 500 13px 'IBM Plex Sans', sans-serif">Process changes · 1</button>
+<button type="button" aria-pressed="false" style="height: 32px; padding: 0 12px; border: 1px solid #CFCAC1; border-radius: 999px; background: #FFFFFF; color: #3A3733; font: 500 13px 'IBM Plex Sans', sans-serif">Tasks · 2</button>
+<button type="button" aria-pressed="false" style="height: 32px; padding: 0 12px; border: 1px solid #CFCAC1; border-radius: 999px; background: #FFFFFF; color: #3A3733; font: 500 13px 'IBM Plex Sans', sans-serif">Defects · 1</button>
+</div>
+
+<div style="flex-grow: 1; min-height: 0; overflow: auto; padding: 8px 12px 12px; display: flex; flex-direction: column; gap: 4px">
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="4">
+<div style="padding: 10px 8px 4px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">{{g.name}}</div>
+<sc-for list="{{g.items}}" as="r" hint-placeholder-count="2">
+<a href="{{r.href}}" style="{{r.style}}">
+<span style="{{r.sw}}"></span>
+<span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="display: flex; align-items: baseline; gap: 8px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; color: #3A3733">{{r.id}}</span><span style="font-size: 14px; font-weight: 600; color: #1D2124">{{r.title}}</span></span>
+<span style="font-size: 13px; color: #5E5A54; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.context}}</span>
+</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #5E5A54; white-space: nowrap; flex-shrink: 0">{{r.url}}</span>
+</a>
+</sc-for>
+</sc-for>
+</div>
+
+<div style="display: flex; align-items: center; gap: 16px; padding: 10px 20px; border-top: 1px solid #E8E4DC; background: #FBFAF7; font-size: 12px; color: #5E5A54">
+<span>↑ ↓ move</span><span>Enter open</span><span>Ctrl Enter open in new tab</span>
+<span style="margin-left: auto">Every result has its own link you can share</span>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":720,"height":700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const sw = (s) => 'width: 12px; height: 28px; border-radius: 3px; flex-shrink: 0; box-sizing: border-box; ' + s;
+    const row = (first) => 'display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 6px 10px; border-radius: 8px; text-decoration: none; ' + (first ? 'background: #F2EFEA; box-shadow: inset 0 0 0 1px #CFCAC1;' : 'background: transparent;');
+    return {
+      groups: [
+        { name: 'Knowledge', items: [
+          { id: '', title: 'Mould powder', context: 'Process step · Continuous casting › Mould', url: '/knowledge/stl/cc/m-powder', href: 'ProcessMap.dc.html', sw: sw('background: #FFFFFF; border: 1.5px solid #1D2124;'), style: row(true) },
+          { id: '', title: 'Powder entrapment', context: 'Failure mode · liquid mould powder is dragged into the shell…', url: '/knowledge/stl/cc/fm-powder', href: 'ProcessMap.dc.html', sw: sw('background: #FBEFE8; border: 1px solid #D08A62;'), style: row(false) },
+          { id: '', title: 'Powder datasheets', context: 'Reference · supplier-portal.example.com/powders', url: '/knowledge/stl/cc/ref-powder', href: 'ProcessMap.dc.html', sw: sw('background: #E3EBF8; border: 1px solid #6C8FCF;'), style: row(false) }
+        ] },
+        { name: 'Process changes', items: [
+          { id: 'CC-31', title: 'Mould powder type B', context: 'Continuous casting · in effect since 18 May', url: '/changes/stl/cc/CC-31', href: 'ChangeDetail.dc.html', sw: sw('background: #C4561C;'), style: row(false) }
+        ] },
+        { name: 'Tasks', items: [
+          { id: 'T-104', title: 'Root-cause analysis of surface defects on line 2', context: 'In conversation: “…cluster right after the switch to mould powder type B…”', url: '/tasks/T-104', href: 'TaskConversation.dc.html', sw: sw('background: #DCE6F7; border: 1px solid #B9CBEB;'), style: row(false) },
+          { id: 'T-117', title: 'Agree inspection criteria with customer panel', context: 'Description mentions mould powder residues on class A surfaces', url: '/tasks/T-117', href: 'TaskDetail.dc.html', sw: sw('background: #DCE6F7; border: 1px solid #B9CBEB;'), style: row(false) }
+        ] },
+        { name: 'Defects', items: [
+          { id: '', title: 'Sliver lines', context: 'Mould powder or inclusions trapped just under the slab surface…', url: '/cpl/stl/sliver-lines', href: 'DefectView.dc.html', sw: sw('background: #1D2124; border-radius: 999px;'), style: row(false) }
+        ] }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

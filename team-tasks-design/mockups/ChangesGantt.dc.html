@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Team Tasks – Process change timeline</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1D2124;background:#F4F2EE}
+a{color:#2D5BA8}a:hover{color:#1E4686}
+</style>
+</helmet>
+<div style="width: 1440px; height: 960px; display: flex; background: #F4F2EE; overflow: hidden">
+
+<nav aria-label="Main" style="width: 232px; flex-shrink: 0; background: #1D2124; color: #E9E6E0; display: flex; flex-direction: column; gap: 28px; padding: 24px 16px; box-sizing: border-box">
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 8px">
+<div style="width: 28px; height: 28px; border-radius: 6px; background: #C4561C; display: flex; align-items: center; justify-content: center">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h6"></path></svg>
+</div>
+<div style="font-weight: 700; font-size: 16px">Team Tasks</div>
+</div>
+<a href="GlobalSearch.dc.html" style="display: flex; align-items: center; gap: 8px; height: 40px; margin-top: -12px; padding: 0 10px; border-radius: 8px; background: #2A2F33; border: 1px solid #3A4146; color: #B8B4AD; text-decoration: none; font-size: 13px">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+<span style="flex-grow: 1">Search everything</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 1px 5px; border: 1px solid #4A5157; border-radius: 4px">Ctrl K</span>
+</a>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #9A968F; padding: 0 8px 6px">Views</div>
+<a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 6px; color: #D6D2CB; text-decoration: none; font-size: 14px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"></path></svg>
+<span style="flex-grow: 1">Priority</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #9A968F">11</span>
+</a>
+<a href="People.dc.html" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 6px; color: #D6D2CB; text-decoration: none; font-size: 14px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="5" height="16" rx="1"></rect><rect x="10" y="4" width="5" height="11" rx="1"></rect><rect x="17" y="4" width="4" height="14" rx="1"></rect></svg>
+<span style="flex-grow: 1">People</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #9A968F">6</span>
+</a>
+<a href="Projects.dc.html" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 6px; color: #D6D2CB; text-decoration: none; font-size: 14px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+<span style="flex-grow: 1">Projects</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #9A968F">3</span>
+</a>
+<a href="ChangesList.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 6px; background: #30363A; color: #FFFFFF; text-decoration: none; font-size: 14px; font-weight: 600">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F08A55" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M3 12h6M15 12h6"></path></svg>
+<span style="flex-grow: 1">Process changes</span>
+</a>
+<a href="ProcessMap.dc.html" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 6px; color: #D6D2CB; text-decoration: none; font-size: 14px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="9" width="6" height="6" rx="1"></rect><rect x="16" y="3" width="6" height="5" rx="1"></rect><rect x="16" y="16" width="6" height="5" rx="1"></rect><path d="M8 12h4M12 5.5v13M12 5.5h4M12 18.5h4"></path></svg>
+<span style="flex-grow: 1">Process knowledge</span>
+</a>
+</div>
+<div style="margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 12px 8px 0; border-top: 1px solid #353B40">
+<span style="width: 30px; height: 30px; border-radius: 50%; background: #2D5BA8; color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center">AC</span>
+<div style="display: flex; flex-direction: column"><span style="font-size: 13px; font-weight: 600">Anna Claes</span><span style="font-size: 12px; color: #9A968F">STL · Quality</span></div>
+</div>
+</nav>
+
+<main style="flex-grow: 1; display: flex; flex-direction: column; gap: 18px; padding: 32px 40px 24px; box-sizing: border-box; min-width: 0">
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; color: #5E5A54">Process changes › STL</span>
+<h1 style="margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.01em">{{procName}}</h1>
+<p style="margin: 0; font-size: 14px; color: #5E5A54">Tests and process changes that went into operation in the last 6 months, plus what is planned.</p>
+</div>
+<button type="button" style="height: 44px; padding: 0 18px; border: 0; border-radius: 8px; background: #B34A15; color: #FFFFFF; font: 600 14px 'IBM Plex Sans', sans-serif; display: flex; align-items: center; gap: 8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>New change</button>
+</div>
+
+<div style="display: flex; align-items: center; gap: 12px">
+<label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #5E5A54">Department
+<select style="height: 44px; min-width: 96px; border: 1px solid #CFCAC1; border-radius: 8px; background: #fff; font: 14px 'IBM Plex Sans', sans-serif; color: #1D2124; padding: 0 10px"><option>STL</option><option>R&amp;D</option></select></label>
+<div role="group" aria-label="Process" style="display: flex; gap: 4px; background: #E9E5DE; padding: 4px; border-radius: 10px">
+<sc-for list="{{procTabs}}" as="p" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{p.pressed}}" onClick="{{p.pick}}" style="{{p.style}}">{{p.name}}</button>
+</sc-for>
+</div>
+<label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #5E5A54"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Map box</span>
+<select style="height: 44px; max-width: 170px; border: 1px solid #CFCAC1; border-radius: 8px; background: #fff; font: 14px 'IBM Plex Sans', sans-serif; color: #1D2124; padding: 0 10px"><option selected>Whole process</option><option>Trim &amp; stirring</option><option>Desulphurisation</option><option>Temperature control</option></select></label>
+<label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #5E5A54"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Range</span>
+<select style="height: 44px; border: 1px solid #CFCAC1; border-radius: 8px; background: #fff; font: 14px 'IBM Plex Sans', sans-serif; color: #1D2124; padding: 0 10px"><option>Last 3 months</option><option selected>Last 6 months</option><option>Last 12 months</option></select></label>
+<div role="group" aria-label="View" style="margin-left: auto; display: flex; gap: 4px; background: #E9E5DE; padding: 4px; border-radius: 10px">
+<a href="ChangesList.dc.html" style="height: 36px; padding: 0 14px; display: flex; align-items: center; border-radius: 7px; color: #5E5A54; text-decoration: none; font-size: 13px; font-weight: 500">List</a>
+<a href="ChangesGantt.dc.html" aria-current="page" style="height: 36px; padding: 0 14px; display: flex; align-items: center; border-radius: 7px; background: #FFFFFF; color: #1D2124; text-decoration: none; font-size: 13px; font-weight: 600">Timeline</a>
+</div>
+</div>
+
+<div style="display: flex; align-items: center; gap: 24px; font-size: 13px; color: #3A3733">
+<span style="display: flex; align-items: center; gap: 8px"><span style="width: 28px; height: 12px; border-radius: 3px; background: #3A6FC4"></span>Test (has an end date)</span>
+<span style="display: flex; align-items: center; gap: 0"><span style="width: 22px; height: 12px; border-radius: 3px 0 0 3px; background: #C4561C"></span><svg width="8" height="12" viewBox="0 0 8 12" aria-hidden="true"><path d="M0 0L8 6L0 12z" fill="#C4561C"></path></svg><span style="margin-left: 8px">Process change (no end date)</span></span>
+<span style="display: flex; align-items: center; gap: 8px"><span style="width: 24px; height: 8px; border-radius: 3px; border: 2px dashed #3A6FC4"></span>Planned</span>
+<span style="display: flex; align-items: center; gap: 8px"><span style="width: 2px; height: 16px; background: #1D2124"></span>Today</span>
+<span style="margin-left: auto; color: #5E5A54">{{summary}}</span>
+</div>
+
+<div role="figure" aria-label="{{figLabel}}" style="position: relative; background: #FFFFFF; border: 1px solid #DDD8CF; border-radius: 10px; display: flex; flex-direction: column">
+<div style="display: flex; height: 40px; border-bottom: 1px solid #DDD8CF; background: #EFECE6; border-radius: 10px 10px 0 0">
+<div style="width: 300px; flex-shrink: 0; padding: 0 20px; box-sizing: border-box; display: flex; align-items: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Change</div>
+<div style="position: relative; width: 800px; flex-shrink: 0">
+<sc-for list="{{months}}" as="m" hint-placeholder-count="7">
+<span style="{{m.labelStyle}}">{{m.label}}</span>
+</sc-for>
+</div>
+</div>
+<div style="position: relative">
+<div aria-hidden="true" style="position: absolute; left: 300px; top: 0; bottom: 0; width: 800px; pointer-events: none">
+<sc-for list="{{months}}" as="m" hint-placeholder-count="7"><span style="{{m.lineStyle}}"></span></sc-for>
+<span style="{{todayLine}}"></span>
+<span style="{{todayLabel}}">Today 3 Oct</span>
+</div>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+<div style="{{r.rowStyle}}">
+<a href="ChangeDetail.dc.html" style="width: 300px; flex-shrink: 0; padding: 0 16px 0 20px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 2px; text-decoration: none; color: #1D2124; min-width: 0">
+<span style="display: flex; align-items: baseline; gap: 8px; min-width: 0"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #5E5A54; flex-shrink: 0">{{r.id}}</span><span style="font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.title}}</span></span>
+<span style="font-size: 12px; color: #5E5A54">{{r.shape}}</span>
+</a>
+<div style="position: relative; width: 800px; flex-shrink: 0">
+<span style="{{r.track}}"></span>
+<sc-for list="{{r.bars}}" as="b" hint-placeholder-count="2">
+<a href="ChangeDetail.dc.html" aria-label="{{b.aria}}" onMouseEnter="{{b.enter}}" onMouseLeave="{{b.leave}}" onFocus="{{b.enter}}" onBlur="{{b.leave}}" style="{{b.hit}}">
+<span style="{{b.bar}}"></span>
+<sc-if value="{{b.open}}" hint-placeholder-val="{{ false }}">
+<svg width="10" height="16" viewBox="0 0 10 16" aria-hidden="true" style="flex-shrink: 0"><path d="M0 0L10 8L0 16z" fill="#C4561C"></path></svg>
+</sc-if>
+</a>
+<sc-if value="{{b.hovered}}" hint-placeholder-val="{{ false }}">
+<div role="tooltip" style="{{b.tipStyle}}">
+<span style="font-weight: 600; font-size: 13px">{{b.tipTitle}}</span>
+<span style="font-size: 12px; color: #D6D2CB">{{b.tipKind}}</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px">{{b.tipDates}}</span>
+<sc-if value="{{b.hasScope}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #F3D9C9; padding-top: 3px; border-top: 1px solid #3A4146">Scope: {{b.scope}}</span></sc-if>
+</div>
+</sc-if>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":960}}'>
+class Component extends DCLogic {
+  data() {
+    return {
+      procs: [['CV', 'Convertor'], ['LM', 'Ladle metallurgy'], ['CC', 'Continuous casting']],
+      changes: {
+        LM: [
+          ['LM-07', 'Argon stirring rate during trim', [['2026-04-14', '2026-04-14', 'Test', 'IF-01 · Heats 41230–41236 · LF2'], ['2026-04-16', '2026-04-16', 'Follow-up test', 'All ULC grades · LF2'], ['2026-04-21', null, 'Process change', 'All ULC grades · LF1 · LF2']]],
+          ['LM-08', 'Desulphurisation flux, new supplier', [['2026-05-05', '2026-05-16', 'Trial batch 1'], ['2026-06-02', '2026-06-13', 'Trial batch 2']]],
+          ['LM-09', 'Ladle preheating +50 °C', [['2026-05-12', null, 'Process change']]],
+          ['LM-10', 'Lower superheat for slab grades', [['2026-07-08', '2026-07-10', 'Test'], ['2026-08-01', null, 'Process change']]],
+          ['LM-11', 'Calcium wire feeding sequence', [['2026-08-25', '2026-09-05', 'Test'], ['2026-09-22', '2026-10-03', 'Follow-up test', 'CC2 sequences only']]],
+          ['LM-12', 'Temperature probe position', [['2026-10-13', '2026-10-17', 'Planned test']]]
+        ],
+        CV: [
+          ['CV-21', 'Oxygen lance height profile', [['2026-04-07', '2026-04-11', 'Test'], ['2026-05-04', null, 'Process change']]],
+          ['CV-22', 'More shredded scrap in the mix', [['2026-06-01', '2026-06-30', 'Test']]],
+          ['CV-23', 'Slag splashing duration', [['2026-07-15', null, 'Process change']]],
+          ['CV-24', 'Bottom stirring gas flow', [['2026-09-01', '2026-09-05', 'Test'], ['2026-09-15', '2026-09-19', 'Follow-up test']]]
+        ],
+        CC: [
+          ['CC-31', 'Mould powder type B', [['2026-04-20', '2026-04-30', 'Test'], ['2026-05-18', null, 'Process change']]],
+          ['CC-32', 'Casting speed ramp at sequence start', [['2026-06-09', '2026-06-09', 'Test', 'First 3 heats of each sequence'], ['2026-06-11', '2026-06-11', 'Test'], ['2026-06-16', '2026-06-16', 'Test']]],
+          ['CC-33', 'Secondary cooling pattern', [['2026-08-03', null, 'Process change']]],
+          ['CC-34', 'Tundish nozzle immersion depth', [['2026-09-28', '2026-10-09', 'Test', 'Caster 1 only']]]
+        ]
+      }
+    };
+  }
+  renderVals() {
+    const d = this.data();
+    const st = this.state || {};
+    const proc = st.proc || 'LM';
+    const W = 800;
+    const day = (s) => { const p = s.split('-'); return (Date.UTC(+p[0], +p[1] - 1, +p[2]) - Date.UTC(2026, 3, 1)) / 86400000; };
+    const SPAN = day('2026-11-01');
+    const px = W / SPAN;
+    const TODAY = day('2026-10-03');
+    const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const fmt = (s) => { const p = s.split('-'); return (+p[2]) + ' ' + MON[+p[1] - 1]; };
+    const months = [];
+    for (let m = 4; m <= 10; m++) {
+      const x = Math.round(day('2026-' + (m < 10 ? '0' + m : m) + '-01') * px);
+      months.push({
+        label: MON[m - 1] + (m === 4 ? ' 2026' : ''),
+        labelStyle: "position: absolute; left: " + (x + 8) + "px; top: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #3A3733; white-space: nowrap;",
+        lineStyle: 'position: absolute; left: ' + x + 'px; top: 0; bottom: 0; width: 1px; background: #ECE8E1;'
+      });
+    }
+    const tx = Math.round(TODAY * px);
+    const rows = (d.changes[proc] || []).map((c, ri) => {
+      const periods = c[2];
+      const tests = periods.filter((p) => p[1]).length;
+      const hasOpen = periods.some((p) => !p[1]);
+      const shape = (tests ? tests + (tests === 1 ? ' test' : ' tests') : '') + (tests && hasOpen ? ' → ' : '') + (hasOpen ? 'process change' : '');
+      const first = day(periods[0][0]) * px;
+      const lastP = periods[periods.length - 1];
+      const last = lastP[1] ? (day(lastP[1]) + 1) * px : W;
+      const bars = periods.map((p, pi) => {
+        const s = day(p[0]);
+        const x = s * px;
+        const open = !p[1];
+        const planned = s > TODAY;
+        let w = open ? (W - x - 10) : Math.max(6, (day(p[1]) - s + 1) * px);
+        const hovered = st.hover === ri + ':' + pi;
+        const dur = open ? 'in effect since ' + fmt(p[0]) : (p[0] === p[1] ? fmt(p[0]) + ' · 1 day' : fmt(p[0]) + ' – ' + fmt(p[1]) + ' · ' + (day(p[1]) - s + 1) + ' days');
+        const bar = 'display: block; height: 16px; flex-shrink: 0; width: ' + w.toFixed(1) + 'px; box-sizing: border-box; ' +
+          (open ? 'background: #C4561C; border-radius: 4px 0 0 4px;' : planned ? 'background: #FFFFFF; border: 2px dashed #3A6FC4; border-radius: 4px;' : 'background: #3A6FC4; border-radius: 4px;') +
+          (hovered ? ' box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px #1D2124;' : '');
+        return {
+          open: open, hovered: hovered,
+          aria: c[1] + ', ' + p[2] + ', ' + dur,
+          bar: bar,
+          hit: 'position: absolute; left: ' + (x - 4).toFixed(1) + 'px; top: 8px; height: 40px; padding: 0 4px; display: flex; align-items: center; cursor: pointer; z-index: 1;',
+          enter: () => this.setState({ hover: ri + ':' + pi }),
+          leave: () => this.setState({ hover: null }),
+          tipTitle: c[0] + ' · ' + c[1],
+          tipKind: (open ? 'Process change' : planned ? 'Planned test' : 'Test') + (p[2] && p[2] !== 'Test' && p[2] !== 'Process change' ? ' · ' + p[2] : ''),
+          tipDates: dur, scope: p[3] || '', hasScope: !!p[3],
+          tipStyle: 'position: absolute; top: 50px; left: ' + Math.min(Math.max(0, x - 8), W - 250).toFixed(0) + 'px; width: 250px; box-sizing: border-box; padding: 10px 12px; border-radius: 8px; background: #1D2124; color: #FFFFFF; display: flex; flex-direction: column; gap: 3px; z-index: 10; box-shadow: 0 8px 20px rgba(29,33,36,0.25); pointer-events: none;'
+        };
+      });
+      const hoverRow = st.hover && st.hover.split(':')[0] === String(ri);
+      return {
+        id: c[0], title: c[1], shape: shape, bars: bars,
+        track: 'position: absolute; top: 27px; left: ' + first.toFixed(1) + 'px; width: ' + Math.max(0, last - first).toFixed(1) + 'px; height: 2px; background: #D9D4CB;',
+        rowStyle: 'position: relative; display: flex; height: 56px; border-bottom: 1px solid #F0EDE7;' + (hoverRow ? ' z-index: 5; background: rgba(239,236,230,0.45);' : '')
+      };
+    });
+    let nT = 0, nP = 0;
+    (d.changes[proc] || []).forEach((c) => c[2].forEach((p) => { if (p[1]) nT++; else nP++; }));
+    const pname = d.procs.filter((p) => p[0] === proc)[0][1];
+    return {
+      procName: pname,
+      procTabs: d.procs.map((p) => ({
+        name: p[1], pressed: p[0] === proc ? 'true' : 'false',
+        style: "height: 36px; padding: 0 14px; border: 0; border-radius: 7px; cursor: pointer; font: " + (p[0] === proc ? '600' : '500') + " 13px 'IBM Plex Sans', sans-serif; " + (p[0] === proc ? 'background: #FFFFFF; color: #1D2124;' : 'background: transparent; color: #5E5A54;'),
+        pick: () => this.setState({ proc: p[0], hover: null })
+      })),
+      months: months, rows: rows,
+      summary: rows.length + ' changes · ' + nT + ' test periods · ' + nP + ' process changes',
+      figLabel: 'Timeline of tests and process changes for ' + pname + ', April to October 2026',
+      todayLine: 'position: absolute; left: ' + tx + 'px; top: 0; bottom: 0; width: 2px; background: #1D2124;',
+      todayLabel: "position: absolute; left: " + (tx + 6) + "px; bottom: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #1D2124; white-space: nowrap; background: #FFFFFF; padding: 0 3px;"
+    };
+  }
+}
+</script>
+</body>
+</html>

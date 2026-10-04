@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Team Tasks – Edit map node</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1D2124;background:#FFFFFF}
+a{color:#2D5BA8}a:hover{color:#1E4686}
+input::placeholder,textarea::placeholder{color:#7A756D}
+</style>
+</helmet>
+<aside aria-label="Edit map node" style="width: 560px; height: 1280px; box-sizing: border-box; background: #FFFFFF; border-left: 1px solid #DDD8CF; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 20px 28px; border-bottom: 1px solid #E8E4DC">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 12px; color: #5E5A54">Editing box in Continuous casting</span>
+<span style="font-size: 18px; font-weight: 700">Mould level fluctuation</span>
+</div>
+<a href="ProcessMap.dc.html" aria-label="Close" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #1D2124"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+</header>
+
+<div style="flex-grow: 1; min-height: 0; overflow: auto; padding: 22px 28px; display: flex; flex-direction: column; gap: 22px">
+
+<div style="display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 12px">
+<label style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Kind</span>
+<select style="height: 44px; padding: 0 10px; border: 1px solid #CFCAC1; border-radius: 8px; background: #fff; font: 14px 'IBM Plex Sans', sans-serif; color: #1D2124"><option>Process step</option><option>Knowledge</option><option>Reference</option><option>Rule</option><option selected>Failure mode</option><option>Defect</option></select>
+</label>
+<label style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Name</span>
+<input type="text" value="Mould level fluctuation" style="height: 44px; padding: 0 12px; border: 1px solid #CFCAC1; border-radius: 8px; font: 600 15px 'IBM Plex Sans', sans-serif; color: #1D2124">
+</label>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Sits under</span>
+<div style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 6px 0 12px; border: 1px solid #E1DCD3; border-radius: 8px; font-size: 14px">
+<span style="flex-grow: 1">Continuous casting › Mould › <strong>Mould level control</strong></span>
+<button type="button" style="height: 34px; padding: 0 12px; border: 0; border-radius: 6px; background: transparent; font: 500 13px 'IBM Plex Sans', sans-serif; color: #2D5BA8">Move</button>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Description · Markdown</span>
+<div style="display: flex; flex-direction: column; border: 1px solid #CFCAC1; border-radius: 10px; overflow: hidden">
+<div style="display: flex; align-items: center; gap: 2px; padding: 4px 6px; border-bottom: 1px solid #E8E4DC">
+<button type="button" aria-pressed="true" style="height: 32px; padding: 0 10px; border: 0; border-radius: 6px; background: #F2EFEA; font: 600 12px 'IBM Plex Sans', sans-serif; color: #1D2124">Write</button>
+<button type="button" aria-pressed="false" style="height: 32px; padding: 0 10px; border: 0; border-radius: 6px; background: transparent; font: 500 12px 'IBM Plex Sans', sans-serif; color: #5E5A54; margin-right: 8px">Preview</button>
+<button type="button" aria-label="Bold" style="width: 32px; height: 32px; border: 0; border-radius: 6px; background: transparent; font: 700 14px 'IBM Plex Sans', sans-serif; color: #3A3733">B</button>
+<button type="button" aria-label="Italic" style="width: 32px; height: 32px; border: 0; border-radius: 6px; background: transparent; font: italic 500 14px Georgia, serif; color: #3A3733">I</button>
+<button type="button" aria-label="Heading" style="width: 32px; height: 32px; border: 0; border-radius: 6px; background: transparent; font: 700 13px 'IBM Plex Sans', sans-serif; color: #3A3733">H</button>
+<button type="button" aria-label="Bulleted list" style="width: 32px; height: 32px; border: 0; border-radius: 6px; background: transparent; color: #3A3733; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"></path></svg></button>
+<button type="button" aria-label="Insert image" style="width: 32px; height: 32px; border: 0; border-radius: 6px; background: transparent; color: #3A3733; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="M21 16l-5-5-9 9"></path></svg></button>
+</div>
+<textarea rows="7" aria-label="Description" style="border: 0; outline: none; padding: 10px 12px; font: 13px/1.55 'IBM Plex Mono', monospace; color: #1D2124; resize: vertical">Waves at the meniscus pull mould powder and inclusions into the solidifying shell. After rolling they show up as **sliver lines**.
+
+- Typical triggers: nozzle clogging and release, speed changes, argon flow too high
+- Worst at sequence start and after a ladle change</textarea>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Links to other boxes</span>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid #E1DCD3; border-radius: 10px">
+<div style="display: flex; align-items: center; gap: 8px">
+<select aria-label="Link type" style="height: 32px; padding: 0 6px; border: 1px solid #CFCAC1; border-radius: 6px; background: #fff; font: 13px 'IBM Plex Sans', sans-serif"><option selected>leads to</option><option>caused by</option><option>restricted by</option><option>see also</option></select><span style="display: inline-flex; align-items: center; height: 28px; padding: 0 12px; border-radius: 999px; background: #1D2124; color: #FFFFFF; font-size: 13px; font-weight: 500">Sliver lines</span>
+<span style="flex-grow: 1"></span>
+<button type="button" aria-label="Unlink Sliver lines" style="width: 32px; height: 32px; border: 0; border-radius: 6px; background: transparent; color: #5E5A54; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<label style="display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #5E5A54">How it leads to this defect
+<input type="text" value="Meniscus waves fold powder into the shell as it forms." style="height: 38px; padding: 0 10px; border: 1px solid #CFCAC1; border-radius: 6px; font: 13px 'IBM Plex Sans', sans-serif; color: #1D2124"></label>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid #E1DCD3; border-radius: 10px">
+<div style="display: flex; align-items: center; gap: 8px">
+<select aria-label="Link type" style="height: 32px; padding: 0 6px; border: 1px solid #CFCAC1; border-radius: 6px; background: #fff; font: 13px 'IBM Plex Sans', sans-serif"><option selected>leads to</option><option>caused by</option><option>restricted by</option><option>see also</option></select><span style="display: inline-flex; align-items: center; height: 28px; padding: 0 12px; border-radius: 999px; background: #1D2124; color: #FFFFFF; font-size: 13px; font-weight: 500">Longitudinal cracks</span>
+<span style="flex-grow: 1"></span>
+<button type="button" aria-label="Unlink Longitudinal cracks" style="width: 32px; height: 32px; border: 0; border-radius: 6px; background: transparent; color: #5E5A54; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<label style="display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #5E5A54">How it leads to this defect
+<input type="text" value="Uneven shell growth." style="height: 38px; padding: 0 10px; border: 1px solid #CFCAC1; border-radius: 6px; font: 13px 'IBM Plex Sans', sans-serif; color: #1D2124"></label>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid #E1DCD3; border-radius: 10px">
+<select aria-label="Link type" style="height: 32px; padding: 0 6px; border: 1px solid #CFCAC1; border-radius: 6px; background: #fff; font: 13px 'IBM Plex Sans', sans-serif"><option>leads to</option><option>caused by</option><option selected>restricted by</option><option>see also</option></select>
+<span style="display: inline-flex; align-items: center; min-height: 28px; padding: 0 10px; border-radius: 6px; background: #EEE8F6; border: 1px solid #CDBFE3; font-size: 13px; font-weight: 500">Peritectic grades not first in a sequence</span>
+<span style="flex-grow: 1"></span>
+<button type="button" aria-label="Remove link" style="width: 32px; height: 32px; border: 0; border-radius: 6px; background: transparent; color: #5E5A54; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<button type="button" style="align-self: flex-start; height: 38px; padding: 0 14px; border: 1px dashed #948E84; border-radius: 6px; background: #fff; font: 500 13px 'IBM Plex Sans', sans-serif; color: #3A3733">+ Link to another box (or create one)</button>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Controls</span>
+<div style="display: grid; grid-template-columns: 110px minmax(0, 1fr) 36px; gap: 8px; align-items: center">
+<select aria-label="Control 1 type" style="height: 40px; padding: 0 8px; border: 1px solid #CFCAC1; border-radius: 6px; background: #fff; font: 13px 'IBM Plex Sans', sans-serif"><option selected>Prevent</option><option>Detect</option></select>
+<input type="text" aria-label="Control 1" value="Level control loop tuned per slab format" style="height: 40px; min-width: 0; padding: 0 10px; border: 1px solid #CFCAC1; border-radius: 6px; font: 13px 'IBM Plex Sans', sans-serif">
+<button type="button" aria-label="Remove control 1" style="width: 36px; height: 36px; border: 0; border-radius: 6px; background: transparent; color: #5E5A54; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+<span></span><span style="display: flex; gap: 6px; flex-wrap: wrap"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 8px; border-radius: 4px; background: #F2EFEA; font-size: 12px"><span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600">DB</span>Mould level – live</span><button type="button" style="height: 26px; padding: 0 8px; border: 1px dashed #948E84; border-radius: 4px; background: #fff; font: 500 12px 'IBM Plex Sans', sans-serif; color: #3A3733">+ link</button></span><span></span>
+</div>
+<div style="display: grid; grid-template-columns: 110px minmax(0, 1fr) 36px; gap: 8px; align-items: center">
+<select aria-label="Control 2 type" style="height: 40px; padding: 0 8px; border: 1px solid #CFCAC1; border-radius: 6px; background: #fff; font: 13px 'IBM Plex Sans', sans-serif"><option>Prevent</option><option selected>Detect</option></select>
+<input type="text" aria-label="Control 2" value="Alarm above [LIMIT] mm fluctuation; slabs flagged" style="height: 40px; min-width: 0; padding: 0 10px; border: 1px solid #CFCAC1; border-radius: 6px; font: 13px 'IBM Plex Sans', sans-serif">
+<button type="button" aria-label="Remove control 2" style="width: 36px; height: 36px; border: 0; border-radius: 6px; background: transparent; color: #5E5A54; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+<span></span><span style="display: flex; gap: 6px; flex-wrap: wrap"><span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 8px; border-radius: 4px; background: #F2EFEA; font-size: 12px"><span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600">GR</span>Level fluctuation vs. sliver rate</span><button type="button" style="height: 26px; padding: 0 8px; border: 1px dashed #948E84; border-radius: 4px; background: #fff; font: 500 12px 'IBM Plex Sans', sans-serif; color: #3A3733">+ link</button></span><span></span>
+</div>
+<button type="button" style="align-self: flex-start; height: 38px; padding: 0 14px; border: 1px dashed #948E84; border-radius: 6px; background: #fff; font: 500 13px 'IBM Plex Sans', sans-serif; color: #3A3733">+ Add control</button>
+</div>
+
+<fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+<legend style="padding: 0 0 8px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">External link · new</legend>
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 12px; border: 1px solid #CFCAC1; border-radius: 10px; background: #FBFAF7">
+<div style="display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 8px">
+<label style="display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #5E5A54">Kind
+<select style="height: 40px; padding: 0 8px; border: 1px solid #CFCAC1; border-radius: 6px; background: #fff; font: 13px 'IBM Plex Sans', sans-serif; color: #1D2124"><option>Dashboard</option><option>Graph</option><option selected>Calibration diagram</option><option>Document</option></select></label>
+<label style="display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #5E5A54">Label
+<input type="text" value="Eddy-current level sensor" style="height: 40px; padding: 0 10px; border: 1px solid #CFCAC1; border-radius: 6px; font: 13px 'IBM Plex Sans', sans-serif; color: #1D2124"></label>
+</div>
+<label style="display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #5E5A54">URL
+<input type="url" value="https://docs.plant.local/cc/calibration/level-sensor" style="height: 40px; padding: 0 10px; border: 1px solid #CFCAC1; border-radius: 6px; font: 13px 'IBM Plex Mono', monospace; color: #1D2124"></label>
+<label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #3A3733; min-height: 32px">
+<input type="checkbox" style="width: 18px; height: 18px; margin: 0; accent-color: #B34A15">Pass this node as a parameter (adds <code style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: #F2EFEA; padding: 1px 4px; border-radius: 3px">?node=fm-level</code>)
+</label>
+<div style="display: flex; justify-content: flex-end; gap: 8px">
+<button type="button" style="height: 38px; padding: 0 14px; border: 1px solid #CFCAC1; border-radius: 6px; background: #fff; font: 500 13px 'IBM Plex Sans', sans-serif; color: #1D2124">Cancel</button>
+<button type="button" style="height: 38px; padding: 0 14px; border: 0; border-radius: 6px; background: #1D2124; font: 600 13px 'IBM Plex Sans', sans-serif; color: #FFFFFF">Add link</button>
+</div>
+</div>
+</fieldset>
+</div>
+
+<footer style="display: flex; justify-content: flex-end; gap: 10px; padding: 16px 28px; border-top: 1px solid #E8E4DC">
+<a href="ProcessMap.dc.html" style="height: 44px; padding: 0 18px; display: flex; align-items: center; border: 1px solid #CFCAC1; border-radius: 8px; color: #1D2124; text-decoration: none; font-size: 14px; font-weight: 500">Cancel</a>
+<a href="ProcessMap.dc.html" style="height: 44px; padding: 0 20px; display: flex; align-items: center; border-radius: 8px; background: #B34A15; color: #FFFFFF; text-decoration: none; font-size: 14px; font-weight: 600">Save node</a>
+</footer>
+</aside>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":560,"height":1280}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

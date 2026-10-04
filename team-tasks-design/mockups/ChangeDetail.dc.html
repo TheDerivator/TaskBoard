@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Team Tasks – Change detail</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1D2124;background:#FFFFFF}
+a{color:#2D5BA8}a:hover{color:#1E4686}
+input::placeholder{color:#7A756D}
+</style>
+</helmet>
+<aside aria-label="Process change detail" style="width: 560px; height: 960px; box-sizing: border-box; background: #FFFFFF; border-left: 1px solid #DDD8CF; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 20px 28px; border-bottom: 1px solid #E8E4DC">
+<div style="display: flex; align-items: center; gap: 12px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; color: #5E5A54">LM-07</span>
+<span style="display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 999px; background: #FBEFE8; color: #9A3E10; border: 1px solid #F0D2C1; font-size: 12px; font-weight: 600">In effect since 21 Apr</span>
+</div>
+<a href="ChangesList.dc.html" aria-label="Close" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #1D2124">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+</header>
+
+<div role="tablist" aria-label="Change sections" style="display: flex; gap: 4px; padding: 0 20px; border-bottom: 1px solid #E8E4DC">
+<a href="ChangeDetail.dc.html" role="tab" aria-selected="true" style="height: 46px; padding: 0 12px; display: flex; align-items: center; color: #1D2124; text-decoration: none; font-size: 14px; font-weight: 600; box-shadow: inset 0 -2px 0 #B34A15">Details</a>
+<a href="ChangeConversation.dc.html" role="tab" aria-selected="false" style="height: 46px; padding: 0 12px; display: flex; align-items: center; gap: 8px; color: #5E5A54; text-decoration: none; font-size: 14px; font-weight: 500">Conversation<span style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 999px; background: #1D2124; color: #FFFFFF; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center">5</span></a>
+</div>
+
+<div style="flex-grow: 1; min-height: 0; overflow: auto; padding: 24px 28px; display: flex; flex-direction: column; gap: 22px">
+
+<label style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Change</span>
+<input type="text" value="Argon stirring rate during trim" style="height: 48px; padding: 0 12px; border: 1px solid #CFCAC1; border-radius: 8px; font: 600 18px 'IBM Plex Sans', sans-serif; color: #1D2124">
+</label>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+<label style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Department</span>
+<select style="height: 44px; padding: 0 10px; border: 1px solid #CFCAC1; border-radius: 8px; background: #fff; font: 14px 'IBM Plex Sans', sans-serif; color: #1D2124"><option>STL</option></select>
+</label>
+<label style="display: flex; flex-direction: column; gap: 6px; grid-column: span 2">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Process</span>
+<select style="height: 44px; padding: 0 10px; border: 1px solid #CFCAC1; border-radius: 8px; background: #fff; font: 14px 'IBM Plex Sans', sans-serif; color: #1D2124"><option>Convertor</option><option selected>Ladle metallurgy</option><option>Continuous casting</option></select>
+</label>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Where in the knowledge map</span>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<span style="display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 4px 0 12px; border-radius: 6px; background: #FFFFFF; border: 1px solid #BDB6AA; font-size: 13px"><a href="ProcessMap.dc.html" style="color: #1D2124; text-decoration: none">Ladle metallurgy › <strong>Trim &amp; stirring</strong></a><button type="button" aria-label="Unlink Trim and stirring" style="width: 28px; height: 28px; border: 0; border-radius: 4px; background: transparent; color: #5E5A54; display: flex; align-items: center; justify-content: center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></span>
+<span style="display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 4px 0 12px; border-radius: 6px; background: #FBEFE8; border: 1px solid #E3B49A; font-size: 13px"><a href="ProcessMap.dc.html" style="color: #1D2124; text-decoration: none">Inclusion flotation <span style="color: #5E5A54">(failure mode)</span></a><button type="button" aria-label="Unlink Inclusion flotation" style="width: 28px; height: 28px; border: 0; border-radius: 4px; background: transparent; color: #5E5A54; display: flex; align-items: center; justify-content: center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></span>
+<button type="button" style="height: 36px; padding: 0 12px; border: 1px dashed #948E84; border-radius: 6px; background: #fff; font: 500 13px 'IBM Plex Sans', sans-serif; color: #3A3733">+ Link to a box</button>
+</div>
+<span style="font-size: 12px; color: #5E5A54">The change then shows up on those boxes, and on every box above them.</span>
+</div>
+
+<label style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">What changes</span>
+<textarea rows="3" style="padding: 10px 12px; border: 1px solid #CFCAC1; border-radius: 8px; font: 14px/1.5 'IBM Plex Sans', sans-serif; color: #1D2124; resize: vertical">Argon flow during trim additions from [OLD FLOW] to [NEW FLOW] for ultra-low-carbon grades.</textarea>
+</label>
+
+<label style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Why</span>
+<textarea rows="2" style="padding: 10px 12px; border: 1px solid #CFCAC1; border-radius: 8px; font: 14px/1.5 'IBM Plex Sans', sans-serif; color: #1D2124; resize: vertical">Reduce inclusions in ultra-low-carbon grades.</textarea>
+</label>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Owner</span>
+<button type="button" style="height: 48px; display: flex; align-items: center; gap: 12px; padding: 0 12px; border: 1px solid #CFCAC1; border-radius: 8px; background: #fff; font: 14px 'IBM Plex Sans', sans-serif; color: #1D2124; text-align: left">
+<span style="width: 30px; height: 30px; border-radius: 50%; background: #2D5BA8; color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center">AC</span>
+<span style="flex-grow: 1; font-weight: 600">Anna Claes</span>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5E5A54" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+</button>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: baseline; justify-content: space-between">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Periods in effect</span>
+<span style="font-size: 12px; color: #5E5A54">Posted in the conversation</span>
+</div>
+<div style="display: flex; gap: 12px; padding: 12px; border: 1px solid #E8E4DC; border-radius: 8px">
+<span style="width: 10px; height: 22px; border-radius: 3px; background: #3A6FC4; flex-shrink: 0; margin-top: 2px"></span>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; align-items: baseline; gap: 10px"><span style="font-size: 14px; font-weight: 600">Test</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #3A3733">14 Apr 2026 · 1 day</span></div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px"><span style="display: inline-flex; align-items: center; height: 22px; padding: 0 7px; border-radius: 4px; background: #F2EFEA; border: 1px solid #E1DCD3; font-size: 12px; color: #3A3733; white-space: nowrap">IF-01</span><span style="display: inline-flex; align-items: center; height: 22px; padding: 0 7px; border-radius: 4px; background: #F2EFEA; border: 1px solid #E1DCD3; font-size: 12px; color: #3A3733; white-space: nowrap">Heats 41230–41236</span><span style="display: inline-flex; align-items: center; height: 22px; padding: 0 7px; border-radius: 4px; background: #F2EFEA; border: 1px solid #E1DCD3; font-size: 12px; color: #3A3733; white-space: nowrap">LF2</span></div>
+</div>
+<a href="ChangeConversation.dc.html" style="align-self: center; height: 36px; padding: 0 8px; display: flex; align-items: center; font-size: 13px; font-weight: 500; text-decoration: none; white-space: nowrap; flex-shrink: 0">View post</a>
+</div>
+<div style="display: flex; gap: 12px; padding: 12px; border: 1px solid #E8E4DC; border-radius: 8px">
+<span style="width: 10px; height: 22px; border-radius: 3px; background: #3A6FC4; flex-shrink: 0; margin-top: 2px"></span>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; align-items: baseline; gap: 10px"><span style="font-size: 14px; font-weight: 600">Follow-up test</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #3A3733">16 Apr 2026 · 1 day</span></div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px"><span style="display: inline-flex; align-items: center; height: 22px; padding: 0 7px; border-radius: 4px; background: #F2EFEA; border: 1px solid #E1DCD3; font-size: 12px; color: #3A3733; white-space: nowrap">All ULC grades</span><span style="display: inline-flex; align-items: center; height: 22px; padding: 0 7px; border-radius: 4px; background: #F2EFEA; border: 1px solid #E1DCD3; font-size: 12px; color: #3A3733; white-space: nowrap">LF2</span></div>
+</div>
+<a href="ChangeConversation.dc.html" style="align-self: center; height: 36px; padding: 0 8px; display: flex; align-items: center; font-size: 13px; font-weight: 500; text-decoration: none; white-space: nowrap; flex-shrink: 0">View post</a>
+</div>
+<div style="display: flex; gap: 12px; padding: 12px; border: 1px solid #E8E4DC; border-radius: 8px">
+<span style="width: 10px; height: 22px; border-radius: 3px; background: #C4561C; flex-shrink: 0; margin-top: 2px"></span>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; align-items: baseline; gap: 10px"><span style="font-size: 14px; font-weight: 600">Process change</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #3A3733">from 21 Apr 2026 · no end date</span></div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px"><span style="display: inline-flex; align-items: center; height: 22px; padding: 0 7px; border-radius: 4px; background: #F2EFEA; border: 1px solid #E1DCD3; font-size: 12px; color: #3A3733; white-space: nowrap">All ULC grades</span><span style="display: inline-flex; align-items: center; height: 22px; padding: 0 7px; border-radius: 4px; background: #F2EFEA; border: 1px solid #E1DCD3; font-size: 12px; color: #3A3733; white-space: nowrap">LF1</span><span style="display: inline-flex; align-items: center; height: 22px; padding: 0 7px; border-radius: 4px; background: #F2EFEA; border: 1px solid #E1DCD3; font-size: 12px; color: #3A3733; white-space: nowrap">LF2</span></div>
+</div>
+<a href="ChangeConversation.dc.html" style="align-self: center; height: 36px; padding: 0 8px; display: flex; align-items: center; font-size: 13px; font-weight: 500; text-decoration: none; white-space: nowrap; flex-shrink: 0">View post</a>
+</div>
+<a href="ChangeConversation.dc.html" style="align-self: flex-start; height: 40px; padding: 0 14px; display: flex; align-items: center; border: 1px dashed #948E84; border-radius: 6px; background: #fff; font-size: 13px; font-weight: 500; color: #3A3733; text-decoration: none">+ Post a period</a>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">At a glance</span>
+<div aria-hidden="true" style="position: relative; height: 28px; border-radius: 6px; background: #F4F2EE">
+<span style="position: absolute; left: 12px; right: 12px; top: 13px; height: 2px; background: #D9D4CB"></span>
+<span style="position: absolute; left: 12px; top: 6px; width: 8px; height: 16px; border-radius: 3px; background: #3A6FC4"></span>
+<span style="position: absolute; left: 40px; top: 6px; width: 8px; height: 16px; border-radius: 3px; background: #3A6FC4"></span>
+<span style="position: absolute; left: 96px; right: 22px; top: 6px; height: 16px; border-radius: 3px 0 0 3px; background: #C4561C"></span>
+<svg width="10" height="16" viewBox="0 0 10 16" style="position: absolute; right: 12px; top: 6px"><path d="M0 0L10 8L0 16z" fill="#C4561C"></path></svg>
+</div>
+<span style="font-size: 12px; color: #5E5A54">2 tests, then a permanent process change from 21 Apr 2026.</span>
+</div>
+</div>
+
+<footer style="display: flex; justify-content: flex-end; gap: 10px; padding: 16px 28px; border-top: 1px solid #E8E4DC">
+<a href="ChangesList.dc.html" style="height: 44px; padding: 0 18px; display: flex; align-items: center; border: 1px solid #CFCAC1; border-radius: 8px; color: #1D2124; text-decoration: none; font-size: 14px; font-weight: 500">Cancel</a>
+<a href="ChangesList.dc.html" style="height: 44px; padding: 0 20px; display: flex; align-items: center; border-radius: 8px; background: #B34A15; color: #FFFFFF; text-decoration: none; font-size: 14px; font-weight: 600">Save change</a>
+</footer>
+</aside>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":560,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

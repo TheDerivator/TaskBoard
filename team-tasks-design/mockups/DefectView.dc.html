@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Team Tasks – Control plan</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1D2124;background:#F4F2EE}
+a{color:#2D5BA8}a:hover{color:#1E4686}
+input::placeholder{color:#7A756D}
+</style>
+</helmet>
+<div style="width: 1440px; height: 960px; display: flex; background: #F4F2EE; overflow: hidden">
+
+<nav aria-label="Main" style="width: 232px; flex-shrink: 0; background: #1D2124; color: #E9E6E0; display: flex; flex-direction: column; gap: 28px; padding: 24px 16px; box-sizing: border-box">
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 8px">
+<div style="width: 28px; height: 28px; border-radius: 6px; background: #C4561C; display: flex; align-items: center; justify-content: center">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h6"></path></svg>
+</div>
+<div style="font-weight: 700; font-size: 16px">Team Tasks</div>
+</div>
+<a href="GlobalSearch.dc.html" style="display: flex; align-items: center; gap: 8px; height: 40px; margin-top: -12px; padding: 0 10px; border-radius: 8px; background: #2A2F33; border: 1px solid #3A4146; color: #B8B4AD; text-decoration: none; font-size: 13px">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+<span style="flex-grow: 1">Search everything</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 1px 5px; border: 1px solid #4A5157; border-radius: 4px">Ctrl K</span>
+</a>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #9A968F; padding: 0 8px 6px">Views</div>
+<a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 6px; color: #D6D2CB; text-decoration: none; font-size: 14px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"></path></svg>
+<span style="flex-grow: 1">Priority</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #9A968F">11</span>
+</a>
+<a href="People.dc.html" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 6px; color: #D6D2CB; text-decoration: none; font-size: 14px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="5" height="16" rx="1"></rect><rect x="10" y="4" width="5" height="11" rx="1"></rect><rect x="17" y="4" width="4" height="14" rx="1"></rect></svg>
+<span style="flex-grow: 1">People</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #9A968F">6</span>
+</a>
+<a href="Projects.dc.html" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 6px; color: #D6D2CB; text-decoration: none; font-size: 14px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+<span style="flex-grow: 1">Projects</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #9A968F">3</span>
+</a>
+<a href="ChangesList.dc.html" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 6px; color: #D6D2CB; text-decoration: none; font-size: 14px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M3 12h6M15 12h6"></path></svg>
+<span style="flex-grow: 1">Process changes</span>
+</a>
+<a href="ProcessMap.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 6px; background: #30363A; color: #FFFFFF; text-decoration: none; font-size: 14px; font-weight: 600">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F08A55" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="9" width="6" height="6" rx="1"></rect><rect x="16" y="3" width="6" height="5" rx="1"></rect><rect x="16" y="16" width="6" height="5" rx="1"></rect><path d="M8 12h4M12 5.5v13M12 5.5h4M12 18.5h4"></path></svg>
+<span style="flex-grow: 1">Process knowledge</span>
+</a>
+</div>
+<div style="margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 12px 8px 0; border-top: 1px solid #353B40">
+<span style="width: 30px; height: 30px; border-radius: 50%; background: #2D5BA8; color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center">AC</span>
+<div style="display: flex; flex-direction: column"><span style="font-size: 13px; font-weight: 600">Anna Claes</span><span style="font-size: 12px; color: #9A968F">STL · Quality</span></div>
+</div>
+</nav>
+
+<div style="width: 260px; flex-shrink: 0; background: #FBFAF7; border-right: 1px solid #DDD8CF; display: flex; flex-direction: column; gap: 14px; padding: 28px 12px; box-sizing: border-box; overflow: auto">
+<h2 style="margin: 0; padding: 0 8px; font-size: 18px; font-weight: 700">Defects</h2>
+<label style="display: flex; align-items: center; gap: 8px; height: 40px; margin: 0 4px; padding: 0 10px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #CFCAC1; border-radius: 8px">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5E5A54" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+<input type="search" aria-label="Find a defect" placeholder="Find a defect…" style="flex-grow: 1; border: 0; outline: none; background: transparent; font: 14px 'IBM Plex Sans', sans-serif; min-width: 0">
+</label>
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="padding: 6px 8px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">{{g.name}}</span>
+<sc-for list="{{g.items}}" as="d" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{d.pressed}}" onClick="{{d.pick}}" style="{{d.style}}">
+<span style="flex-grow: 1; text-align: left">{{d.name}}</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5E5A54" title="Known causes">{{d.count}}</span>
+</button>
+</sc-for>
+</div>
+</sc-for>
+</div>
+
+<main style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column">
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 28px 28px 18px; border-bottom: 1px solid #DDD8CF">
+<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<span style="font-size: 13px; color: #5E5A54">Process knowledge › STL › Control plan</span>
+<div style="display: flex; align-items: center; gap: 12px">
+<h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.01em">{{d.name}}</h1>
+<span style="display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px; background: #1D2124; color: #FFFFFF; font-size: 12px; font-weight: 600">{{d.cat}}</span>
+</div>
+</div>
+
+</div>
+<div style="display: flex; align-items: center; gap: 12px">
+<label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #5E5A54">Department
+<select style="height: 44px; min-width: 96px; border: 1px solid #CFCAC1; border-radius: 8px; background: #fff; font: 14px 'IBM Plex Sans', sans-serif; color: #1D2124; padding: 0 10px"><option>STL</option><option>R&amp;D</option></select></label>
+<div role="group" aria-label="Process" style="display: flex; gap: 4px; background: #E9E5DE; padding: 4px; border-radius: 10px">
+<button type="button" aria-pressed="true" style="height: 36px; padding: 0 14px; display: flex; align-items: center; border: 0; border-radius: 7px; background: #FFFFFF; color: #1D2124; text-decoration: none; font: 600 13px 'IBM Plex Sans', sans-serif; cursor: pointer">All processes</button>
+<button type="button" aria-pressed="false" style="height: 36px; padding: 0 14px; display: flex; align-items: center; border: 0; border-radius: 7px; background: transparent; color: #5E5A54; text-decoration: none; font: 500 13px 'IBM Plex Sans', sans-serif; cursor: pointer">Convertor</button>
+<button type="button" aria-pressed="false" style="height: 36px; padding: 0 14px; display: flex; align-items: center; border: 0; border-radius: 7px; background: transparent; color: #5E5A54; text-decoration: none; font: 500 13px 'IBM Plex Sans', sans-serif; cursor: pointer">Ladle metallurgy</button>
+<button type="button" aria-pressed="false" style="height: 36px; padding: 0 14px; display: flex; align-items: center; border: 0; border-radius: 7px; background: transparent; color: #5E5A54; text-decoration: none; font: 500 13px 'IBM Plex Sans', sans-serif; cursor: pointer">Continuous casting</button>
+</div>
+<div role="group" aria-label="View" style="margin-left: auto; display: flex; gap: 4px; background: #E9E5DE; padding: 4px; border-radius: 10px">
+<a href="ProcessMap.dc.html" title="The full knowledge map" style="height: 36px; padding: 0 14px; display: flex; align-items: center; border-radius: 7px; text-decoration: none; font: 500 13px 'IBM Plex Sans', sans-serif; background: transparent; color: #5E5A54">Knowledge</a>
+<a href="FmeaMap.dc.html" title="Failure modes and the steps they sit in" style="height: 36px; padding: 0 14px; display: flex; align-items: center; border-radius: 7px; text-decoration: none; font: 500 13px 'IBM Plex Sans', sans-serif; background: transparent; color: #5E5A54">FMEA</a>
+<a href="DefectView.dc.html" aria-current="page" title="Control plan: from defect to controls" style="height: 36px; padding: 0 14px; display: flex; align-items: center; border-radius: 7px; text-decoration: none; font: 600 13px 'IBM Plex Sans', sans-serif; background: #FFFFFF; color: #1D2124">CPL</a>
+</div>
+</div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 8px 8px 8px 12px; background: #FFFFFF; border: 1px solid #DDD8CF; border-radius: 10px; flex-wrap: wrap">
+<span style="display: inline-flex; align-items: center; height: 28px; padding: 0 10px; border-radius: 6px; background: #1D2124; color: #FFFFFF; font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600">CPL v3</span>
+<span style="font-size: 13px; color: #3A3733">Released with FMEA v3 on 12 Sep 2026</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: #E3EBF8; color: #1E4686; font-size: 12px; font-weight: 600"><span style="width: 8px; height: 8px; border-radius: 50%; background: #2D5BA8"></span>Draft: 3 changes since v3</span>
+<label style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #5E5A54; margin-left: auto">Viewing
+<select style="height: 36px; border: 1px solid #CFCAC1; border-radius: 6px; background: #fff; font: 13px 'IBM Plex Sans', sans-serif; color: #1D2124; padding: 0 8px"><option selected>Current draft</option><option>v3 · 12 Sep 2026</option><option>v2 · 3 Mar 2026</option></select></label>
+<button type="button" style="height: 36px; padding: 0 12px; border: 1px solid #CFCAC1; border-radius: 6px; background: #FFFFFF; font: 500 13px 'IBM Plex Sans', sans-serif; color: #1D2124">Export PDF</button>
+<a href="Release.dc.html" style="height: 36px; padding: 0 14px; display: flex; align-items: center; border-radius: 6px; background: #B34A15; color: #FFFFFF; text-decoration: none; font-size: 13px; font-weight: 600">Review &amp; release v4</a>
+</div>
+<p style="margin: 0; max-width: 760px; font-size: 14px; line-height: 1.55; color: #3A3733">{{d.desc}}</p>
+<sc-if value="{{d.hasRelated}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap">
+<span style="font-size: 12px; color: #5E5A54; margin-right: 4px">Related</span>
+<sc-for list="{{d.related}}" as="x" hint-placeholder-count="2"><a href="{{x.href}}" style="display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 6px; background: #EBE8E2; font-size: 12px; color: #1D2124; text-decoration: none"><span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600">{{x.id}}</span>{{x.label}}</a></sc-for>
+</div>
+</sc-if>
+</div>
+
+<div style="flex-grow: 1; min-height: 0; display: flex">
+<section aria-label="How it arises" style="width: 560px; flex-shrink: 0; overflow: auto; background-color: #F4F2EE; background-image: radial-gradient(#DAD5CC 1px, transparent 1px); background-size: 20px 20px; display: flex; flex-direction: column">
+<div style="display: flex; padding: 16px 24px 0; gap: 0; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">
+<span style="width: 190px">Defect</span><span style="width: 160px">Where</span><span>How (failure mode)</span>
+</div>
+<div style="{{mapStyle}}">
+<sc-for list="{{lines}}" as="l" hint-placeholder-count="8"><span style="{{l.style}}"></span></sc-for>
+<sc-for list="{{nodes}}" as="n" hint-placeholder-count="7">
+<sc-if value="{{n.isButton}}" hint-placeholder-val="{{ true }}">
+<button type="button" aria-pressed="{{n.selected}}" onClick="{{n.select}}" style="{{n.style}}">
+<span style="{{n.labelStyle}}">{{n.label}}</span>
+<span style="font-size: 11px; color: #5E5A54; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{n.sub}}</span>
+</button>
+</sc-if>
+<sc-if value="{{n.isStatic}}" hint-placeholder-val="{{ false }}">
+<div style="{{n.style}}"><span style="{{n.labelStyle}}">{{n.label}}</span></div>
+</sc-if>
+</sc-for>
+</div>
+</section>
+
+<aside aria-label="How to control it" style="flex-grow: 1; min-width: 0; background: #FFFFFF; border-left: 1px solid #DDD8CF; overflow: auto; display: flex; flex-direction: column">
+<div style="padding: 20px 24px 16px; border-bottom: 1px solid #E8E4DC; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<span style="display: inline-flex; align-items: center; height: 24px; padding: 0 9px; border-radius: 4px; background: #FBEFE8; color: #9A3E10; font-size: 12px; font-weight: 600">Failure mode</span>
+<span style="display: flex; align-items: center; gap: 10px"><a href="ProcessMap.dc.html" style="font-size: 13px; font-weight: 500">Show in knowledge map</a><button type="button" aria-label="Copy link" title="/cpl/stl/sliver-lines/fm-level" style="width: 36px; height: 36px; border: 1px solid #CFCAC1; border-radius: 8px; background: #FFFFFF; color: #1D2124; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"></path></svg></button></span>
+</div>
+<span style="font-size: 12px; color: #5E5A54">{{c.path}}</span>
+<h2 style="margin: 0; font-size: 20px; font-weight: 700">{{c.name}}</h2>
+</div>
+<div style="padding: 16px 24px 24px; display: flex; flex-direction: column; gap: 20px">
+<section style="display: flex; flex-direction: column; gap: 6px">
+<h3 style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">{{c.mechTitle}}</h3>
+<p style="margin: 0; font-size: 14px; line-height: 1.55">{{c.mech}}</p>
+</section>
+<section style="display: flex; flex-direction: column; gap: 10px">
+<h3 style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">How it is controlled</h3>
+<sc-for list="{{c.controls}}" as="k" hint-placeholder-count="2">
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid #E1DCD3; border-radius: 10px">
+<div style="display: flex; gap: 10px; align-items: flex-start"><span style="{{k.tagStyle}}">{{k.type}}</span><span style="font-size: 14px; line-height: 1.45">{{k.text}}</span></div>
+<sc-for list="{{k.links}}" as="r" hint-placeholder-count="1">
+<a href="https://example.com" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 4px 10px; border-radius: 8px; background: #F7F5F1; text-decoration: none; color: #1D2124">
+<span style="width: 30px; height: 30px; border-radius: 6px; background: #FFFFFF; border: 1px solid #E1DCD3; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; color: #3A3733">{{r.abbr}}</span>
+<span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column"><span style="font-size: 13px; font-weight: 600">{{r.label}}</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #5E5A54">{{r.kind}} · {{r.host}}</span></span>
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5E5A54" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Opens in a new tab" style="flex-shrink: 0"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"></path></svg>
+</a>
+</sc-for>
+</div>
+</sc-for>
+<sc-if value="{{c.noControls}}" hint-placeholder-val="{{ false }}">
+<div style="padding: 16px; border: 1.5px dashed #CFCAC1; border-radius: 8px; font-size: 13px; color: #5E5A54; display: flex; flex-direction: column; gap: 8px; align-items: flex-start">No controls documented for this cause yet.<a href="NodeEdit.dc.html" style="font-weight: 600">Add a control</a></div>
+</sc-if>
+</section>
+</div>
+</aside>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":960}}'>
+class Component extends DCLogic {
+  data() {
+    const L = (abbr, kind, label, host) => ({ abbr: abbr, kind: kind, label: label, host: host });
+    const DB = (l) => L('DB', 'Dashboard', l, 'grafana.plant.local');
+    const GR = (l) => L('GR', 'Graph', l, 'shiny.qa.local');
+    const CAL = (l) => L('CAL', 'Calibration diagram', l, 'docs.plant.local');
+    const DOC = (l) => L('DOC', 'Document', l, 'docs.plant.local');
+    return [
+      { id: 'sliver', group: 'Surface', name: 'Sliver lines', cat: 'Surface defect',
+        desc: 'Thin lines along the rolling direction on the strip surface. Mould powder or inclusions trapped just under the slab surface get stretched out during hot and cold rolling.',
+        related: [{ id: 'T-104', label: 'Root-cause analysis line 2', href: 'Main.dc.html' }, { id: 'T-117', label: 'Inspection criteria', href: 'Main.dc.html' }, { id: 'CC-31', label: 'Mould powder type B', href: 'ChangesList.dc.html' }],
+        causes: [
+          { step: 'Mould', sub: 'Mould level control', fm: 'Mould level fluctuation', mech: 'Waves at the meniscus fold mould powder into the shell as it forms. The worst events follow a nozzle clog release or a speed change.',
+            controls: [['Prevent', 'Level control loop tuned per slab format', [DB('Mould level – live')]], ['Prevent', 'Level sensor calibrated every [INTERVAL]', [CAL('Eddy-current level sensor')]], ['Detect', 'Alarm above [LIMIT] mm fluctuation; affected slabs flagged for inspection', [GR('Level fluctuation vs. sliver rate')]]] },
+          { step: 'Mould', sub: 'Mould powder', fm: 'Powder entrapment', mech: 'Liquid powder is dragged under when the flow near the meniscus is too strong or the powder is too fluid for the grade.',
+            controls: [['Prevent', 'Powder type chosen per grade family', [DOC('Powder selection table')]], ['Detect', 'Powder consumption tracked per heat', [GR('Powder consumption per heat')]]] },
+          { step: 'Tundish', sub: 'Flow control', fm: 'Nozzle clogging', mech: 'A clog that breaks loose causes a sudden level jump in the mould, which then entraps powder.',
+            controls: [['Prevent', 'Calcium treatment in ladle metallurgy', []], ['Detect', 'Stopper position trend', [DB('Stopper position')]]] },
+          { step: 'Tundish', sub: 'Slag & refractory', fm: 'Slag carry-over', mech: 'Tundish slag reaches the mould during a ladle change and gets trapped near the surface.',
+            controls: [['Prevent', 'Minimum tundish weight during ladle change', [DB('Tundish weight')]], ['Detect', 'Slag detection on the ladle shroud', [CAL('Slag detector')]]] }
+        ] },
+      { id: 'blisters', group: 'Surface', name: 'Blisters', cat: 'Surface defect', desc: 'Raised bubbles on the strip surface, often after annealing or coating.', causes: [{ step: 'Mould', sub: 'Mould powder', fm: 'Powder entrapment', mech: 'Entrapped powder with gas leaves a pocket under the surface.', controls: [] }] },
+      { id: 'incl', group: 'Internal', name: 'Inclusions', cat: 'Internal defect', desc: 'Non-metallic particles inside the steel.', causes: [{ step: 'Tundish', sub: 'Slag & refractory', fm: 'Slag carry-over', mech: 'Slag particles stay in the steel.', controls: [] }] },
+      { id: 'trans', group: 'Cracks', name: 'Transverse cracks', cat: 'Crack', desc: 'Cracks across the casting direction, usually at the slab corners or in the oscillation marks.',
+        causes: [
+          { step: 'Mould', sub: 'Oscillation', fm: 'Deep oscillation marks', mech: 'Cracks start in the bottom of deep marks.', controls: [['Prevent', 'Oscillation settings per grade', [DOC('Oscillation table')]]] },
+          { step: 'Bow / unbending', sub: 'Unbending point', fm: 'Unbending in ductility trough', mech: 'The surface is strained while the steel has low ductility.', controls: [['Detect', 'Surface temperature at unbending', [DB('Strand temperatures')]]] }
+        ] },
+      { id: 'long', group: 'Cracks', name: 'Longitudinal cracks', cat: 'Crack', desc: 'Cracks along the casting direction, mostly in the slab centre.', causes: [{ step: 'Mould', sub: 'Mould level control', fm: 'Mould level fluctuation', mech: 'Uneven shell growth.', controls: [] }] },
+      { id: 'corner', group: 'Cracks', name: 'Corner cracks', cat: 'Crack', desc: 'Cracks at slab corners.', causes: [{ step: 'Secondary cooling', sub: 'Spray zones', fm: 'Uneven spray cooling', mech: 'Corners overcool.', controls: [] }] },
+      { id: 'edge', group: 'Other', name: 'Edge defects', cat: 'Other', desc: 'Damage at the slab ends.', causes: [{ step: 'Cutting', sub: 'Torch cutting', fm: 'Burr at cut edge', mech: 'Burr rolled into the strip.', controls: [] }] }
+    ];
+  }
+  renderVals() {
+    const D = this.data();
+    const st = this.state || {};
+    const dId = st.d || 'sliver';
+    const def = D.filter((x) => x.id === dId)[0];
+    const cIdx = Math.min(st.c || 0, def.causes.length - 1);
+    const cause = def.causes[cIdx];
+    const groups = [];
+    D.forEach((x) => {
+      let g = groups.filter((y) => y.name === x.group)[0];
+      if (!g) { g = { name: x.group, items: [] }; groups.push(g); }
+      const on = x.id === dId;
+      g.items.push({ name: x.name, count: String(x.causes.length), pressed: on ? 'true' : 'false',
+        style: "display: flex; align-items: center; gap: 8px; min-height: 38px; padding: 0 10px; border-radius: 6px; cursor: pointer; font: " + (on ? '600' : '400') + " 14px 'IBM Plex Sans', sans-serif; color: #1D2124; " + (on ? 'background: #FFFFFF; border: 1px solid #1D2124;' : 'background: transparent; border: 1px solid transparent;'),
+        pick: () => this.setState({ d: x.id, c: 0 }) });
+    });
+    const steps = [];
+    def.causes.forEach((c, i) => { let s = steps.filter((y) => y.name === c.step)[0]; if (!s) { s = { name: c.step, kids: [] }; steps.push(s); } s.kids.push(i); });
+    const nodes = [], lines = [];
+    const ln = 'position: absolute; background: #BDB6AA;';
+    let cursor = 20;
+    const stepYs = [];
+    steps.forEach((s) => {
+      const ys = s.kids.map((i) => { const y = cursor + 30; cursor += 74; return { i: i, y: y }; });
+      const sy = (ys[0].y + ys[ys.length - 1].y) / 2;
+      stepYs.push(sy);
+      nodes.push({ isButton: false, isStatic: true, label: s.name,
+        style: 'position: absolute; left: 190px; top: ' + (sy - 21) + 'px; width: 130px; height: 42px; box-sizing: border-box; display: flex; align-items: center; padding: 0 10px; background: #FFFFFF; border: 1.5px solid #1D2124; border-radius: 8px;',
+        labelStyle: 'font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' });
+      lines.push({ style: ln + ' left: 320px; top: ' + (sy - 1) + 'px; width: 20px; height: 2px;' });
+      if (ys.length > 1) lines.push({ style: ln + ' left: 339px; top: ' + ys[0].y + 'px; width: 2px; height: ' + (ys[ys.length - 1].y - ys[0].y) + 'px;' });
+      ys.forEach((o) => {
+        lines.push({ style: ln + ' left: 340px; top: ' + (o.y - 1) + 'px; width: 20px; height: 2px;' });
+        const c = def.causes[o.i];
+        const on = o.i === cIdx;
+        nodes.push({ isButton: true, isStatic: false, label: c.fm, sub: c.sub, selected: on ? 'true' : 'false',
+          style: 'position: absolute; left: 360px; top: ' + (o.y - 30) + 'px; width: 170px; height: 60px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 2px; padding: 0 10px; text-align: left; cursor: pointer; font-family: inherit; color: #1D2124; background: #FBEFE8; border: 1px solid #E3B49A; border-radius: 8px;' + (on ? ' box-shadow: 0 0 0 2px #F4F2EE, 0 0 0 4px #2D5BA8;' : ''),
+          labelStyle: 'font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;',
+          select: () => this.setState({ c: o.i }) });
+      });
+    });
+    const ry = (stepYs[0] + stepYs[stepYs.length - 1]) / 2;
+    nodes.unshift({ isButton: false, isStatic: true, label: def.name,
+      style: 'position: absolute; left: 0; top: ' + (ry - 24) + 'px; width: 150px; height: 48px; box-sizing: border-box; display: flex; align-items: center; padding: 0 14px; background: #1D2124; color: #FFFFFF; border-radius: 999px;',
+      labelStyle: 'font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' });
+    lines.push({ style: ln + ' left: 150px; top: ' + (ry - 1) + 'px; width: 20px; height: 2px;' });
+    if (stepYs.length > 1) lines.push({ style: ln + ' left: 169px; top: ' + stepYs[0] + 'px; width: 2px; height: ' + (stepYs[stepYs.length - 1] - stepYs[0]) + 'px;' });
+    stepYs.forEach((y) => lines.push({ style: ln + ' left: 170px; top: ' + (y - 1) + 'px; width: 20px; height: 2px;' }));
+    const pill = 'display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; min-width: 58px; height: 24px; padding: 0 9px; border-radius: 4px; font-size: 12px; font-weight: 600; ';
+    return {
+      groups: groups, nodes: nodes, lines: lines,
+      mapStyle: 'position: relative; width: 540px; height: ' + Math.max(cursor + 20, 400) + 'px; margin: 4px 0 0 24px;',
+      d: { name: def.name, cat: def.cat, desc: def.desc, hasRelated: !!def.related, related: def.related || [] },
+      c: {
+        name: cause.fm, path: 'Continuous casting › ' + cause.step + ' › ' + cause.sub,
+        mechTitle: 'How it leads to ' + def.name.toLowerCase(), mech: cause.mech,
+        noControls: cause.controls.length === 0,
+        controls: cause.controls.map((k) => ({ type: k[0], text: k[1], links: k[2], tagStyle: pill + (k[0] === 'Prevent' ? 'background: #DCEEE2; color: #1F5C37;' : 'background: #DCE6F7; color: #1E4686;') }))
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

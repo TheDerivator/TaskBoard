@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Team Tasks – Release FMEA and control plan</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1D2124;background:#FFFFFF}
+a{color:#2D5BA8}a:hover{color:#1E4686}
+</style>
+</helmet>
+<div role="dialog" aria-label="Release FMEA and control plan v4" style="width: 760px; height: 1000px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #DDD8CF; border-radius: 12px; box-shadow: 0 16px 40px rgba(29,33,36,0.2); display: flex; flex-direction: column; overflow: hidden">
+
+<header style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 20px 24px 16px; border-bottom: 1px solid #E8E4DC">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; color: #5E5A54">Continuous casting · STL</span>
+<h2 style="margin: 0; font-size: 22px; font-weight: 700">Release FMEA &amp; control plan v4</h2>
+<span style="font-size: 13px; color: #5E5A54; max-width: 600px; line-height: 1.45">A release freezes the current revision of every box, link and control the FMEA and CPL show. Both documents get the same number.</span>
+</div>
+<a href="FmeaMap.dc.html" aria-label="Close" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #1D2124; flex-shrink: 0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+</header>
+
+<div style="flex-grow: 1; min-height: 0; overflow: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 22px">
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border: 1px solid #E1DCD3; border-radius: 10px"><span style="font-size: 12px; color: #5E5A54">Last release</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 600">v3</span><span style="font-size: 12px; color: #5E5A54">12 Sep 2026</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border: 1px solid #E1DCD3; border-radius: 10px"><span style="font-size: 12px; color: #5E5A54">Changes in scope</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 600">4</span><span style="font-size: 12px; color: #5E5A54">4 affect FMEA, 3 affect CPL</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border: 1px solid #E1DCD3; border-radius: 10px"><span style="font-size: 12px; color: #5E5A54">Outside scope</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 600">7</span><span style="font-size: 12px; color: #5E5A54">knowledge edits, kept per box</span></div>
+</div>
+
+<section style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: baseline; justify-content: space-between">
+<h3 style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Changes since v3</h3>
+<a href="#" style="font-size: 13px">Compare v3 and draft side by side</a>
+</div>
+<div style="display: flex; flex-direction: column; border: 1px solid #E1DCD3; border-radius: 10px; overflow: hidden">
+<sc-for list="{{changes}}" as="c" hint-placeholder-count="4">
+<div style="display: grid; grid-template-columns: 12px minmax(0, 1fr) 120px; gap: 12px; align-items: start; padding: 12px 14px; border-bottom: 1px solid #EEEAE3">
+<span style="{{c.sw}}"></span>
+<div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+<span style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap"><span style="font-size: 14px; font-weight: 600">{{c.box}}</span><span style="{{c.verbStyle}}">{{c.verb}}</span></span>
+<span style="font-size: 13px; color: #3A3733; line-height: 1.45">{{c.what}}</span>
+<sc-if value="{{c.warn}}" hint-placeholder-val="{{ false }}"><span style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #8A4B00"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3L2 20h20z"></path><path d="M12 10v4M12 17h.01"></path></svg>{{c.warnText}}</span></sc-if>
+<span style="font-size: 12px; color: #5E5A54">{{c.who}}</span>
+</div>
+<span style="display: flex; gap: 4px; justify-content: flex-end; flex-wrap: wrap">
+<sc-for list="{{c.docs}}" as="d" hint-placeholder-count="2"><span style="display: inline-flex; align-items: center; height: 22px; padding: 0 7px; border-radius: 4px; background: #1D2124; color: #FFFFFF; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600">{{d}}</span></sc-for>
+</span>
+</div>
+</sc-for>
+</div>
+</section>
+
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 12px">
+<label style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Release note</span>
+<textarea rows="3" style="padding: 10px 12px; border: 1px solid #CFCAC1; border-radius: 8px; font: 14px/1.5 'IBM Plex Sans', sans-serif; color: #1D2124; resize: vertical">Updates after the sliver-line investigation (T-104): tighter level alarm, powder check per batch, spray cooling failure mode added.</textarea>
+</label>
+<label style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #5E5A54">Approver</span>
+<select style="height: 44px; padding: 0 10px; border: 1px solid #CFCAC1; border-radius: 8px; background: #fff; font: 14px 'IBM Plex Sans', sans-serif; color: #1D2124"><option>Bram Peeters</option><option>Chloé Martens</option></select>
+<span style="font-size: 12px; color: #5E5A54; line-height: 1.4">v4 goes live once approved. Until then it shows as “v4 pending”.</span>
+</label>
+</div>
+<label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #3A3733; min-height: 32px">
+<input type="checkbox" checked style="width: 18px; height: 18px; margin: 0; accent-color: #B34A15">Notify everyone working on Continuous casting tasks
+</label>
+</div>
+
+<footer style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding: 16px 24px; border-top: 1px solid #E8E4DC">
+<a href="FmeaMap.dc.html" style="height: 44px; padding: 0 18px; display: flex; align-items: center; border: 1px solid #CFCAC1; border-radius: 8px; color: #1D2124; text-decoration: none; font-size: 14px; font-weight: 500">Cancel</a>
+<a href="FmeaMap.dc.html" style="height: 44px; padding: 0 20px; display: flex; align-items: center; border-radius: 8px; background: #B34A15; color: #FFFFFF; text-decoration: none; font-size: 14px; font-weight: 600">Send v4 for approval</a>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":760,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const sw = 'width: 12px; height: 32px; border-radius: 3px; box-sizing: border-box; background: #FBEFE8; border: 1px solid #D08A62;';
+    const verb = (t) => 'display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 4px; font-size: 11px; font-weight: 600; ' + (t === 'Added' ? 'background: #DCEEE2; color: #1F5C37;' : t === 'Removed' ? 'background: #EEEBE5; color: #5E5A54;' : 'background: #DCE6F7; color: #1E4686;');
+    return {
+      changes: [
+        { box: 'Mould level fluctuation', verb: 'Changed', verbStyle: verb('Changed'), what: 'Detect control: alarm limit lowered from [OLD LIMIT] to [NEW LIMIT] mm.', who: 'Dries Wouters · 22 Sep · revision 7 → 8', docs: ['FMEA', 'CPL'], sw: sw, warn: false },
+        { box: 'Powder entrapment', verb: 'Added', verbStyle: verb('Added'), what: 'New prevent control: powder viscosity check per delivered batch, linked to “Powder datasheets”.', who: 'Chloé Martens · 25 Sep · revision 4 → 5', docs: ['FMEA', 'CPL'], sw: sw, warn: false },
+        { box: 'Nozzle clogging', verb: 'Changed', verbStyle: verb('Changed'), what: 'New link: caused by “Calcium treatment” in Ladle metallurgy.', who: 'Anna Claes · 28 Sep · revision 3 → 4', docs: ['FMEA'], sw: sw, warn: false },
+        { box: 'Uneven spray cooling', verb: 'Added', verbStyle: verb('Added'), what: 'New failure mode under Secondary cooling › Spray zones, leads to corner cracks.', who: 'Filip Maes · 1 Oct · revision 1', docs: ['FMEA', 'CPL'], sw: sw, warn: true, warnText: 'No controls yet: it will appear in the control plan without controls.' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
