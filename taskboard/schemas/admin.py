@@ -21,6 +21,10 @@ RoleKey = Annotated[
 Code = Annotated[
     str, StringConstraints(strip_whitespace=True, to_upper=True, min_length=1, max_length=20)
 ]
+# Process codes prefix change keys ("CC" → "CC-31"), so letters and digits only.
+ProcessCode = Annotated[
+    str, StringConstraints(strip_whitespace=True, to_upper=True, pattern=r"^[A-Za-z0-9]{1,10}$")
+]
 PersonCode = Annotated[
     str, StringConstraints(strip_whitespace=True, to_upper=True, pattern=r"^[A-Za-z0-9]{1,8}$")
 ]
@@ -188,6 +192,20 @@ class SectionIn(BaseModel):
 
 class SectionUpdate(BaseModel):
     name: ShortName | None = None
+    position: int | None = None
+
+
+class ProcessIn(BaseModel):
+    code: ProcessCode
+    name: DisplayName
+    section_id: int  # the owning section: its department, and who may see and edit the process
+
+
+class ProcessUpdate(BaseModel):
+    """The code is fixed once created (it is part of change keys and links)."""
+
+    name: DisplayName | None = None
+    section_id: int | None = None
     position: int | None = None
 
 

@@ -16,7 +16,21 @@ from starlette.types import Scope
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 
 # First path segments handled by the browser-side router (see static/js/lib/routes.js).
-APP_ROUTES = frozenset({"", "priority", "people", "projects", "t", "admin"})
+APP_ROUTES = frozenset(
+    {
+        "",
+        "priority",
+        "people",
+        "projects",
+        "t",
+        "admin",
+        "changes",
+        "knowledge",
+        "fmea",
+        "cpl",
+        "box",
+    }
+)
 
 
 class RevalidatingStaticFiles(StaticFiles):

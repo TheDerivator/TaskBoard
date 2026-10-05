@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import select
 
 from taskboard.config import Settings
-from taskboard.db.models import Department, Person, Project, ProjectNode, Section, Task
+from taskboard.db.models import Department, Person, Process, Project, ProjectNode, Section, Task
 from taskboard.db.session import Database
 from taskboard.domain.access import BuiltinRole, Scope
 from taskboard.domain.outline import Outline, TreeNode
@@ -26,6 +26,7 @@ class Ids:
     departments: dict[str, int]  # by code, "STL"
     projects: dict[str, int]  # by key, "ASQ"
     nodes: dict[str, int]  # "ASQ:2.2.1"
+    processes: dict[str, int]  # by code, "LM"
 
 
 @pytest.fixture
@@ -49,6 +50,7 @@ def ids(sample_database: Database) -> Ids:
             departments=dict(s.execute(select(Department.code, Department.id)).all()),
             projects={p.key: p.id for p in s.scalars(select(Project))},
             nodes=nodes,
+            processes=dict(s.execute(select(Process.code, Process.id)).all()),
         )
 
 

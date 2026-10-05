@@ -1,4 +1,5 @@
-"""Built-in data that must always exist: lock rows, built-in roles, the admin and anonymous users.
+"""Built-in data that must always exist: lock rows, built-in roles, the admin and anonymous users,
+and the built-in box kinds and link types of process maps.
 
 `seed_builtins` is idempotent and runs at every startup. It creates what is missing and re-syncs
 built-in role permissions from code, but never undoes an administrator's choices (for example, it
@@ -10,7 +11,15 @@ from dataclasses import dataclass, field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from taskboard.db.models import AppLock, Role, RoleAssignment, RolePermission, User
+from taskboard.db.models import (
+    AppLock,
+    BoxKind,
+    LinkType,
+    Role,
+    RoleAssignment,
+    RolePermission,
+    User,
+)
 from taskboard.db.session import LOCK_NAMES
 from taskboard.domain.access import (
     ADMIN_USERNAME,
@@ -20,6 +29,7 @@ from taskboard.domain.access import (
     UserKind,
     UserStatus,
 )
+from taskboard.domain.knowledge import BUILTIN_KINDS, BUILTIN_LINK_TYPES
 from taskboard.identity.passwords import generate_password, hash_password
 from taskboard.services import audit
 
@@ -38,8 +48,48 @@ def seed_builtins(session: Session, *, initial_admin_password: str | None = None
     roles = _sync_builtin_roles(session, report)
     _ensure_anonymous(session, roles, report)
     _ensure_admin(session, roles, initial_admin_password, report)
+    _ensure_map_settings(session, report)
     session.flush()
     return report
+
+
+def _ensure_map_settings(session: Session, report: SeedReport) -> None:
+    """Create missing built-in kinds and link types. An administrator may rename or restyle them
+    (Kinds & link types settings), so existing ones are left as they are."""
+    kinds = set(session.scalars(select(BoxKind.key)))
+    for position, kind in enumerate(BUILTIN_KINDS):
+        if kind.key not in kinds:
+            session.add(
+                BoxKind(
+                    key=kind.key,
+                    name=kind.name,
+                    description=kind.description,
+                    role=kind.role,
+                    style=kind.style,
+                    has_facts=kind.has_facts,
+                    has_main_url=kind.has_main_url,
+                    builtin=True,
+                    position=position,
+                    field_schema=list(kind.field_schema),
+                )
+            )
+            report.created.append(f"box kind {kind.key}")
+    link_types = set(session.scalars(select(LinkType.key)))
+    for position, link_type in enumerate(BUILTIN_LINK_TYPES):
+        if link_type.key not in link_types:
+            session.add(
+                LinkType(
+                    key=link_type.key,
+                    forward_name=link_type.forward_name,
+                    backward_name=link_type.backward_name,
+                    description=link_type.description,
+                    role=link_type.role,
+                    builtin=True,
+                    position=position,
+                    field_schema=[],
+                )
+            )
+            report.created.append(f"link type {link_type.key}")
 
 
 def _ensure_locks(session: Session, report: SeedReport) -> None:

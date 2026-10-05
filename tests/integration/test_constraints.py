@@ -1,6 +1,7 @@
 """The database itself guards the core invariants (so no code path can break them)."""
 
 from collections.abc import Iterator
+from datetime import date
 
 import pytest
 from sqlalchemy import select
@@ -8,10 +9,17 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from taskboard.db.models import (
+    Box,
+    BoxLink,
+    Change,
+    ChangePeriod,
     Person,
     Placement,
+    Post,
+    Process,
     Project,
     ProjectNode,
+    Release,
     Role,
     RoleAssignment,
     Section,
@@ -20,6 +28,7 @@ from taskboard.db.models import (
 )
 from taskboard.db.session import Database
 from taskboard.domain.access import Scope
+from taskboard.domain.changes import PeriodKind
 
 
 def _first[T](session: Session, model: type[T]) -> T:
@@ -147,3 +156,85 @@ def test_emails_and_usernames_are_stored_normalized(s: Session) -> None:
         "mixed@example.com",
     )
     assert User(username="u", display_name="U", email="   ").email is None
+
+
+def test_a_period_is_posted_in_its_own_changes_conversation(s: Session) -> None:
+    """change_periods(post_id, change_id) → posts(id, change_id): no period on another's post."""
+    lm07, lm08 = (
+        s.scalars(select(Change).where(Change.key == k)).one() for k in ("LM-07", "LM-08")
+    )
+    post = s.scalars(select(Post).where(Post.change_id == lm07.id)).first()
+    assert post is not None
+    s.add(
+        ChangePeriod(
+            post_id=post.id,
+            change_id=lm08.id,
+            kind=PeriodKind.TEST,
+            start_date=date(2026, 10, 1),
+            end_date=date(2026, 10, 2),
+            label="Test",
+            scope_tags=[],
+        )
+    )
+    with pytest.raises(IntegrityError):
+        s.flush()
+
+
+def test_a_post_belongs_to_a_task_or_a_change_never_both(s: Session) -> None:
+    change = s.scalars(select(Change)).first()
+    assert change is not None
+    s.add(Post(task_id=_task(s, "104").id, change_id=change.id, author_user_id=1, body_md="x"))
+    with pytest.raises(IntegrityError):
+        s.flush()
+
+
+def _box(s: Session, key: str) -> Box:
+    return s.scalars(select(Box).where(Box.key == key)).one()
+
+
+def test_a_process_map_has_one_root(s: Session) -> None:
+    root = _box(s, "cc")
+    s.add(Box(key="second-root", process_id=root.process_id, kind_id=root.kind_id, name="Again"))
+    with pytest.raises(IntegrityError):
+        s.flush()
+
+
+def test_a_parent_is_in_the_same_process(s: Session) -> None:
+    lm = s.scalars(select(Process).where(Process.code == "LM")).one()
+    mould = _box(s, "mould")
+    s.add(
+        Box(key="stray", process_id=lm.id, parent_id=mould.id, kind_id=mould.kind_id, name="Stray")
+    )
+    with pytest.raises(IntegrityError):
+        s.flush()
+
+
+def test_a_box_is_in_a_process_or_in_a_section_never_both(s: Session) -> None:
+    root = _box(s, "cc")
+    s.add(
+        Box(
+            key="both",
+            process_id=root.process_id,
+            section_id=_task(s, "104").section_id,
+            parent_id=root.id,
+            kind_id=root.kind_id,
+            name="Both",
+        )
+    )
+    with pytest.raises(IntegrityError):
+        s.flush()
+
+
+def test_a_box_does_not_link_to_itself(s: Session) -> None:
+    box = _box(s, "fm-level")
+    link_type = s.scalars(select(BoxLink.type_id)).first()
+    s.add(BoxLink(from_box_id=box.id, to_box_id=box.id, type_id=link_type, note_md=""))
+    with pytest.raises(IntegrityError):
+        s.flush()
+
+
+def test_two_releases_of_a_process_never_share_a_number(s: Session) -> None:
+    cc = s.scalars(select(Process).where(Process.code == "CC")).one()
+    s.add(Release(process_id=cc.id, number=3, note="At the same moment"))
+    with pytest.raises(IntegrityError):
+        s.flush()

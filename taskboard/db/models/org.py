@@ -1,9 +1,9 @@
-"""Organization tables: departments and their sections (the scopes for access rights)."""
+"""Organization tables: departments, their sections (the scopes for access rights) and processes."""
 
 from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from taskboard.db.base import Base, Code, ShortText
+from taskboard.db.base import Base, Code, Name, ShortText
 
 
 class Department(Base):
@@ -29,3 +29,23 @@ class Section(Base):
     position: Mapped[int] = mapped_column(default=0)
 
     department: Mapped[Department] = relationship(back_populates="sections")
+
+
+class Process(Base):
+    """A production process (e.g. STL › Continuous casting): owns process changes and a map.
+
+    It belongs to a department through its owning section, which also decides who may see and
+    edit its changes and its map (section-scoped rights, like a task's section).
+    """
+
+    __tablename__ = "processes"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    # Short and unique everywhere ("CC"): it prefixes change keys (CC-31) and appears in links.
+    # Stored uppercase; never changed once created.
+    code: Mapped[str] = mapped_column(Code, unique=True)
+    name: Mapped[str] = mapped_column(Name)
+    section_id: Mapped[int] = mapped_column(ForeignKey("sections.id"), index=True)
+    position: Mapped[int] = mapped_column(default=0)
+
+    section: Mapped[Section] = relationship()

@@ -90,4 +90,4 @@ def test_permissions_unknown_to_the_code_are_ignored(s: Session) -> None:
     viewer.permissions.append(RolePermission(permission="removed.permission"))
     s.flush()
     anonymous = _user(s, "anonymous")
-    assert {g.permission for g in load_grants(s, anonymous.id)} == {Permission.TASK_VIEW}
+    assert {g.permission for g in load_grants(s, anonymous.id)} == BuiltinRole.VIEWER.permissions

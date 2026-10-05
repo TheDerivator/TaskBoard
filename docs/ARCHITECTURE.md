@@ -1,8 +1,9 @@
 # Architecture
 
 How TaskBoard is put together, and the rules that keep it that way. Progress and milestones are in
-[`PLAN.md`](PLAN.md); the reasons behind choices are in [`DECISIONS.md`](DECISIONS.md); a
-file-by-file map is in [`CODEMAP.md`](CODEMAP.md) (generated).
+[`PLAN2.md`](PLAN2.md) (current: process changes, process knowledge, search) and
+[`PLAN.md`](PLAN.md) (the original build); the reasons behind choices are in
+[`DECISIONS.md`](DECISIONS.md); a file-by-file map is in [`CODEMAP.md`](CODEMAP.md) (generated).
 
 ## Stack
 
@@ -36,7 +37,7 @@ taskboard/
   cli.py, __main__.py   python -m taskboard serve | db upgrade | seed | create-admin
   static/               index.html, css/, js/ (views/, components/, lib/), vendor/, fonts/
 tests/                  unit/, integration/, api/, architecture/, e2e/, js/
-docs/                   PLAN, ARCHITECTURE (this), DECISIONS, AUTH, OPERATIONS, CODEMAP (generated),
+docs/                   PLAN2, PLAN, ARCHITECTURE (this), DECISIONS, AUTH, OPERATIONS, CODEMAP (generated),
                         walkthroughs: IIS, WINDOWS-SIGNIN
 scripts/                check.py (quality gate), gen_codemap.py
 ```
@@ -82,7 +83,47 @@ static/js/
 ```
 
 - **Routes** (`lib/routes.js`): `/priority`, `/people`, `/people/{department}[/{section}]` (team
-  views, D-078), `/projects/{key}?node={id}`, `/t/{key}`, `/t/{key}/conversation`. The server returns index.html for these paths (`web/frontend.py`).
+  views, D-078), `/projects/{key}?node={id}`, `/t/{key}`, `/t/{key}/conversation`; process
+  changes `/changes/{department}/{process}[/timeline | /{KEY}[/conversation]]`; process knowledge
+  `/knowledge/{department}/{process}[/{box}]`, `/fmea/{department}/{process}?box=&release=`,
+  `/cpl/{department}[/{defect}[/{cause}]]?process=&release=`, `/box/{key}` (the full table is in
+  PLAN2.md). The
+  server returns index.html for these paths (`web/frontend.py`).
+- **Views by right** (`lib/access.js`): each view needs its module's view permission somewhere;
+  "home" opens the first module the visitor may use. The two process modules share a header
+  (`components/process-header.js`: department, process tabs) and remember the process chosen last.
+- **Process changes** (`views/changes/`): the list and the timeline of a process (`index.js`,
+  `list.js`, `timeline.js`) and a change as a drawer over them or as its own page (`change.js`,
+  like tasks, D-040). The conversation (`components/change-conversation.js`) mixes comments and
+  period posts and has the Comment / Period composer. Wording and states come from
+  `lib/periods.js`, timeline geometry from `lib/timeline.js` (both pure and unit-tested). The
+  server lists every first path segment of `lib/routes.js` as an app route (a test keeps them in
+  step), so pasted links answer 200.
+- **Process knowledge** (`views/knowledge/`): the map of a process (`index.js`: header, find in map,
+  kind chips, expand/collapse) drawn by `map.js` from `lib/maplayout.js` (pure, unit-tested on the
+  design's sample: tree, the mockup's horizontal layout, typed links both ways, defect chips,
+  rolled-up change badges, search, arrow keys), and the selected box's panel (`panel.js`). Boxes
+  are buttons in reading order with a roving tab stop; their colours come from the kind's palette
+  entry (`kind--<style>` in `css/knowledge.css`, tokens for both themes) plus a shape per role.
+  Editors get the box editor drawer (`editor.js`: the box, its links in both directions, its
+  controls and external links saved in one request; a 409 shows "Someone else changed this box";
+  the move dialog also reorders siblings) and admins the kinds & link types dialog
+  (`settings.js`). `components/box-picker.js` finds a box by name (`GET /api/boxes?q=`, maps and
+  defects) for links, changes and tasks; `components/box-links-field.js` shows and edits the
+  boxes a change or task refers to. The FMEA is the same map with a `keep` filter
+  (`fmeaBoxes`: failure modes and the boxes on the way to them). The control plan (`cpl.js`)
+  works on `GET /api/control-plan?department=` through `lib/controlplan.js` (pure, unit-tested:
+  defect groups, causes in map order, where they sit, the diagram's layout); it is a department
+  page (`useDepartmentPage`: "All processes" or one). "Export PDF" prints a sheet (`print.js`);
+  `css/print.css` shows only that sheet when printing. The FMEA and a process's control plan have
+  the release bar and dialog (`release.js`, wording in `lib/releases.js`): the version shown,
+  the draft (blue dots on the boxes), a version picker (`?release=v3`, read only) and "Review &
+  release".
+- **Search everything** (`components/search-dialog.js`, wording in `lib/search.js`): Ctrl K anywhere
+  or the sidebar entry opens it; `GET /api/search` (`services/search.py`, rules in
+  `domain/search.py`, D-094) returns the best hits per type with their stable links. The input is
+  a combobox over a listbox whose options are the links themselves (Enter, Ctrl Enter for a new
+  tab). `/box/{key}` (`views/knowledge/box-link.js`) opens a box where it lives.
 - **Base path**: `<base href>` is filled in from `TASKBOARD_BASE_PATH`; all URLs are relative to it.
 - **Styling**: `css/tokens.css` defines every colour/size as a custom property; the dark theme
   only overrides tokens (`[data-theme="dark"]`). Components never hard-code colours.
@@ -94,6 +135,9 @@ static/js/
 From `team-tasks-design/DESIGN.md`, plus access control.
 
 - `departments(id, code, name)`, `sections(id, department_id, name)`.
+- `processes(id, code, name, section_id, position)`: a production process (STL › Continuous
+  casting). `code` is unique and fixed (`CC`, the prefix of change keys); the **owning section**
+  decides who may see and edit the process's changes and map (D-080), and gives its department.
 - `people(id, code, name, color, email?, section_id, active)`. The department follows from the section.
 - `projects(id, key, name, color, position, archived)`.
 - `project_nodes(id, project_id, parent_id?, position, name)`, unique `(id, project_id)`. Display
@@ -110,8 +154,49 @@ From `team-tasks-design/DESIGN.md`, plus access control.
 - `placements(task_id, project_id, node_id?)`, unique `(task_id, project_id)`. The composite FK
   `(node_id, project_id) → project_nodes(id, project_id)` makes "the node belongs to that project"
   a database guarantee. A NULL node means top level of the project.
-- `posts(id, task_id, author_user_id, created_at, edited_at?, body_md, is_update)`;
-  `attachments(id, task_id, post_id?, uploader_user_id, filename, content_type, size, storage_key)`.
+- `posts(id, task_id?, change_id?, author_user_id, created_at, edited_at?, edited_by_user_id?,
+  body_md, is_update)`; `attachments(id, task_id?, change_id?, box_id?, post_id?,
+  uploader_user_id, filename, content_type, size, storage_key)`. A post belongs to **exactly one**
+  conversation, a task's or a process change's; an image to exactly one task, change or knowledge
+  box (images in a box's description, kept as long as the box: CHECK `one_owner`). `post_revisions(post_id, rev,
+  content JSON, written_by, written_at)` keeps every earlier version of an edited post.
+- `changes(id, key, number, process_id, title, what_md, why_md, owner_person_id, created_at,
+  updated_at, version)`: a process change. `key` is the process code and a number per code
+  (`LM-07`), fixed even when the change moves to another process.
+- `change_periods(id, post_id, change_id, kind, start_date, end_date?, label, scope_tags JSON)`:
+  a test (`kind = test`, with an end date) or a permanent process change (`kind = change`, no end
+  date until it is ended), **posted in the change's conversation**: the composite FK
+  `(post_id, change_id) → posts(id, change_id)` keeps it on a post of the same change. The state
+  ("In effect", "Test running", ...) is derived, never stored (`domain/changes.py`, mirrored by
+  `static/js/lib/periods.js`, both tested against `tests/fixtures/change_states.json`).
+- **Process knowledge** (DESIGN Module 3; `db/models/knowledge.py`, `services/knowledge.py`):
+  - `box_kinds(key, name, role, style, has_facts, has_main_url, builtin, field_schema JSON)` and
+    `link_types(key, forward_name, backward_name, role, builtin, field_schema JSON)`: built-in
+    rows are seeded at start (renamable, not deletable) and carry the behaviour (`role`: step,
+    failure mode, defect, `leads_to`, ...); custom ones are plain.
+  - `boxes(id, key, process_id?, section_id?, parent_id?, position, kind_id, name, body_md,
+    main_url, facts JSON, fields JSON, step_no, owner_person_id, reviewed_at, rev, version)`. A
+    map box has a process (one root per process: a filtered unique index; a parent in the same
+    process: a composite FK); a defect has no process and names its own section (CHECK). `key`
+    is a readable slug, unique and fixed.
+  - `box_links(from_box_id, to_box_id, type_id, note_md, fields JSON, rev)`, `controls(box_id,
+    kind, text, position, fields JSON, rev)`, `external_links(box_id? | control_id?, kind, label,
+    url, pass_box_param, position)` (part of their owner's content), `box_references(task_id? |
+    change_id?, box_id, role)`.
+  - `revisions(object_type, object_id, box_id, rev, content JSON, deleted, author_user_id)`:
+    every save of a box, link or control whose content changed writes its full content; deletions
+    too. `box_id` is the box whose history shows it. A test checks that every object's latest
+    revision equals its row. Positions are spread out (1024, 2048, ...) and `stable_positions`
+    changes as few as possible, so reordering rarely touches other boxes' revisions.
+  - Saving a box (`PATCH /api/boxes/{key}`) sends **all** of its links, each with a `direction`
+    (`forward`: this box is the link's from-box; `backward`: it is the to-box), so a link can be
+    edited from either end; a link's revision goes to its from-box's history.
+  - `releases(process_id, number, note, released_by_user_id, released_at)`, unique
+    `(process_id, number)`, and `release_items(release_id, object_type, object_id, rev)`: a
+    version of the process's FMEA and control plan (one number for both, no approval: D-081)
+    freezes the revision of every object in its scope (`domain/releases.py`, D-093). The draft is
+    computed (`services/releases.py`), and an old version is rebuilt from its frozen revisions as
+    unsaved objects (`services/frozen.py`): `?release=N` on the map and the control plan.
 - `events(id, task_id, actor_user_id?, created_at, kind, data JSON)`: lifecycle changes, lead
   changes, helpers added or removed, placement changes.
 - Identity: `users`, `external_identities(provider, subject)`, `roles`, `role_permissions`,
@@ -123,13 +208,16 @@ linked 1:1. People who never log in can still lead tasks; built-in accounts are 
 
 ## Access control
 
-- **Permissions** are strings defined in code: `task.view`, `task.edit`, `task.comment`,
-  `task.delete` (scoped to sections); `project.manage`, `people.manage`, `users.manage` (global).
-- **Roles** are database rows bundling permissions. Built-in and non-deletable: *Viewer*
-  (`task.view`), *Editor* (`task.view`, `task.edit`, `task.comment`), *Administrator* (all).
+- **Permissions** are strings defined in code (`domain/access.py`): `task.*`, `change.*`
+  (`view`, `edit`, `comment`, `delete`) and `knowledge.*` (`view`, `edit`, `release`), all scoped
+  to sections; `knowledge.configure`, `project.manage`, `people.manage`, `users.manage` (global).
+  Table with the built-in roles: [`AUTH.md`](AUTH.md#permissions-and-built-in-roles).
+- **Roles** are database rows bundling permissions. Built-in and non-deletable: *Viewer* (the
+  three `*.view`), *Editor* (Viewer plus editing, commenting and releasing), *Administrator* (all).
   Custom roles need no code changes.
 - **Assignments** give a user a role at a **scope**: global, one department (covering all its
-  sections), or one section. A task's organizational section decides which assignments apply.
+  sections), or one section. A task's organizational section decides which assignments apply; for
+  process changes and maps, the process's owning section does.
 - **Anonymous** is a built-in user that cannot log in; by default it holds *Viewer* globally.
   Admins edit its assignments like anyone else's; removing them makes the board login-only.
 - **Built-in users**: `admin` and `anonymous`.
@@ -137,6 +225,11 @@ linked 1:1. People who never log in can still lead tasks; built-in accounts are 
   filter for visible sections. Services call it; routers never decide access.
 - Lists only contain tasks the principal may see. Ranks stay global (DESIGN rule 2), so a
   restricted viewer can see gaps (#1, #4, #5). Counts only include visible tasks.
+- **The board** (departments, people, processes in the bootstrap) is open to anyone who may view
+  something in any module (`services/visibility.py: can_view_anything`); task data only to those
+  with `task.view` somewhere.
+- **Today** comes from the server (`bootstrap.today`; `TASKBOARD_TODAY` pins it for tests and
+  demos), so process-change states ("Test running", "Planned") are the same in browser and server.
 
 Details, including SSO configuration: [`AUTH.md`](AUTH.md).
 
@@ -194,11 +287,18 @@ verify tokens, and refuses to start elsewhere.
    in `taskboard/db/base.py`; the defaults would be the deprecated `NTEXT` and `DATETIME`).
    Timestamps are naive UTC in the database and timezone-aware UTC in Python (`UTCDateTime`).
 10. To see the MS SQL DDL without a server: compile `CreateTable(table)` with
-    `sqlalchemy.dialects.mssql.dialect()`.
+    `sqlalchemy.dialects.mssql.dialect()`. `tests/unit/test_mssql_schema.py` does so for every
+    table: NVARCHAR text, no cascades, filtered unique indexes keep their WHERE (`mssql_where`
+    next to `sqlite_where`), reserved words such as KEY quoted.
 11. The API and integration suites run against any database named in
     `TASKBOARD_TEST_DATABASE_URL` (migrated once, emptied before every test; tests about SQLite
     itself are marked `requires_sqlite`). The MS SQL driver is the optional extra `mssql`. See
     [`OPERATIONS.md`](OPERATIONS.md#ms-sql-later).
+12. A statement takes at most **2,100 parameters** on MS SQL (SQLite: 32,766). Lists of ids that
+    grow with the data (a map's boxes, a release's objects) go through `db/ids.py: in_ids`, which
+    writes integer ids into the SQL; `tests/conftest.py` fails any statement with more
+    parameters on every backend, and the scale tests (5,000 tasks, 2,000 changes, a 2,000-box
+    map) exercise the big lists.
 
 ## Transactions and concurrency
 

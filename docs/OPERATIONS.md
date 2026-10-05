@@ -78,7 +78,11 @@ TASKBOARD_DATA_DIR=/var/lib/taskboard
 TASKBOARD_INITIAL_ADMIN_PASSWORD=<a long password>
 ```
 
-Demo content (optional): the design's sample board, with the sample people able to log in:
+Demo content (optional): the design's sample board, with the sample people able to log in. It
+holds the tasks and projects, the process changes of Ladle metallurgy and Continuous casting,
+the Continuous casting knowledge map with its defects, and the FMEA and control plan releases
+v1-v3 with four draft changes after v3. Its dates move so that the sample's "today" (3 Oct 2026)
+is the day you seed; seeding only fills an empty board:
 
 ```sh
 sudo -u taskboard sh -c 'set -a; . /etc/taskboard/taskboard.env; exec /opt/taskboard/.venv/bin/python -m taskboard seed --sample --demo-password "<demo password>"'

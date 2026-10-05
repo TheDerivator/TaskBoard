@@ -1,13 +1,24 @@
-"""Organization administration: departments, sections and people (needs `people.manage`).
+"""Organization administration: departments, sections, processes and people (`people.manage`).
 
-Departments and sections are only deleted when nothing depends on them any more. People are
-never deleted (tasks and history refer to them); they are deactivated instead.
+Departments, sections and processes are only deleted when nothing depends on them any more.
+People are never deleted (tasks and history refer to them); they are deactivated instead.
 """
 
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from taskboard.db.models import Department, Person, RoleAssignment, Section, Task, User
+from taskboard.db.models import (
+    Box,
+    Change,
+    Department,
+    Person,
+    Process,
+    Release,
+    RoleAssignment,
+    Section,
+    Task,
+    User,
+)
 from taskboard.domain.access import Permission
 from taskboard.domain.errors import ConflictError, NotFoundError, RuleViolationError
 from taskboard.identity.principal import Principal
@@ -17,10 +28,12 @@ from taskboard.schemas.admin import (
     PersonAdminOut,
     PersonIn,
     PersonUpdate,
+    ProcessIn,
+    ProcessUpdate,
     SectionIn,
     SectionUpdate,
 )
-from taskboard.schemas.reference import DepartmentOut
+from taskboard.schemas.reference import DepartmentOut, ProcessOut
 from taskboard.services import audit
 from taskboard.services.visibility import ensure_usable
 
@@ -140,6 +153,8 @@ class OrganizationService:
         usage = {
             "tasks": self._count(Task.section_id == section.id),
             "people": self._count(Person.section_id == section.id),
+            "processes": self._count(Process.section_id == section.id),
+            "defects": self._count(Box.section_id == section.id),
             "access rights": self._count(RoleAssignment.section_id == section.id),
         }
         blocking = [f"{n} {what}" for what, n in usage.items() if n]
@@ -150,6 +165,66 @@ class OrganizationService:
         self.session.delete(section)
         self.session.commit()
         return self._department_out(department)
+
+    # ------------------------------------------------------------------ processes
+
+    def _process(self, process_id: int) -> Process:
+        process = self.session.get(Process, process_id)
+        if process is None:
+            raise NotFoundError(f"no process {process_id}")
+        return process
+
+    def _process_out(self, process: Process) -> ProcessOut:
+        return ProcessOut(
+            id=process.id,
+            code=process.code,
+            name=process.name,
+            section_id=process.section_id,
+            department_id=self._section(process.section_id).department_id,
+            position=process.position,
+        )
+
+    def list_processes(self) -> list[ProcessOut]:
+        query = select(Process).order_by(Process.position, Process.id)
+        return [self._process_out(p) for p in self.session.scalars(query)]
+
+    def create_process(self, data: ProcessIn) -> ProcessOut:
+        section = self._section(data.section_id)
+        if self.session.scalar(select(Process.id).where(Process.code == data.code)):
+            raise ConflictError(f"a process with code {data.code} exists")
+        last = self.session.scalar(select(func.max(Process.position))) or 0
+        process = Process(code=data.code, name=data.name, section_id=section.id, position=last + 1)
+        self.session.add(process)
+        self.session.flush()
+        self._record(
+            "process.created", "process", process.id, code=process.code, section=section.name
+        )
+        self.session.commit()
+        return self._process_out(process)
+
+    def update_process(self, process_id: int, data: ProcessUpdate) -> ProcessOut:
+        process = self._process(process_id)
+        if data.section_id is not None:
+            process.section_id = self._section(data.section_id).id
+        if data.name is not None:
+            process.name = data.name
+        if data.position is not None:
+            process.position = data.position
+        self._record("process.updated", "process", process.id, **data.model_dump(exclude_none=True))
+        self.session.commit()
+        return self._process_out(process)
+
+    def delete_process(self, process_id: int) -> None:
+        process = self._process(process_id)
+        if changes := self._count(Change.process_id == process.id):
+            raise ConflictError(f"the process still has {changes} process change(s)")
+        if self._count(Box.process_id == process.id):
+            raise ConflictError("the process has a knowledge map; delete its boxes first")
+        if self._count(Release.process_id == process.id):
+            raise ConflictError("the process has released FMEA and control plan versions")
+        self._record("process.deleted", "process", process.id, code=process.code)
+        self.session.delete(process)
+        self.session.commit()
 
     # ------------------------------------------------------------------ people
 

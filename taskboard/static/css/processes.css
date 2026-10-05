@@ -1,0 +1,42 @@
+/* Process changes and Process knowledge: the shared bar with department, process tabs and page switch. */
+
+.process-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.process-bar__department {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.process-bar__department .select {
+  width: auto;
+  min-width: 96px;
+}
+
+/* The page switch (List / Timeline, Knowledge / FMEA / CPL) sits at the end of the bar. */
+.process-bar__end {
+  margin-left: auto;
+}
+
+/* On narrow screens the process tabs scroll sideways instead of wrapping into a tall block. */
+@media (max-width: 720px) {
+  .process-bar .segmented {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .process-bar__end {
+    margin-left: 0;
+  }
+}
+
+.process-bar__box {
+  max-width: 220px;
+}

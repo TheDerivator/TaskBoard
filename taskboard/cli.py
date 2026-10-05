@@ -78,6 +78,7 @@ def _seed(args: argparse.Namespace) -> int:
                 session,
                 demo_password=args.demo_password,
                 store=AttachmentStore(settings.uploads_dir),
+                today=settings.current_date(),  # process changes then look current
             )
         print("Loaded the sample board." if loaded else "Board is not empty: sample not loaded.")
     database.dispose()

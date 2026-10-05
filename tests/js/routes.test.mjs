@@ -2,7 +2,20 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { parseRoute, peoplePath, projectPath, taskPath } from "../../taskboard/static/js/lib/routes.js";
+import {
+  boxHomePath,
+  boxLinkPath,
+  changePath,
+  changesPath,
+  cplPath,
+  fmeaPath,
+  knowledgePath,
+  parseRoute,
+  peoplePath,
+  projectPath,
+  routePath,
+  taskPath,
+} from "../../taskboard/static/js/lib/routes.js";
 
 test("views", () => {
   assert.deepEqual(parseRoute("/"), { name: "home", params: {} });
@@ -76,4 +89,77 @@ test("routePath inverts parseRoute", async () => {
     assert.equal(routePath(parseRoute(`/${pathname}`, search ? `?${search}` : "")), path);
   }
   assert.equal(routePath({ name: "notFound", params: {} }), "priority");
+});
+
+test("process changes: list, timeline and one change (DESIGN 'Stable links')", () => {
+  assert.deepEqual(parseRoute("/changes"), {
+    name: "changes",
+    params: { department: null, process: null, view: "list" },
+  });
+  assert.deepEqual(parseRoute("/changes/STL/LM").params, { department: "STL", process: "LM", view: "list" });
+  assert.deepEqual(parseRoute("/changes/stl/lm/timeline", "?range=12&box=m-level").params, {
+    department: "stl",
+    process: "lm",
+    view: "timeline",
+    range: 12,
+    box: "m-level",
+  });
+  assert.equal(parseRoute("/changes/STL/LM/timeline", "?range=5").params.range, 6);
+  assert.deepEqual(parseRoute("/changes/STL/LM/lm-07"), {
+    name: "change",
+    params: { department: "STL", process: "LM", key: "LM-07", tab: "details" },
+  });
+  assert.equal(parseRoute("/changes/STL/LM/LM-07/conversation").params.tab, "conversation");
+  assert.equal(parseRoute("/changes/STL/LM/LM-07/history").name, "notFound");
+  assert.equal(parseRoute("/changes/STL/LM/whatever").name, "notFound");
+});
+
+test("process knowledge: the map, FMEA and the control plan", () => {
+  assert.deepEqual(parseRoute("/knowledge/STL/CC/fm-level"), {
+    name: "knowledge",
+    params: { department: "STL", process: "CC", box: "fm-level" },
+  });
+  assert.deepEqual(parseRoute("/fmea/STL/CC", "?box=fm-level&release=v3"), {
+    name: "fmea",
+    params: { department: "STL", process: "CC", box: "fm-level", release: "v3" },
+  });
+  assert.deepEqual(parseRoute("/cpl/STL/sliver-lines/fm-level", "?process=CC"), {
+    name: "cpl",
+    params: { department: "STL", defect: "sliver-lines", cause: "fm-level", process: "CC", release: null },
+  });
+  assert.deepEqual(parseRoute("/cpl").params, { department: null, defect: null, cause: null, process: null, release: null });
+  assert.equal(parseRoute("/knowledge/STL/CC/fm-level/extra").name, "notFound");
+});
+
+test("process paths round-trip through parseRoute", () => {
+  const paths = [
+    changesPath(),
+    changesPath("STL", "LM"),
+    changesPath("STL", "LM", { view: "timeline" }),
+    changesPath("STL", "LM", { view: "timeline", range: 12, box: "m-level" }),
+    changePath("STL", "LM", "LM-07"),
+    changePath("STL", "LM", "LM-07", "conversation"),
+    knowledgePath("STL", "CC"),
+    knowledgePath("STL", "CC", "fm-level"),
+    fmeaPath("STL", "CC", { box: "fm-level", release: "v3" }),
+    cplPath("R&D", "sliver-lines", "fm-level", { process: "CC" }),
+  ];
+  for (const path of paths) {
+    const [pathname, search = ""] = path.split("?");
+    assert.equal(routePath(parseRoute(`/${pathname}`, search ? `?${search}` : "")), path);
+  }
+  assert.equal(changesPath("STL", "LM", { view: "timeline" }), "changes/STL/LM/timeline");
+  assert.equal(cplPath("R&D", "blisters"), "cpl/R%26D/blisters");
+});
+
+test("a box by its key alone opens where it lives (stable links for dashboards)", () => {
+  assert.deepEqual(parseRoute("/box/fm-level"), { name: "box", params: { key: "fm-level" } });
+  assert.equal(routePath(parseRoute(`/${boxLinkPath("fm-level")}`)), "box/fm-level");
+  const lookup = {
+    processes: new Map([[3, { code: "CC", department_id: 1 }]]),
+    departments: new Map([[1, { code: "STL" }]]),
+    sections: new Map([[7, { department_id: 1 }]]),
+  };
+  assert.equal(boxHomePath({ key: "fm-level", process_id: 3, section_id: 9 }, lookup), "knowledge/STL/CC/fm-level");
+  assert.equal(boxHomePath({ key: "d-sliver", process_id: null, section_id: 7 }, lookup), "cpl/STL/d-sliver");
 });

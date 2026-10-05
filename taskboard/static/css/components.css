@@ -29,6 +29,19 @@
   color: var(--ink-2);
 }
 
+/* "Process changes › STL" above a view's title. */
+.view-head__crumb {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.view-head__title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 /* ---------------------------------------------------------------- buttons */
 
 .btn {
@@ -137,6 +150,31 @@
 }
 
 .segmented button[aria-pressed="true"] {
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 600;
+  box-shadow: var(--shadow-card);
+}
+
+/* Segments that change the address are links marked aria-current (process tabs, page switches). */
+.segmented a {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.segmented a:hover {
+  color: var(--ink);
+}
+
+.segmented a[aria-current] {
   background: var(--surface);
   color: var(--ink);
   font-weight: 600;
@@ -501,4 +539,265 @@
 .link-button:hover {
   color: var(--link-hover);
   text-decoration: underline;
+}
+
+/* ---------------------------------------------------------------- form helpers */
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.grid-span-2 {
+  grid-column: span 2;
+}
+
+/* A label with a note on the right ("Periods" … "Posted in the conversation"). */
+.field__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.field-hint {
+  font-size: 12px;
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+
+.check-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  font-size: 13px;
+  color: var(--ink-chip);
+}
+
+.check-line input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.textarea--mono {
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.input--date {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 0 6px;
+}
+
+/* "+ Post a period", "+ Link to a box": an invitation to add something. */
+.btn--dashed {
+  align-self: flex-start;
+  height: 40px;
+  border-style: dashed;
+  border-color: var(--border-dashed);
+  font-size: 13px;
+  color: var(--ink-chip);
+}
+
+@media (max-width: 480px) {
+  .grid-3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .grid-span-2 {
+    grid-column: auto;
+  }
+}
+
+/* ---------------------------------------------------------------- search everything */
+
+.search-dialog {
+  width: min(720px, calc(100vw - 32px));
+  max-height: min(720px, calc(100dvh - 96px));
+  margin-top: 72px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.search-dialog:not([open]) {
+  display: none;
+}
+
+.search-dialog__bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 0 16px 0 20px;
+  border-bottom: 1px solid var(--divider);
+  color: var(--ink-2);
+}
+
+.search-dialog__bar input {
+  flex: 1;
+  min-width: 0;
+  height: 56px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--ink);
+  font: 17px var(--font-sans);
+}
+
+.search-dialog__bar input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.search-dialog__esc {
+  padding: 2px 7px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-chip);
+  background: transparent;
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.search-dialog__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--divider);
+}
+
+.search-dialog__results {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 8px 10px 12px;
+}
+
+.search-dialog__hint {
+  padding: 16px 10px;
+  font-size: 14px;
+}
+
+.search-group__name {
+  padding: 10px 10px 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.search-hit {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 6px 10px;
+  border-radius: var(--radius-control);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.search-hit:hover {
+  color: var(--ink);
+}
+
+.search-hit.is-active {
+  background: var(--tag-bg);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+}
+
+.search-swatch {
+  width: 12px;
+  height: 28px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  border-radius: 3px;
+  background: var(--kind-bg);
+  border: var(--kind-border-width) solid var(--kind-border);
+}
+
+.search-swatch.kind--ink {
+  border-radius: var(--radius-pill);
+}
+
+.search-swatch--change {
+  background: var(--accent);
+  border: 0;
+}
+
+.search-swatch--task {
+  background: var(--started-bg);
+  border: 1px solid var(--started-ink);
+}
+
+.search-hit__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.search-hit__title {
+  display: flex;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.search-hit__ref {
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.search-hit__context {
+  overflow: hidden;
+  font-size: 13px;
+  color: var(--ink-2);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-hit__url {
+  flex-shrink: 0;
+  max-width: 34%;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-2);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-dialog__keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 10px 20px;
+  border-top: 1px solid var(--divider);
+  background: var(--surface-sunken);
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+.search-dialog__share {
+  margin-left: auto;
+}
+
+@media (max-width: 560px) {
+  .search-dialog {
+    margin-top: 16px;
+  }
+
+  .search-hit__url,
+  .search-dialog__keys {
+    display: none;
+  }
 }

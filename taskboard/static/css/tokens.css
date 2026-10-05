@@ -75,6 +75,56 @@
   --archived-ink: #5E5A54;
   --archived-border: #DDD8CF;
 
+  /* Process changes: tests are blue, process changes orange (checked for colour-blind readers,
+     and each also has its own shape); tints for cards, chips and pills. */
+  --test: #3A6FC4;
+  --test-soft: #E3EBF8;
+  --test-soft-border: #C3D3EE;
+  --test-ink: #1E4686;
+  --change: #C4561C;
+  --change-soft: #FBEFE8;
+  --change-soft-border: #F0D2C1;
+  --change-ink: #9A3E10;
+  --tag-bg: #F2EFEA;
+  --tag-border: #E1DCD3;
+  --gantt-grid: #ECE8E1;
+  --gantt-track: #D9D4CB;
+  /* Timeline tooltips sit on the sidebar's dark colour in both themes. */
+  --tip-ink: #FFFFFF;
+  --tip-accent: #F3D9C9;
+
+  /* Box kinds of process maps (DESIGN "Box kinds"): fill, border, and the pill/icon ink.
+     Each kind also has an icon, so colour is never the only cue. */
+  --kind-step-border: #1D2124;
+  --kind-step-thin: #BDB6AA;
+  --kind-sand: #EFECE6;
+  --kind-sand-border: #CFC8BC;
+  --kind-sand-ink: #3A3733;
+  --kind-blue: #E3EBF8;
+  --kind-blue-border: #B9CBEB;
+  --kind-blue-ink: #1E4686;
+  --kind-violet: #EEE8F6;
+  --kind-violet-border: #CDBFE3;
+  --kind-violet-ink: #5B3E8A;
+  --kind-peach: #FBEFE8;
+  --kind-peach-border: #E3B49A;
+  --kind-peach-ink: #9A3E10;
+  --kind-green: #DCEEE2;
+  --kind-green-border: #B5D8C1;
+  --kind-green-ink: #1F5C37;
+  --kind-rose: #F7E4EA;
+  --kind-rose-border: #E3BAC7;
+  --kind-rose-ink: #8A3A56;
+  --kind-teal: #DDF0EC;
+  --kind-teal-border: #A9D6CD;
+  --kind-teal-ink: #1F6157;
+  --kind-grey: #EEEBE5;
+  --kind-grey-border: #CFCAC1;
+  --kind-grey-ink: #5E5A54;
+  --map-dots: #DAD5CC;
+  --map-line: #BDB6AA;
+  --draft: #2D5BA8; /* "changed since the last release" */
+
   /* Feedback */
   --danger: #B42318;
   --danger-soft: #FDECEA;
@@ -99,6 +149,13 @@
 
   /* Project colours are stored for light surfaces; on the dark sidebar they are lightened. */
   --on-dark-mix: 30%;
+
+  /* Printed sheets (FMEA, control plan) are always dark on white paper, whatever the theme. */
+  --print-paper: #FFFFFF;
+  --print-ink: #1D2124;
+  --print-muted: #5E5A54;
+  --print-line: #BDB6AA;
+  --print-head: #EEEBE5;
 }
 
 :root[data-theme="dark"] {
@@ -159,6 +216,49 @@
   --archived-bg: #272C30;
   --archived-ink: #A9A49C;
   --archived-border: #3A4045;
+
+  --test: #5B8BD8;
+  --test-soft: #1C2E48;
+  --test-soft-border: #2D4A73;
+  --test-ink: #AFC7F1;
+  --change: #E07A45;
+  --change-soft: #3A2419;
+  --change-soft-border: #5A3421;
+  --change-ink: #F3A57A;
+  --tag-bg: #272C30;
+  --tag-border: #3A4045;
+  --gantt-grid: #262B2F;
+  --gantt-track: #454C52;
+
+  --kind-step-border: #ECE9E4;
+  --kind-step-thin: #5A6066;
+  --kind-sand: #2A2824;
+  --kind-sand-border: #4A453E;
+  --kind-sand-ink: #D6D2CB;
+  --kind-blue: #1C2E48;
+  --kind-blue-border: #2D4A73;
+  --kind-blue-ink: #AFC7F1;
+  --kind-violet: #2B2340;
+  --kind-violet-border: #4A3A6E;
+  --kind-violet-ink: #CDB8F0;
+  --kind-peach: #3A2419;
+  --kind-peach-border: #5A3421;
+  --kind-peach-ink: #F3A57A;
+  --kind-green: #183324;
+  --kind-green-border: #2A5139;
+  --kind-green-ink: #A3D6B6;
+  --kind-rose: #3A1F2A;
+  --kind-rose-border: #5E3445;
+  --kind-rose-ink: #EBB0C4;
+  --kind-teal: #163330;
+  --kind-teal-border: #285650;
+  --kind-teal-ink: #9ED8CD;
+  --kind-grey: #272C30;
+  --kind-grey-border: #3A4045;
+  --kind-grey-ink: #A9A49C;
+  --map-dots: #2A3034;
+  --map-line: #5A6066;
+  --draft: #8FB0E8;
 
   --danger: #F28B82;
   --danger-soft: #3A1E1C;

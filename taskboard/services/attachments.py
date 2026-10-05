@@ -1,4 +1,4 @@
-"""Uploaded files on disk: image type sniffing, size limits, atomic writes, deletion.
+"""Uploaded images: type sniffing, size limits, atomic writes, deletion, and their rows and links.
 
 Files live in <data_dir>/uploads/<public_id> (no extension; the content type is in the database).
 Only raster images are accepted, recognised by their first bytes rather than by the name or the
@@ -7,6 +7,12 @@ browser's claim: SVG (which can carry scripts) is refused.
 
 import secrets
 from pathlib import Path
+from urllib.parse import quote
+
+from taskboard.db.models import Attachment
+from taskboard.domain.errors import RuleViolationError
+from taskboard.schemas.conversation import AttachmentOut
+from taskboard.services.markdown import ATTACHMENT_URL_PREFIX
 
 MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024
 
@@ -68,3 +74,41 @@ class AttachmentStore:
 
     def delete(self, public_id: str) -> None:
         self.path(public_id).unlink(missing_ok=True)
+
+
+def attachment_url(public_id: str, filename: str) -> str:
+    """Percent-encoded, so names with spaces still form a valid Markdown link."""
+    return f"{ATTACHMENT_URL_PREFIX}{public_id}/{quote(filename)}"
+
+
+def store_image(
+    store: AttachmentStore, filename: str | None, data: bytes, **owner: int | None
+) -> Attachment:
+    """Check an uploaded image, save its file, and return its (not yet added) row. `owner` names
+    the uploader and what it belongs to: a task, a change (as a draft) or a box."""
+    if len(data) > MAX_ATTACHMENT_BYTES:
+        raise RuleViolationError(f"images can be at most {MAX_ATTACHMENT_BYTES // 1_000_000} MB")
+    content_type = sniff_image_type(data)
+    if content_type is None:
+        raise RuleViolationError("only PNG, JPEG, GIF or WebP images can be attached")
+    attachment = Attachment(
+        public_id=new_public_id(),
+        filename=safe_filename(filename, content_type),
+        content_type=content_type,
+        size=len(data),
+        **owner,
+    )
+    store.save(attachment.public_id, data)
+    return attachment
+
+
+def attachment_out(attachment: Attachment) -> AttachmentOut:
+    url = attachment_url(attachment.public_id, attachment.filename)
+    return AttachmentOut(
+        id=attachment.public_id,
+        filename=attachment.filename,
+        content_type=attachment.content_type,
+        size=attachment.size,
+        url=url,
+        markdown=f"![{attachment.filename}]({url})",
+    )

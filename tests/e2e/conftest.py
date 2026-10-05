@@ -4,6 +4,7 @@ Run with `uv run pytest -m e2e` (or `uv run python scripts/check.py --e2e`). Nee
 `uv run playwright install chromium`.
 """
 
+import gc
 import threading
 import time
 from collections.abc import Iterator
@@ -21,10 +22,22 @@ from taskboard.web import create_app
 E2E_DIR = Path(__file__).resolve().parent
 
 
+# When a browser drops a connection mid-request (a view navigates while its fetches are still in
+# flight), Windows' asyncio proactor in the test server's thread may leave that socket for the
+# garbage collector, which warns. Harmless, and not the app's code: only these two are ignored.
+SERVER_SOCKET_FINALIZERS = (
+    "ignore:Exception ignored while finalizing socket:pytest.PytestUnraisableExceptionWarning",
+    "ignore:Exception ignored while calling deallocator <function _ProactorBasePipeTransport"
+    ":pytest.PytestUnraisableExceptionWarning",
+)
+
+
 def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
     for item in items:
         if E2E_DIR in Path(str(item.fspath)).parents:
             item.add_marker(pytest.mark.e2e)
+            for rule in SERVER_SOCKET_FINALIZERS:
+                item.add_marker(pytest.mark.filterwarnings(rule))
 
 
 @pytest.fixture
@@ -50,6 +63,9 @@ def serve(app: ASGIApp) -> Iterator[str]:
     yield f"http://127.0.0.1:{port}/"
     server.should_exit = True
     thread.join(timeout=10)
+    # Finalize the server's leftover sockets now, while this test's warning filters apply, rather
+    # than during whichever test the garbage collector happens to run in next.
+    gc.collect()
 
 
 @pytest.fixture

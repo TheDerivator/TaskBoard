@@ -18,10 +18,14 @@ from taskboard.identity.providers import IdentityProviders
 from taskboard.identity.sessions import SESSION_COOKIE
 from taskboard.services.attachments import AttachmentStore
 from taskboard.services.auth import AuthService
+from taskboard.services.changes import ChangeService
 from taskboard.services.conversation import ConversationService
+from taskboard.services.knowledge import KnowledgeService
 from taskboard.services.organization import OrganizationService
 from taskboard.services.projects import ProjectService
 from taskboard.services.reference import ReferenceService
+from taskboard.services.releases import ReleaseService
+from taskboard.services.search import SearchService
 from taskboard.services.sso import SsoService
 from taskboard.services.tasks import TaskService
 from taskboard.services.users import UserAdminService
@@ -80,23 +84,57 @@ def get_task_service(session: DbSession, principal: CurrentPrincipal, store: Sto
 
 
 def get_conversation_service(
-    session: DbSession, principal: CurrentPrincipal, store: Store
+    session: DbSession, principal: CurrentPrincipal, store: Store, settings: AppSettings
 ) -> ConversationService:
-    return ConversationService(session, principal, store)
+    return ConversationService(session, principal, store, today=settings.current_date())
+
+
+def get_change_service(
+    session: DbSession, principal: CurrentPrincipal, store: Store, settings: AppSettings
+) -> ChangeService:
+    return ChangeService(session, principal, today=settings.current_date(), store=store)
 
 
 def get_project_service(session: DbSession, principal: CurrentPrincipal) -> ProjectService:
     return ProjectService(session, principal)
 
 
-def get_reference_service(session: DbSession, principal: CurrentPrincipal) -> ReferenceService:
-    return ReferenceService(session, principal)
+def get_reference_service(
+    session: DbSession, principal: CurrentPrincipal, settings: AppSettings
+) -> ReferenceService:
+    return ReferenceService(session, principal, today=settings.current_date())
 
 
 Tasks = Annotated[TaskService, Depends(get_task_service)]
 Projects = Annotated[ProjectService, Depends(get_project_service)]
 Reference = Annotated[ReferenceService, Depends(get_reference_service)]
 Conversations = Annotated[ConversationService, Depends(get_conversation_service)]
+Changes = Annotated[ChangeService, Depends(get_change_service)]
+
+
+def get_knowledge_service(
+    session: DbSession, principal: CurrentPrincipal, settings: AppSettings, store: Store
+) -> KnowledgeService:
+    return KnowledgeService(session, principal, today=settings.current_date(), store=store)
+
+
+Knowledge = Annotated[KnowledgeService, Depends(get_knowledge_service)]
+
+
+def get_release_service(session: DbSession, principal: CurrentPrincipal) -> ReleaseService:
+    return ReleaseService(session, principal)
+
+
+Releases = Annotated[ReleaseService, Depends(get_release_service)]
+
+
+def get_search_service(
+    session: DbSession, principal: CurrentPrincipal, settings: AppSettings
+) -> SearchService:
+    return SearchService(session, principal, today=settings.current_date())
+
+
+Search = Annotated[SearchService, Depends(get_search_service)]
 
 
 def get_user_admin(session: DbSession, principal: CurrentPrincipal) -> UserAdminService:

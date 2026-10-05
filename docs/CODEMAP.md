@@ -21,10 +21,13 @@ taskboard/                                  TaskBoard: a team task board with a 
     routers/                                One module per API resource. Routers parse input, call a service and shape the output.
       admin.py                              Administration endpoints: users, passwords, role assignments, roles, organization, audit log.
       auth.py                               Authentication endpoints: current user, password login, logout, change own password.
-      conversation.py                       Conversation endpoints: timeline, posts, image uploads and downloads, Markdown preview.
+      changes.py                            Process-change endpoints: a process's changes, one change, its conversation and periods.
+      conversation.py                       Conversation endpoints: a task's timeline and posts, editing and history of any post, image
+      knowledge.py                          Process-knowledge endpoints: a process's map, boxes (with links, controls, external links),
       meta.py                               Service metadata endpoints: health check and version.
       projects.py                           Project endpoints: projects with node trees and counts, outlines, project and node editing.
       reference.py                          Reference endpoints: the bootstrap document and the people list.
+      search.py                             Search everything (M19): tasks, process changes, knowledge boxes and defects you may see.
       sso.py                                SSO endpoints for redirect providers: start a sign-in, and the provider's callback.
       tasks.py                              Task endpoints: list/filter, read, create, edit, move in the ranking, delete, placements.
       windows.py                            Windows sign-in endpoint: the HTTP Negotiate handshake (Kerberos or NTLM) with the browser.
@@ -38,28 +41,40 @@ taskboard/                                  TaskBoard: a team task board with a 
         20260926_6bbf2e3943cd_sso_requests_and_group_mappings.py  sso requests and group mappings
         20260926_867d060d677d_login_attempts.py  login attempts
         20260926_8cfc9fb20cab_initial_schema.py  initial schema
+        20261004_43353ae16098_processes.py  processes
+        20261004_5337a4d5fc47_process_changes.py  process changes
+        20261004_a58ea5830fe1_box_images.py  box images
+        20261004_accb969d56e3_process_knowledge.py  process knowledge
+        20261004_d8d4a375aeac_releases.py   releases
       env.py                                Alembic environment: migrates the database named in the config (or in TASKBOARD_ settings).
       script.py.mako
     models/                                 All tables. Importing this package registers every model on `Base.metadata`.
-      conversation.py                       Task conversation: Markdown posts, uploaded attachments, and automatic events.
+      changes.py                            Process changes: one per change to a process, and its periods (tests and permanent changes).
+      conversation.py                       Conversations of tasks and process changes: Markdown posts (with their earlier versions),
       identity.py                           Accounts and access control: users, external identities, roles, assignments, sessions, audit.
-      org.py                                Organization tables: departments and their sections (the scopes for access rights).
+      knowledge.py                          Process knowledge: kinds and link types, the boxes of each process's map (and the defect
+      org.py                                Organization tables: departments, their sections (the scopes for access rights) and processes.
       people.py                             People on the board (task leads and helpers). Not the same as login accounts (users).
       projects.py                           Projects and their node trees (sections and subsections, any depth).
       system.py                             Infrastructure tables: named lock rows that serialize critical sections (see db/session.py).
       tasks.py                              Tasks, their helpers, and their placements in projects.
     base.py                                 Declarative base, constraint naming convention and portable column types (SQLite ↔ MS SQL).
+    ids.py                                  `column IN (ids)` for any number of ids on every backend: the ids are written into the SQL as
     migrate.py                              Run Alembic programmatically: upgrade to the latest schema, check models against migrations.
     session.py                              Engine and session factory, SQLite connection tuning, and portable named locks.
     sqlite_files.py                         SQLite database files: where they are, and consistent copies of them while they are in use.
     text.py                                 Case-insensitive text matching that works for all of Unicode on every backend.
   domain/                                   Domain layer: pure business rules (ranking, outlines, lifecycle, task keys).
     access.py                               Access-control vocabulary: permissions, built-in roles, scopes and account states.
+    changes.py                              Process changes: keys (`LM-07`), period rules, scope tags, and the derived state of a change.
     errors.py                               Domain exceptions. The API layer maps each one to an HTTP status in a single place.
     events.py                               Kinds of automatic task events shown in the conversation timeline.
+    knowledge.py                            Process knowledge: box kinds and link types (built-in and custom), box keys, extra fields, and
     lifecycle.py                            Task lifecycle: idea → started → done → archived, and which states are shown by default.
     outline.py                              Project trees: outline numbers (1, 1.1, 2.2.1), pre-order listing, subtrees and cycle checks.
     ranking.py                              The team-wide ranking: moving a task before/after another one, as list and as rank shift.
+    releases.py                             Releases of a process's FMEA and control plan (DESIGN "Versioning" 2-4): what a release freezes
+    search.py                               Search everything (DESIGN "Global search", M19): the words of a query, whether a text holds
     task_keys.py                            Short public task keys (`T-K7Q2MX`): generation, normalization and display.
   identity/                                 Identity and access control: users, roles, permissions, sessions, identity providers, policy.
     providers/                              External identity providers (SSO). None are configured by default: built-in accounts only.
@@ -75,39 +90,51 @@ taskboard/                                  TaskBoard: a team task board with a 
   schemas/                                  Pydantic models for data going into and out of use cases; the API exposes them as-is.
     admin.py                                Administration shapes: users, passwords, role assignments, roles, organization, audit log.
     auth.py                                 Shapes for login, password change and the current-user ("me") document.
-    conversation.py                         Conversation shapes: timeline of posts and events, post commands, attachments, preview.
+    changes.py                              Process-change shapes: changes with their periods and derived state, edit commands, periods.
+    conversation.py                         Conversation shapes (tasks and process changes): timeline of posts, periods and events, post
+    knowledge.py                            Process-knowledge shapes: kinds and link types, a map (boxes, links, controls, external links),
     projects.py                             Project shapes: projects with their node trees and counts, outlines, and edit commands.
     reference.py                            Reference data shapes: departments and sections, people, lifecycle states, bootstrap.
+    search.py                               Search results (M19): grouped by type (knowledge, process changes, tasks, defects), each hit
     tasks.py                                Task shapes: list filters, summaries and details, create/update/move commands, placements.
   services/                                 Service layer: use cases. Each service owns its transaction and enforces the access policy.
     data/
       sample-data.json
-    attachments.py                          Uploaded files on disk: image type sniffing, size limits, atomic writes, deletion.
+    attachments.py                          Uploaded images: type sniffing, size limits, atomic writes, deletion, and their rows and links.
     audit.py                                Append-only audit trail of security-relevant actions (account, role and login events).
     auth.py                                 Authentication use cases: who is calling, log in, log out, change password.
     backup.py                               Back up and restore everything TaskBoard stores: the database and the uploaded images.
     catalog.py                              Reference data loaded once per request: sections, people, projects and their outlines.
-    conversation.py                         Conversation use cases: timeline (posts + events), post/edit/delete posts, image uploads.
+    changes.py                              Process-change use cases: list a process's changes, read, create, edit, move, delete; scope tags.
+    conversation.py                         Conversation use cases for tasks and process changes: timeline, posts, periods, history, images.
+    frozen.py                               A release's frozen state: the boxes, links, controls and external links it froze, rebuilt from
+    knowledge.py                            Process-knowledge use cases: a process's map; saving a box with its links, controls and external
     markdown.py                             Markdown → safe HTML for conversation posts.
-    organization.py                         Organization administration: departments, sections and people (needs `people.manage`).
+    organization.py                         Organization administration: departments, sections, processes and people (`people.manage`).
     projects.py                             Project use cases: list projects with counts, unfold an outline, edit projects and their trees.
-    reference.py                            Reference data use cases: the bootstrap document (who am I, departments, people, projects).
-    sample_data.py                          Load the design's sample data (departments, people, projects, tasks, posts) into an empty board.
-    seed.py                                 Built-in data that must always exist: lock rows, built-in roles, the admin and anonymous users.
+    reference.py                            Reference data use cases: the bootstrap document (who am I, departments, people, projects,
+    releases.py                             Releases of a process's FMEA and control plan (DESIGN Versioning 2-4): the released versions,
+    sample_data.py                          Load the design's sample data (departments, people, projects, tasks, posts, processes, process
+    search.py                               Search everything (DESIGN "Global search", M19): tasks (title, description, conversation),
+    seed.py                                 Built-in data that must always exist: lock rows, built-in roles, the admin and anonymous users,
     setup.py                                Bring a database up to date: apply migrations, then create the built-in data.
     sso.py                                  SSO sign-ins that start a session: the OpenID Connect round trip, and Windows sign-in.
     tasks.py                                Task use cases: list (filtered, visible only), read, create, edit, re-rank, delete, placements.
     users.py                                User administration: accounts, passwords, role assignments, custom roles, the audit log.
-    visibility.py                           The one place that decides which tasks a principal can see; every task query goes through it.
+    visibility.py                           The one place that decides what a principal can see: every task query goes through it, and
   static/
     css/
       admin.css                             Administration screens: tab bar, data tables, account/role editors, organization lists.
       base.css                              Element defaults: box model, typography, links, focus rings, visually-hidden helper.
       boards.css                            People lanes and the Projects view (tree, outline, section editor).
+      changes.css                           Process changes: the list, state pills and period chips, the timeline (Gantt), period posts and
       components.css                        Shared components: buttons, toggle chips, fields, pills, avatars, project chips, dialogs, toasts.
       conversation.css                      Task conversation: event lines, posts (update posts as highlighted cards), Markdown, composer.
       fonts.css                             Self-hosted IBM Plex Sans and Mono (SIL Open Font License, see fonts/LICENSE-OFL.txt).
+      knowledge.css                         Process knowledge: box kinds, the map canvas (boxes, lines, toggles), the toolbar with kind
       layout.css                            App shell: sidebar (full, collapsed rail, or off-canvas on narrow screens) and main area.
+      print.css                             Printing ("Export PDF" saves the print as PDF): no navigation; a page with a print sheet (FMEA,
+      processes.css                         Process changes and Process knowledge: the shared bar with department, process tabs and page switch.
       task.css                              Task drawer and task page: header, tabs, detail form, people and placements; drag states.
       tokens.css                            Design tokens (DESIGN.md "Visual system") for the light theme, with dark-theme overrides.
       views.css                             View-specific styles: Priority list (ranked table that becomes cards on narrow screens).
@@ -116,42 +143,72 @@ taskboard/                                  TaskBoard: a team task board with a 
       components/
         auth-dialogs.js                     Login form (dialog or full page) and the password-change dialog.
         badges.js                           Small display components: person avatar, lifecycle pill, project chip.
+        box-links-field.js                  "Where in the knowledge map": the boxes a process change or a task refers to, as chips that
+        box-picker.js                       "Link to a box": a dialog that searches every map and defect catalogue the visitor can see
+        change-conversation.js              A process change's conversation: comments and period posts in time order, the Comment / Period
         composer.js                         Markdown composer: Write/Preview, formatting toolbar, images by button, paste or drop.
         conversation.js                     The Conversation tab: events and posts in time order, own-post editing, and the composer.
         copy-link.js                        "Copy link" button: puts the full URL of an app path on the clipboard (task permalinks, team views).
         dialog.js                           Modal dialogs on the native <dialog> element (focus trapping and backdrop for free).
         drawer.js                           Side drawer on a modal <dialog>: slides in from the right, Escape/backdrop close it.
         icons.js                            Inline SVG icons (paths from the design mockups). Decorative: hidden from screen readers.
+        markdown-field.js                   A Markdown text field for forms (a box's description): Write/Preview, a formatting toolbar and,
         person-picker.js                    Searchable person list in a popover (lead picker, "Add person"); keyboard and pointer friendly.
         placement-dialog.js                 "Add to another project" / "Move" dialog: step 1 pick a project, step 2 pick a node or top level.
+        process-header.js                   Header shared by Process changes and Process knowledge: department, process tabs, page switch.
+        search-dialog.js                    "Search everything" (the GlobalSearch mockup): Ctrl K anywhere or the sidebar entry; type
         sidebar.js                          Left navigation: views with counts, projects, the signed-in user, theme and collapse toggles.
         task-fields.js                      Fields of the task form: lifecycle picker, department/section, lead, helpers, placements.
         toasts.js                           Transient notifications: `showToast(text)`, `showError(error)`, and the <Toasts/> outlet.
       lib/
+        access.js                           Which views a visitor may open, and where "home" leads (pure; the server enforces the rules).
+        controlplan.js                      The control plan (pure): a department's defects in their groups, what leads to each defect in
         dnd.js                              Drag-and-drop reordering rules (pure): drop side, and the optimistic local reorder.
         editor.js                           Text operations for the Markdown composer (bold, lists, inserted images). Pure: each returns
         events.js                           Human wording for automatic task events ("Anna Claes moved this from Idea to Started"). Pure.
         filters.js                          Client-side task filtering for instant feedback; same rules as the server (GET /api/tasks).
         format.js                           Formatting helpers: ranks ("01"), short names ("Anna C."), initials, dates. Pure.
         lanes.js                            People lanes (pure): each person's lead and helping cards, in team rank order.
-        lookup.js                           Index the bootstrap document by id (people, sections, departments, projects, nodes). Pure.
+        lookup.js                           Index the bootstrap document by id (people, sections, departments, projects, nodes, processes). Pure.
+        maplayout.js                        The knowledge map (pure): its tree from the API's graph, what a view shows, the horizontal
+        periods.js                          Process-change periods (pure): a change's derived state and its wording. Same rules as the
+        processes.js                        Processes for Process changes and Process knowledge (pure): who may use which, found from the URL.
+        releases.js                         Releases of the FMEA and control plan (pure): versions in links ("v3"), the release bar's
         routes.js                           Map URL paths to app routes and back. Pure: the deployment's base path is passed in.
         scopes.js                           Choices for "where does this role apply": everywhere, a department, or a section. Pure.
+        search.js                           Search everything (pure): the dialog's type filters with counts, the hits it lists in order,
         signin.js                           Windows sign-in decisions: when the page tries it by itself, and which failures to mention. Pure.
         teams.js                            Teams for the People view (pure): everyone, a department or a section; found from the URL.
+        timeline.js                         The process-change timeline (Gantt), pure: the window shown, which changes, and the bars.
       views/
         admin/
           audit.js                          Administration › Audit log: security-relevant actions, newest first, with "Show older".
           groups.js                         Administration › SSO groups: members of an identity-provider group hold a role at a scope.
           index.js                          Administration: tabs for accounts, roles, organization, people, SSO groups and the audit log.
-          organization.js                   Administration › Organization: departments and their sections (the scopes for access rights).
+          organization.js                   Administration › Organization: departments, their sections (the scopes for access rights) and processes.
           people.js                         Administration › People: the people on the board (leads and helpers), active or not.
           roles.js                          Administration › Roles: built-in roles (read-only) and custom roles with chosen permissions.
           users.js                          Administration › Accounts: list, create (local or SSO pre-provisioned), edit, rights, passwords.
+        changes/
+          change.js                         A process change: a drawer over the list, or its own page; plus the "New change" drawer.
+          index.js                          Process changes of one process: the list or the timeline (Gantt) of its tests and changes.
+          list.js                           The list of a process's changes: what and why, periods as chips, the state now, owner, posts.
+          timeline.js                       The timeline (Gantt) of a process's changes: tests as blue bars, process changes as orange bars
+        knowledge/
+          box-link.js                       /box/{key}: a box by its key alone (links from dashboards, or a map link naming the wrong
+          cpl.js                            The control plan (the DefectView mockup): a department's defects in their groups; for the one
+          editor.js                         Editing a box (the NodeEdit mockup): kind, name, place in the tree, description, key facts,
+          index.js                          Process knowledge of one process, read three ways: the knowledge map, the FMEA, the control plan.
+          map.js                            The map canvas: boxes laid out left to right (lib/maplayout.js), the lines between them, a toggle
+          panel.js                          The selected box's side panel: what it is, where it sits, its description and key facts, its
+          print.js                          What "Export PDF" prints: the FMEA and the control plan as tables (the browser saves them as
+          release.js                        The release bar of the FMEA and the control plan (the FmeaMap and DefectView mockups) and the
+          settings.js                       "Kinds & link types" (the MapSettings mockup): the box kinds and link types every map uses.
+          switch.js                         The Knowledge / FMEA / CPL switch of Process knowledge, and each view's path for a process.
         people.js                           People view: one lane per person of a team (everyone, a department or a section), cards in team priority order.
         priority.js                         Priority view: every visible task in one team-wide ranked list, with search and filters.
         projects.js                         Projects view: project tree on the left, the selected project or section unfolded as an outline.
-        simple.js                           Small full-page views: not found, login required, error, and views still to be built.
+        simple.js                           Small full-page views: not found, login required, no access, error.
         task.js                             The task: a drawer over the list, or its own page at /t/{key}; plus the "New task" drawer.
       api.js                                HTTP client for /api: JSON in and out, CSRF header on writes, errors as ApiError.
       app.js                                The application: loads the bootstrap document, lays out sidebar + view, routes, dialogs.
@@ -181,14 +238,20 @@ tests/                                      Test suite: unit/ (pure logic), api/
     test_admin.py                           Administration API: accounts, passwords, rights, roles, organization, audit, lockout guard.
     test_auth.py                            Password login, sessions, logout, throttling, CSRF, suspension and password changes over HTTP.
     test_bootstrap.py                       The bootstrap document and the people list, for visitors with and without access.
+    test_changes.py                         Process changes API (milestone M12): lists with derived states, editing, periods, history.
     test_conversation.py                    Conversation API: timeline, posting rights, editing, image uploads and their access rules.
     test_frontend.py                        Serving the frontend: app routes return the page, base path injection, static caching,
+    test_knowledge.py                       Process knowledge API (milestone M14): maps, saving boxes with revisions, the tree, history,
     test_meta.py                            Health endpoint, API docs and the static app shell are served.
     test_oidc.py                            SSO with OpenID Connect against an in-process provider (milestone M9 acceptance).
     test_placements.py                      Placing tasks in projects: one place per project, nodes of that project, events.
+    test_processes.py                       Processes (milestone M11): administration, the bootstrap, and who may see them (D-079, D-080).
     test_projects.py                        Projects API: trees with counts, outlines (DESIGN rule 7), editing projects and sections.
     test_ranking_api.py                     Moving tasks in the team-wide ranking over HTTP, including concurrent moves.
+    test_releases.py                        Releases of the FMEA and control plan (milestone M18): the sample's v1-v3 and draft, releasing,
     test_scale.py                           A board with 5,000 extra tasks (milestone M10): the API stays fast and the ranking dense.
+    test_scale_processes.py                 2,000 process changes and a 2,000-box map (milestone M20): the API stays fast.
+    test_search.py                          Search everything (milestone M19): every type is found, grouped and ranked, with links; nothing
     test_sso_provisioning.py                SSO readiness: pre-provisioned accounts get exactly the rights an admin prepared.
     test_tasks.py                           Task API on the sample board: listing and filters, keys, create, edit, events, delete, access.
     test_trusted_header.py                  SSO through a trusted reverse proxy header (e.g. IIS Windows authentication).
@@ -200,12 +263,22 @@ tests/                                      Test suite: unit/ (pure logic), api/
     test_accessibility.py                   Accessibility (milestone M10): axe-core finds no violations, in the light and the dark theme.
     test_admin.py                           Administration in a real browser (milestone M8), with a second browser for "the other person".
     test_boards.py                          People lanes and the Projects view in a real browser (milestone M6).
+    test_changes.py                         Process changes in a real browser (milestone M13): list, drawer, conversation, timeline.
     test_conversation.py                    The task conversation in a real browser (milestone M7): reading, posting, images, editing.
+    test_fmea_cpl.py                        The FMEA and the control plan in a browser (milestone M17): filtering, causes, controls,
+    test_knowledge.py                       The knowledge map in a real browser (M15): the map, the panel, finding, the keyboard.
+    test_knowledge_editing.py               Editing the knowledge map in a browser (milestone M16): boxes, links, settings, references.
+    test_processes.py                       Process changes and Process knowledge in a real browser (M11): navigation and rights.
+    test_releases.py                        Releases in a browser (milestone M18): the release bar, blue dots, releasing, old versions.
     test_scale.py                           A board with 5,000 extra tasks in a real browser (milestone M10).
+    test_scale_processes.py                 2,000 process changes and a 2,000-box map in a real browser (milestone M20).
+    test_search.py                          Search everything and stable links in a browser (milestone M19).
     test_shell.py                           The app shell and the Priority view in a real browser: filters, theme, sidebar, login.
     test_sso.py                             SSO sign-in in a real browser (milestone M9): the full redirect round trip.
     test_tasks.py                           Priority interactions and the task drawer in a real browser (milestone M5).
     test_windows_signin.py                  Windows sign-in in a real browser: Chromium answers the Negotiate challenge through SSPI.
+  fixtures/
+    change_states.json
   integration/                              Tests against a real (migrated) database: schema, constraints, seeding, sample data.
     test_backup.py                          Backup and restore: one archive with a consistent database snapshot and the uploaded images.
     test_constraints.py                     The database itself guards the core invariants (so no code path can break them).
@@ -214,33 +287,45 @@ tests/                                      Test suite: unit/ (pure logic), api/
     test_principal.py                       Principals loaded from the database: grants, scopes, the anonymous floor, refusals.
     test_sample_data.py                     The design's sample board loads completely and consistently.
     test_seed.py                            Built-in roles and users: created once, idempotent, respectful of admin changes.
-    test_session.py                         Engine setup: SQLite pragmas, UTC datetimes, write transactions that serialize writers.
+    test_session.py                         Engine setup: SQLite pragmas, UTC datetimes, serialized writers, long lists of ids.
   js/
+    controlplan.test.mjs                    Unit tests for static/js/lib/controlplan.js on the design's defects and Continuous casting map.
     conversation.test.mjs                   Unit tests for static/js/lib/events.js (event wording) and lib/editor.js (composer edits).
     dnd.test.mjs                            Unit tests for static/js/lib/dnd.js: drop sides, optimistic reordering, keyboard steps.
     filters.test.mjs                        Unit tests for static/js/lib/filters.js: the same rules as the server's task filters.
     format.test.mjs                         Unit tests for static/js/lib/format.js and lib/lookup.js.
     lanes.test.mjs                          Unit tests for static/js/lib/lanes.js: people lanes from the sample board's first tasks.
+    maplayout.test.mjs                      Unit tests for static/js/lib/maplayout.js on the design's Continuous casting map.
+    periods.test.mjs                        Unit tests for static/js/lib/periods.js: the same table of states as the server's tests, and wording.
+    processes.test.mjs                      Unit tests for static/js/lib/processes.js and lib/access.js: which processes and views a visitor gets.
+    releases.test.mjs                       Unit tests for static/js/lib/releases.js: versions in links and the release bar's wording.
     routes.test.mjs                         Unit tests for static/js/lib/routes.js (run: node --test tests/js/*.test.mjs).
     scopes.test.mjs                         Unit tests for static/js/lib/scopes.js: scope choices for role assignments.
+    search.test.mjs                         Unit tests for static/js/lib/search.js: filters with counts, hit order, keys, context lines.
     signin.test.mjs                         Unit tests for static/js/lib/signin.js: when Windows sign-in is tried, and what is said when it fails.
     teams.test.mjs                          Unit tests for static/js/lib/teams.js: finding a team from its URL, its label, members and path.
+    timeline.test.mjs                       Unit tests for static/js/lib/timeline.js: the window, which changes it shows, and bar geometry.
   unit/                                     Fast tests of pure logic: no database, no HTTP.
     test_access_policy.py                   The access policy matrix: who may view, edit, comment and manage, in which section.
+    test_changes.py                         Process changes: the derived state (the shared table of cases), period rules, tags and keys.
     test_cli.py                             Command line: argument parsing, and the database commands end to end.
     test_config.py                          Settings defaults and environment overrides.
     test_forwarded_headers.py               X-Forwarded-For/-Proto: believed only from trusted proxies, which are remembered.
+    test_knowledge.py                       Process knowledge rules: box keys, extra fields, facts, external links, order, revision diffs.
     test_markdown.py                        Post rendering: Markdown features, mentions and task links, and sanitizing (XSS vectors).
+    test_mssql_schema.py                    The schema as MS SQL would get it (M20 review, no server needed): Unicode text everywhere, no
     test_negotiate.py                       Windows sign-in (Negotiate): handshakes per connection, their expiry, and the identity.
     test_oidc_tokens.py                     ID token verification against signature-algorithm attacks (none, HMAC with the public key).
     test_outline.py                         Project outlines: numbering, order, subtrees, counts including descendants, cycle checks.
     test_ranking.py                         Team-wide ranking: moves relative to a target row, and the equivalent database rank shift.
+    test_releases.py                        Release rules (milestone M18): the scope of a release, the draft since the last one, warnings.
+    test_search.py                          Search rules (milestone M19): query words, matching across Unicode, ranking titles, snippets.
     test_task_keys.py                       Short task keys: alphabet, length, forgiving input, display, collision retry.
   conftest.py                               Shared pytest fixtures: isolated settings and databases, sessions, sample data, an HTTP client.
   fake_idp.py                               An in-process OpenID Connect provider for tests: discovery, keys, authorization, tokens.
   fake_negotiate.py                         A stand-in for Windows SSPI in tests: accepts made-up Kerberos-like and NTLM-like tokens.
-  helpers.py                                Test helpers: create users with given roles, log in through the API.
-  scale.py                                  A big board for performance checks: thousands of generated tasks on top of the sample board.
+  helpers.py                                Test helpers: users with given roles (built-in or custom), logging in, revision checks.
+  scale.py                                  A big board for performance checks: thousands of tasks, process changes and map boxes.
 scripts/                                    Developer scripts: quality gate (check.py) and code map generator (gen_codemap.py).
   check.py                                  One-command quality gate: lint, format, types, architecture contracts, codemap, all tests.
   gen_codemap.py                            Generate docs/CODEMAP.md: a tree of the codebase with a one-line summary per file.

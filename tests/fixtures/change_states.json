@@ -1,0 +1,179 @@
+{
+  "_about": "The derived state of a process change (DESIGN Module 2, rule 5; PLAN2.md). Shared by tests/unit/test_changes.py and tests/js/periods.test.mjs, so the server and the browser judge every change the same way. Dates are inclusive. The first rule that matches wins: in effect, test running, planned, no periods, ended.",
+  "today": "2026-10-03",
+  "cases": [
+    {
+      "name": "LM-12: a test that has not started yet",
+      "periods": [{ "kind": "test", "start": "2026-10-13", "end": "2026-10-17" }],
+      "state": "planned",
+      "date": "2026-10-13"
+    },
+    {
+      "name": "LM-11: a follow-up test whose last day is today (end dates are inclusive)",
+      "periods": [
+        { "kind": "test", "start": "2026-08-25", "end": "2026-09-05" },
+        { "kind": "test", "start": "2026-09-22", "end": "2026-10-03" }
+      ],
+      "state": "test_running",
+      "date": "2026-10-03"
+    },
+    {
+      "name": "LM-10: a test, then a permanent change",
+      "periods": [
+        { "kind": "test", "start": "2026-07-08", "end": "2026-07-10" },
+        { "kind": "change", "start": "2026-08-01", "end": null }
+      ],
+      "state": "in_effect",
+      "date": "2026-08-01"
+    },
+    {
+      "name": "LM-08: two trial batches, both over",
+      "periods": [
+        { "kind": "test", "start": "2026-05-05", "end": "2026-05-16" },
+        { "kind": "test", "start": "2026-06-02", "end": "2026-06-13" }
+      ],
+      "state": "tests_ended",
+      "date": "2026-06-13"
+    },
+    {
+      "name": "LM-07: two one-day tests, then a permanent change",
+      "periods": [
+        { "kind": "test", "start": "2026-04-14", "end": "2026-04-14" },
+        { "kind": "test", "start": "2026-04-16", "end": "2026-04-16" },
+        { "kind": "change", "start": "2026-04-21", "end": null }
+      ],
+      "state": "in_effect",
+      "date": "2026-04-21"
+    },
+    {
+      "name": "CC-34: a test running until next week",
+      "periods": [{ "kind": "test", "start": "2026-09-28", "end": "2026-10-09" }],
+      "state": "test_running",
+      "date": "2026-10-09"
+    },
+    {
+      "name": "CC-32: three one-day tests in June",
+      "periods": [
+        { "kind": "test", "start": "2026-06-09", "end": "2026-06-09" },
+        { "kind": "test", "start": "2026-06-11", "end": "2026-06-11" },
+        { "kind": "test", "start": "2026-06-16", "end": "2026-06-16" }
+      ],
+      "state": "tests_ended",
+      "date": "2026-06-16"
+    },
+    {
+      "name": "a new change without periods",
+      "periods": [],
+      "state": "no_periods",
+      "date": null
+    },
+    {
+      "name": "a permanent change that starts tomorrow is planned",
+      "periods": [{ "kind": "change", "start": "2026-10-04", "end": null }],
+      "state": "planned",
+      "date": "2026-10-04"
+    },
+    {
+      "name": "a permanent change that starts today is in effect",
+      "periods": [{ "kind": "change", "start": "2026-10-03", "end": null }],
+      "state": "in_effect",
+      "date": "2026-10-03"
+    },
+    {
+      "name": "a one-day test today is running",
+      "periods": [{ "kind": "test", "start": "2026-10-03", "end": "2026-10-03" }],
+      "state": "test_running",
+      "date": "2026-10-03"
+    },
+    {
+      "name": "a test that ended yesterday",
+      "periods": [{ "kind": "test", "start": "2026-09-28", "end": "2026-10-02" }],
+      "state": "tests_ended",
+      "date": "2026-10-02"
+    },
+    {
+      "name": "a permanent change that was ended (reverted) stays a change: 'Ended' (A15)",
+      "periods": [{ "kind": "change", "start": "2026-04-21", "end": "2026-09-30" }],
+      "state": "ended",
+      "date": "2026-09-30"
+    },
+    {
+      "name": "an ended change followed by a test that ended later: the last period decides",
+      "periods": [
+        { "kind": "change", "start": "2026-04-21", "end": "2026-06-30" },
+        { "kind": "test", "start": "2026-07-01", "end": "2026-07-05" }
+      ],
+      "state": "tests_ended",
+      "date": "2026-07-05"
+    },
+    {
+      "name": "a test that ended after an ended change: still 'Tests ended'; a change ending last: 'Ended'",
+      "periods": [
+        { "kind": "test", "start": "2026-04-01", "end": "2026-04-05" },
+        { "kind": "change", "start": "2026-04-21", "end": "2026-09-01" }
+      ],
+      "state": "ended",
+      "date": "2026-09-01"
+    },
+    {
+      "name": "in effect wins over a planned test",
+      "periods": [
+        { "kind": "change", "start": "2026-04-21", "end": null },
+        { "kind": "test", "start": "2026-10-20", "end": "2026-10-24" }
+      ],
+      "state": "in_effect",
+      "date": "2026-04-21"
+    },
+    {
+      "name": "a running test wins over a planned one",
+      "periods": [
+        { "kind": "test", "start": "2026-10-01", "end": "2026-10-05" },
+        { "kind": "test", "start": "2026-10-20", "end": "2026-10-24" }
+      ],
+      "state": "test_running",
+      "date": "2026-10-05"
+    },
+    {
+      "name": "a change with a planned end date is in effect until then",
+      "periods": [{ "kind": "change", "start": "2026-04-21", "end": "2026-10-31" }],
+      "state": "in_effect",
+      "date": "2026-04-21"
+    },
+    {
+      "name": "two changes in effect: since the earliest",
+      "periods": [
+        { "kind": "change", "start": "2026-08-01", "end": null },
+        { "kind": "change", "start": "2026-04-21", "end": null }
+      ],
+      "state": "in_effect",
+      "date": "2026-04-21"
+    },
+    {
+      "name": "two overlapping running tests: until the latest end",
+      "periods": [
+        { "kind": "test", "start": "2026-09-20", "end": "2026-10-05" },
+        { "kind": "test", "start": "2026-09-01", "end": "2026-10-10" }
+      ],
+      "state": "test_running",
+      "date": "2026-10-10"
+    },
+    {
+      "name": "two planned periods: from the earliest",
+      "periods": [
+        { "kind": "test", "start": "2026-11-01", "end": "2026-11-03" },
+        { "kind": "change", "start": "2026-10-20", "end": null }
+      ],
+      "state": "planned",
+      "date": "2026-10-20"
+    },
+    {
+      "name": "an ended change with a test planned: planned",
+      "periods": [
+        { "kind": "change", "start": "2026-04-21", "end": "2026-09-30" },
+        { "kind": "test", "start": "2026-10-12", "end": "2026-10-16" }
+      ],
+      "state": "planned",
+      "date": "2026-10-12"
+    }
+  ]
+}

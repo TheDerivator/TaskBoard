@@ -348,11 +348,36 @@
   font-family: var(--font-mono);
 }
 
-.org-sections {
+.org-sections,
+.org-processes {
   display: flex;
   flex-direction: column;
   gap: 6px;
   padding-left: 24px;
+}
+
+.org-subhead {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+/* A process code: fixed once created, so shown as text rather than as a field. */
+.org-code {
+  flex: 0 0 110px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  padding-left: 12px;
+}
+
+.org-line .org-select {
+  height: 36px;
+  width: auto;
+  flex: 0 1 220px;
+  min-width: 140px;
 }
 
 @media (max-width: 640px) {

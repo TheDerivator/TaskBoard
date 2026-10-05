@@ -12,11 +12,20 @@ from sqlalchemy import func, select
 from taskboard.cli import main
 from taskboard.config import Settings, get_settings
 from taskboard.db.migrate import alembic_config, current_revision
-from taskboard.db.models import Task
+from taskboard.db.models import (
+    Box,
+    Change,
+    ChangePeriod,
+    Release,
+    ReleaseItem,
+    Revision,
+    Task,
+    User,
+)
 from taskboard.db.session import Database
-from taskboard.services.attachments import AttachmentStore
+from taskboard.services.attachments import AttachmentStore, store_image
 from taskboard.services.backup import BackupError, create_backup, restore_backup
-from taskboard.services.sample_data import load_sample_data
+from taskboard.services.sample_data import defect_map_png, load_sample_data
 from tests.conftest import requires_sqlite, sqlite_url
 
 pytestmark = requires_sqlite  # other databases are backed up with their own tools
@@ -29,6 +38,19 @@ def task_count(url: str) -> int:
     try:
         with database.session() as s:
             return s.scalar(select(func.count()).select_from(Task)) or 0
+    finally:
+        database.dispose()
+
+
+def counts(url: str) -> dict[str, int]:
+    """Rows of what process changes and process knowledge store (M11-M18)."""
+    database = Database(url)
+    try:
+        with database.session() as s:
+            models = (Change, ChangePeriod, Box, Revision, Release, ReleaseItem)
+            return {
+                m.__tablename__: s.scalar(select(func.count()).select_from(m)) or 0 for m in models
+            }
     finally:
         database.dispose()
 
@@ -147,3 +169,28 @@ def test_the_cli_backs_up_and_restores(
     assert "Wrote" in out and "Restore failed: TaskBoard already has data here" in out
     assert "Restored the database and 1 uploaded images" in out
     assert "The data it replaced is kept at" in out
+
+
+def test_process_changes_and_knowledge_come_back_with_their_images(
+    settings: Settings, sample_database: Database, tmp_path: Path
+) -> None:
+    with sample_database.session(write=True) as s:
+        mould = s.scalars(select(Box).where(Box.key == "mould")).one()
+        admin = s.scalars(select(User.id).where(User.username == "admin")).one()
+        image = store_image(
+            AttachmentStore(settings.uploads_dir),
+            "level.png",
+            defect_map_png(20, 10),
+            box_id=mould.id,
+            uploader_user_id=admin,
+        )
+        s.add(image)
+    before = counts(settings.resolved_database_url)
+    assert before["releases"] == 3 and before["release_items"] > 0
+    archive = create_backup(
+        settings.resolved_database_url, settings.uploads_dir, tmp_path / "b.zip"
+    ).path
+    url, uploads = new_home(tmp_path, "new")
+    report = restore_backup(archive, url, uploads)
+    assert report.uploads == 2  # the task conversation's image and the box's
+    assert counts(url) == before

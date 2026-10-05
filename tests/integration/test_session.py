@@ -1,4 +1,4 @@
-"""Engine setup: SQLite pragmas, UTC datetimes, write transactions that serialize writers."""
+"""Engine setup: SQLite pragmas, UTC datetimes, serialized writers, long lists of ids."""
 
 import threading
 import time
@@ -8,7 +8,8 @@ import pytest
 from sqlalchemy import select, text
 from sqlalchemy.exc import StatementError
 
-from taskboard.db.models import AuditEntry
+from taskboard.db.ids import in_ids
+from taskboard.db.models import AuditEntry, Box
 from taskboard.db.session import TASK_RANKING_LOCK, Database, acquire_lock
 from tests.conftest import requires_sqlite
 
@@ -58,3 +59,16 @@ def test_write_sessions_wait_for_each_other(database: Database) -> None:
         timeline.append("second got the lock")
     thread.join()
     assert timeline == ["first commits", "second got the lock"]
+
+
+def test_any_number_of_ids_fits_in_one_statement(sample_database: Database) -> None:
+    """MS SQL takes 2,100 parameters; `in_ids` writes ids into the SQL (tests/conftest.py fails
+    any statement with more parameters, on every backend)."""
+    with sample_database.session() as s:
+        boxes = set(s.scalars(select(Box.id)))
+        found = set(
+            s.scalars(select(Box.id).where(in_ids(Box.id, [*boxes, *range(10**6, 10**6 + 5000)])))
+        )
+    assert found == boxes
+    with pytest.raises(ValueError):
+        in_ids(Box.id, ["1; DROP TABLE boxes"])  # type: ignore[list-item]

@@ -62,7 +62,9 @@ def test_seed_resyncs_builtin_role_permissions(session: Session) -> None:
     viewer.permissions.append(RolePermission(permission=Permission.USERS_MANAGE.value))
     session.flush()
     seed_builtins(session)
-    assert {rp.permission for rp in viewer.permissions} == {Permission.TASK_VIEW.value}
+    assert {rp.permission for rp in viewer.permissions} == {
+        p.value for p in BuiltinRole.VIEWER.permissions
+    }
 
 
 def test_seed_does_not_restore_anonymous_rights_an_admin_removed(session: Session) -> None:

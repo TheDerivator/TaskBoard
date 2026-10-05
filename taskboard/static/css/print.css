@@ -1,0 +1,104 @@
+/* Printing ("Export PDF" saves the print as PDF): no navigation; a page with a print sheet (FMEA,
+   control plan) prints only that sheet, in the print colours whatever the theme. */
+
+.print-sheet {
+  display: none;
+}
+
+@media print {
+  .app,
+  .app.is-collapsed {
+    display: block;
+  }
+
+  .sidebar,
+  .topbar,
+  .scrim,
+  .toasts {
+    display: none !important;
+  }
+
+  .page:has(> .print-sheet) {
+    padding: 0;
+  }
+
+  .page:has(> .print-sheet) > :not(.print-sheet) {
+    display: none !important;
+  }
+
+  body:has(.print-sheet) {
+    background: var(--print-paper);
+  }
+
+  .print-sheet {
+    display: block;
+    color: var(--print-ink);
+    background: var(--print-paper);
+    font-size: 10pt;
+  }
+
+  .print-sheet__head {
+    margin-bottom: 12pt;
+  }
+
+  .print-sheet__head h1 {
+    font-size: 16pt;
+  }
+
+  .print-sheet__head p {
+    color: var(--print-muted);
+  }
+
+  .print-sheet__defect {
+    margin-top: 14pt;
+    break-inside: avoid-page;
+  }
+
+  .print-sheet__defect h2 {
+    margin-bottom: 6pt;
+    font-size: 12pt;
+  }
+
+  .print-sheet__group {
+    font-weight: 400;
+    color: var(--print-muted);
+  }
+
+  .print-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .print-table th,
+  .print-table td {
+    padding: 4pt 6pt;
+    border: 1px solid var(--print-line);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .print-table thead th {
+    background: var(--print-head);
+    font-size: 9pt;
+  }
+
+  .print-table tr {
+    break-inside: avoid;
+  }
+
+  .print-sheet__list {
+    margin: 0;
+    padding-left: 12pt;
+  }
+
+  .print-sheet__link {
+    display: block;
+    color: var(--print-muted);
+    font-size: 8pt;
+    overflow-wrap: anywhere;
+  }
+
+  .print-sheet__none {
+    color: var(--print-muted);
+  }
+}

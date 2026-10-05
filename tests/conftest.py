@@ -11,13 +11,14 @@ about SQLite itself are skipped then (`requires_sqlite`).
 import os
 import shutil
 from collections.abc import Generator, Iterator
+from datetime import date
 from pathlib import Path
 
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
-from sqlalchemy import create_engine
+from sqlalchemy import Engine, create_engine, event
 from sqlalchemy.orm import Session
 
 from taskboard.config import Environment, Settings
@@ -30,7 +31,33 @@ from taskboard.web import create_app
 from taskboard.web.csrf import CSRF_COOKIE, CSRF_HEADER
 
 TEST_ADMIN_PASSWORD = "admin-password-for-tests"
+# "Today" in the design's sample data; tests pin the server's date to it.
+SAMPLE_TODAY = date(2026, 10, 3)
 DB_FILENAME = "taskboard.sqlite3"
+
+MSSQL_MAX_PARAMETERS = 2100
+
+
+@event.listens_for(Engine, "before_cursor_execute")
+def _portable_parameter_count(
+    conn: object,
+    cursor: object,
+    statement: str,
+    parameters: object,
+    context: object,
+    executemany: bool,
+) -> None:
+    """MS SQL refuses a statement with more than 2,100 parameters, SQLite takes 32,766: fail any
+    test that sends more, so big id lists cannot pass here and break there. (Bulk INSERTs are
+    left out: SQLAlchemy sizes their batches per database.)"""
+    if executemany or statement.lstrip()[:6].upper() == "INSERT":
+        return
+    count = len(parameters) if isinstance(parameters, (tuple, list, dict)) else 0
+    assert count <= MSSQL_MAX_PARAMETERS, (
+        f"{count} parameters (MS SQL takes {MSSQL_MAX_PARAMETERS})"
+    )
+
+
 EXTERNAL_DATABASE_URL = os.environ.get("TASKBOARD_TEST_DATABASE_URL") or None
 
 requires_sqlite = pytest.mark.skipif(
@@ -83,6 +110,7 @@ def settings(tmp_path: Path, template_db: Path | None) -> Settings:
         data_dir=tmp_path,
         database_url=EXTERNAL_DATABASE_URL,
         initial_admin_password=SecretStr(TEST_ADMIN_PASSWORD),
+        today=SAMPLE_TODAY,
         _env_file=None,  # pyright: ignore[reportCallIssue]
     )
 

@@ -1,5 +1,6 @@
 /** The task: a drawer over the list, or its own page at /t/{key}; plus the "New task" drawer. */
 import { api, ApiError } from "../api.js";
+import { BoxLinksField } from "../components/box-links-field.js";
 import { Drawer } from "../components/drawer.js";
 import { ConversationPanel } from "../components/conversation.js";
 import { CopyLinkButton } from "../components/copy-link.js";
@@ -16,7 +17,7 @@ import {
 import { showError, showToast } from "../components/toasts.js";
 import { useApi, useTitle } from "../hooks.js";
 import { padRank } from "../lib/format.js";
-import { canIn } from "../lib/lookup.js";
+import { canIn, canSomewhere } from "../lib/lookup.js";
 import { taskPath } from "../lib/routes.js";
 import { href, navigate } from "../router.js";
 import { dataChanged, refreshBoot, useAppState } from "../store.js";
@@ -250,6 +251,8 @@ export function TaskPanel({ taskKey, tab, onClose, layout, dirtyRef }) {
                 onRemove=${(projectId) =>
                   placementAction(() => api.delete(`/tasks/${task.key}/placements/${projectId}`), `Removed from ${projectName(projectId)}.`)}
               />
+              ${canSomewhere(boot.me, "knowledge.view") &&
+              html`<${BoxLinksField} basePath=${`/tasks/${encodeURIComponent(task.key)}/boxes`} editable=${!readOnly} lookup=${lookup} label="Knowledge map" />`}
             </div>
             ${!readOnly &&
             html`<footer class="task-panel__foot">

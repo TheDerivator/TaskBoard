@@ -24,6 +24,24 @@ export const PeopleIcon = () =>
   svg(html`<rect x="3" y="4" width="5" height="16" rx="1" /><rect x="10" y="4" width="5" height="11" rx="1" /><rect x="17" y="4" width="4" height="14" rx="1" />`);
 export const ProjectsIcon = () =>
   svg(html`<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />`);
+export const ChangesIcon = ({ size = 18 } = {}) =>
+  svg(html`<circle cx="12" cy="12" r="3" /><path d="M3 12h6M15 12h6" />`, { size, width: size < 14 ? 2.6 : 2 });
+export const KnowledgeIcon = () =>
+  svg(
+    html`<rect x="2" y="9" width="6" height="6" rx="1" /><rect x="16" y="3" width="6" height="5" rx="1" /><rect x="16" y="16" width="6" height="5" rx="1" /><path d="M8 12h4M12 5.5v13M12 5.5h4M12 18.5h4" />`,
+  );
+// Box kinds (ProcessMap mockup): each role has its own shape, so colour is never the only cue.
+export const FailureModeIcon = () => svg(html`<path d="M12 3L2 20h20z" /><path d="M12 10v4M12 17h.01" />`, { size: 14, width: 2.2 });
+export const InfoIcon = () => svg(html`<circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7.5h.01" />`, { size: 14 });
+export const ExternalIcon = ({ size = 14 } = {}) => svg(html`<path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6" />`, { size });
+export const PrintIcon = () =>
+  svg(html`<path d="M6 9V3h12v6" /><rect x="3" y="9" width="18" height="8" rx="2" /><path d="M7 14h10v7H7z" />`, { size: 14 });
+export const RuleIcon = () => svg(html`<path d="M8 3h8l5 5v8l-5 5H8l-5-5V8z" /><path d="M8 12h8" />`, { size: 14 });
+export const PlainKindIcon = () => svg(html`<rect x="5" y="5" width="14" height="14" rx="3" />`, { size: 14 });
+export const SlidersIcon = () =>
+  svg(html`<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12" /><circle cx="16" cy="6" r="2" /><circle cx="10" cy="12" r="2" /><circle cx="18" cy="18" r="2" />`, { size: 14 });
+export const EditIcon = () => svg(html`<path d="M4 20h4L19 9l-4-4L4 16z" />`, { size: 14 });
+export const HistoryIcon = () => svg(html`<path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5M12 7v5l3 2" />`, { size: 14 });
 export const PlusIcon = ({ size = 16 } = {}) => svg(html`<path d="M12 5v14M5 12h14" />`, { size, width: 2.4 });
 export const SearchIcon = () => svg(html`<circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" />`, { size: 16 });
 export const CloseIcon = ({ size = 20 } = {}) => svg(html`<path d="M6 6l12 12M18 6L6 18" />`, { size });

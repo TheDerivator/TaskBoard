@@ -1,18 +1,23 @@
 /** The application: loads the bootstrap document, lays out sidebar + view, routes, dialogs. */
 import { LoginDialog, PasswordDialog } from "./components/auth-dialogs.js";
 import { MenuIcon } from "./components/icons.js";
+import { SearchDialog } from "./components/search-dialog.js";
 import { Sidebar } from "./components/sidebar.js";
 import { Toasts, showError } from "./components/toasts.js";
-import { canSomewhere } from "./lib/lookup.js";
+import { homeRoute, routeAllowed } from "./lib/access.js";
 import { readPref, writePref } from "./prefs.js";
 import { navigate, useRoute } from "./router.js";
 import { refreshBoot, startUp, useAppState } from "./store.js";
 import { html, useEffect, useState } from "./ui.js";
 import { AdminView } from "./views/admin/index.js";
+import { ChangeDrawer, ChangePage } from "./views/changes/change.js";
+import { ChangesView } from "./views/changes/index.js";
+import { BoxLinkView } from "./views/knowledge/box-link.js";
+import { KnowledgeView } from "./views/knowledge/index.js";
 import { PeopleView } from "./views/people.js";
 import { PriorityView } from "./views/priority.js";
 import { ProjectsView } from "./views/projects.js";
-import { ComingSoonView, ErrorView, LoginRequiredView, NotFoundView } from "./views/simple.js";
+import { ErrorView, LoginRequiredView, NoAccessView, NotFoundView } from "./views/simple.js";
 import { TaskDrawer, TaskPage } from "./views/task.js";
 
 /** A task opened from a list shows as a drawer over that list; opened directly, as its own page. */
@@ -25,14 +30,26 @@ function TaskRoute({ route, background, boot, lookup }) {
   `;
 }
 
+/** The same for a process change: a drawer over the list it was opened from, else its own page. */
+function ChangeRoute({ route, background, boot, lookup }) {
+  const { key, tab } = route.params;
+  if (!background) return html`<${ChangePage} key=${key} changeKey=${key} tab=${tab} route=${route} />`;
+  return html`
+    <${View} route=${background} boot=${boot} lookup=${lookup} />
+    <${ChangeDrawer} key=${key} changeKey=${key} tab=${tab} route=${route} onClose=${() => history.back()} />
+  `;
+}
+
+const DETAIL_ROUTES = new Set(["task", "change"]); // drawers over the list view they came from
+
 function View({ route, boot, lookup, background = null }) {
   if (!boot.me.is_anonymous && boot.me.must_change_password) {
     return html`<section class="page"></section>`;
   }
-  if (!canSomewhere(boot.me, "task.view")) {
+  if (!routeAllowed(boot.me, route.name)) {
     return boot.me.is_anonymous
       ? html`<${LoginRequiredView} />`
-      : html`<${ComingSoonView} title="No access yet" milestone="M8 (ask an administrator for access)" />`;
+      : html`<${NoAccessView} />`;
   }
   switch (route.name) {
     case "priority":
@@ -43,6 +60,16 @@ function View({ route, boot, lookup, background = null }) {
       return html`<${ProjectsView} boot=${boot} lookup=${lookup} route=${route} />`;
     case "admin":
       return html`<${AdminView} boot=${boot} lookup=${lookup} route=${route} />`;
+    case "changes":
+      return html`<${ChangesView} boot=${boot} lookup=${lookup} route=${route} />`;
+    case "change":
+      return html`<${ChangeRoute} route=${route} background=${background} boot=${boot} lookup=${lookup} />`;
+    case "knowledge":
+    case "fmea":
+    case "cpl":
+      return html`<${KnowledgeView} boot=${boot} lookup=${lookup} route=${route} />`;
+    case "box":
+      return html`<${BoxLinkView} lookup=${lookup} route=${route} />`;
     case "task":
       return html`<${TaskRoute} route=${route} background=${background} boot=${boot} lookup=${lookup} />`;
     case "home":
@@ -59,6 +86,7 @@ export function App() {
   const [navOpen, setNavOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [background, setBackground] = useState(null); // the list view a task drawer opens over
 
   useEffect(() => {
@@ -74,10 +102,23 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    if (route.name === "home") navigate("priority", { replace: true });
-    else if (route.name !== "task") setBackground(route.name === "notFound" ? null : route);
+    if (route.name === "home" && boot) navigate(homeRoute(boot.me), { replace: true });
+    else if (!DETAIL_ROUTES.has(route.name)) setBackground(route.name === "notFound" ? null : route);
     setNavOpen(false);
-  }, [route]);
+  }, [route, boot]);
+
+  // Ctrl K (Cmd K on a Mac) opens "Search everything" from anywhere (DESIGN "Global search").
+  useEffect(() => {
+    const onKey = (event) => {
+      if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setNavOpen(false);
+        setSearchOpen(true);
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
 
   useEffect(() => {
     if (!navOpen) return undefined;
@@ -105,6 +146,10 @@ export function App() {
         collapsed=${collapsed}
         onToggleCollapsed=${toggleCollapsed}
         onLogin=${() => setLoginOpen(true)}
+        onSearch=${() => {
+          setNavOpen(false);
+          setSearchOpen(true);
+        }}
       />
       ${navOpen && html`<div class="scrim" onClick=${() => setNavOpen(false)}></div>`}
       <div class="main">
@@ -119,6 +164,7 @@ export function App() {
         </main>
       </div>
       <${LoginDialog} open=${loginOpen} onClose=${() => setLoginOpen(false)} />
+      <${SearchDialog} open=${searchOpen} onClose=${() => setSearchOpen(false)} />
       <${PasswordDialog}
         open=${mustChangePassword || passwordOpen}
         required=${mustChangePassword}

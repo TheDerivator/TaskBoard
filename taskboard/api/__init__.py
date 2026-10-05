@@ -5,10 +5,13 @@ from fastapi import APIRouter
 from taskboard.api.routers import (
     admin,
     auth,
+    changes,
     conversation,
+    knowledge,
     meta,
     projects,
     reference,
+    search,
     sso,
     tasks,
     windows,
@@ -33,5 +36,8 @@ def build_api_router(providers: IdentityProviders | None = None) -> APIRouter:
     router.include_router(tasks.router)
     router.include_router(projects.router)
     router.include_router(conversation.router)
+    router.include_router(changes.router)
+    router.include_router(knowledge.router)
+    router.include_router(search.router)
     router.include_router(admin.router)
     return router

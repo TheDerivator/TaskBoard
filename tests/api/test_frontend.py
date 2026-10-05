@@ -4,13 +4,14 @@ security headers."""
 import base64
 import hashlib
 import re
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
 
 from taskboard.config import Settings
 from taskboard.db.session import Database
-from taskboard.web import create_app
+from taskboard.web import create_app, frontend
 
 
 @pytest.mark.parametrize(
@@ -23,6 +24,12 @@ from taskboard.web import create_app
         "/projects/ASQ",
         "/t/K7Q2MX",
         "/t/K7Q2MX/conversation",
+        "/changes/STL/LM",
+        "/changes/STL/LM/timeline",
+        "/changes/STL/LM/LM-07/conversation",
+        "/knowledge/STL/CC/fm-level",
+        "/fmea/STL/CC",
+        "/cpl/STL/sliver-lines",
     ],
 )
 def test_app_routes_serve_the_page(client: TestClient, path: str) -> None:
@@ -109,3 +116,12 @@ def test_large_responses_are_compressed(client: TestClient, sample_database: Dat
     response = client.get("/api/tasks", headers={"Accept-Encoding": "gzip"})
     assert response.headers["content-encoding"] == "gzip"
     assert response.json()["total"] == 11  # the client decompresses transparently
+
+
+def test_the_server_serves_every_view_the_browser_router_knows() -> None:
+    """Each first path segment parsed in static/js/lib/routes.js is an app route on the server,
+    so pasted links answer 200 (not 404) for every view."""
+    routes_js = Path(frontend.__file__).parent.parent / "static" / "js" / "lib" / "routes.js"
+    heads = set(re.findall(r'head === "([a-z]+)"', routes_js.read_text(encoding="utf-8")))
+    assert heads, "no route heads found in routes.js"
+    assert heads <= frontend.APP_ROUTES

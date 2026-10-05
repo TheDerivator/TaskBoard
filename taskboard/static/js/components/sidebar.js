@@ -1,5 +1,6 @@
 /** Left navigation: views with counts, projects, the signed-in user, theme and collapse toggles. */
 import { api } from "../api.js";
+import { canSomewhere } from "../lib/lookup.js";
 import { projectPath } from "../lib/routes.js";
 import { findTeam, teamPath } from "../lib/teams.js";
 import { href } from "../router.js";
@@ -11,8 +12,10 @@ import { Avatar } from "./badges.js";
 import { adminTabs } from "../views/admin/index.js";
 import {
   AdminIcon,
+  ChangesIcon,
   CollapseIcon,
   ExpandIcon,
+  KnowledgeIcon,
   LoginIcon,
   LogoIcon,
   LogoutIcon,
@@ -20,6 +23,7 @@ import {
   PeopleIcon,
   PriorityIcon,
   ProjectsIcon,
+  SearchIcon,
   SunIcon,
 } from "./icons.js";
 import { showError, showToast } from "./toasts.js";
@@ -63,7 +67,7 @@ function UserBlock({ boot, lookup, onLogin, collapsed }) {
   `;
 }
 
-export function Sidebar({ boot, lookup, route, collapsed, onToggleCollapsed, onLogin }) {
+export function Sidebar({ boot, lookup, route, collapsed, onToggleCollapsed, onLogin, onSearch }) {
   const [theme, toggleTheme] = useTheme();
   const selectedProject = route.name === "projects" ? route.params.key : null;
 
@@ -79,6 +83,9 @@ export function Sidebar({ boot, lookup, route, collapsed, onToggleCollapsed, onL
   };
 
   const activePeople = boot.people.filter((p) => p.active).length;
+  const tasks = canSomewhere(boot.me, "task.view");
+  const changes = canSomewhere(boot.me, "change.view");
+  const knowledge = canSomewhere(boot.me, "knowledge.view");
   const team = route.name === "people" ? findTeam(boot.departments, route.params) : null;
   if (team) peopleLink = teamPath(team);
   return html`
@@ -98,17 +105,39 @@ export function Sidebar({ boot, lookup, route, collapsed, onToggleCollapsed, onL
         </button>
       </div>
 
+      ${(tasks || changes || knowledge) &&
+      html`<button type="button" class="sidebar__search" onClick=${onSearch} title="Search everything (Ctrl K)" aria-keyshortcuts="Control+K">
+        <${SearchIcon} /><span class="sidebar__search-label">Search everything</span><kbd class="sidebar__kbd">Ctrl K</kbd>
+      </button>`}
+
       <div class="sidebar__group">
         <div class="sidebar__heading">Views</div>
-        <${NavItem} path="priority" label="Priority" icon=${html`<${PriorityIcon} />`} count=${boot.task_total} current=${route.name === "priority"} />
-        <${NavItem} path=${peopleLink} label="People" icon=${html`<${PeopleIcon} />`} count=${activePeople} current=${route.name === "people"} />
-        <${NavItem}
-          path="projects"
-          label="Projects"
-          icon=${html`<${ProjectsIcon} />`}
-          count=${boot.projects.length}
-          current=${route.name === "projects"}
-        />
+        ${tasks &&
+        html`
+          <${NavItem} path="priority" label="Priority" icon=${html`<${PriorityIcon} />`} count=${boot.task_total} current=${route.name === "priority"} />
+          <${NavItem} path=${peopleLink} label="People" icon=${html`<${PeopleIcon} />`} count=${activePeople} current=${route.name === "people"} />
+          <${NavItem}
+            path="projects"
+            label="Projects"
+            icon=${html`<${ProjectsIcon} />`}
+            count=${boot.projects.length}
+            current=${route.name === "projects"}
+          />
+        `}
+        ${changes &&
+        html`<${NavItem}
+          path="changes"
+          label="Process changes"
+          icon=${html`<${ChangesIcon} />`}
+          current=${route.name === "changes" || route.name === "change"}
+        />`}
+        ${knowledge &&
+        html`<${NavItem}
+          path="knowledge"
+          label="Process knowledge"
+          icon=${html`<${KnowledgeIcon} />`}
+          current=${["knowledge", "fmea", "cpl"].includes(route.name)}
+        />`}
       </div>
 
       ${adminTabs(boot.me).length > 0 &&

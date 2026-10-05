@@ -1,0 +1,888 @@
+/* Process changes: the list, state pills and period chips, the timeline (Gantt), period posts and
+   the period form. Tests are blue, process changes orange, planned ones dashed (DESIGN.md). */
+
+/* ---------------------------------------------------------------- the bar's search */
+
+.process-bar__search {
+  width: 260px;
+  max-width: 100%;
+}
+
+/* ---------------------------------------------------------------- pills and chips */
+
+.state-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  min-height: 26px;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.state-pill--in_effect {
+  background: var(--change-soft);
+  color: var(--change-ink);
+  border-color: var(--change-soft-border);
+}
+
+.state-pill--test_running {
+  background: var(--started-bg);
+  color: var(--started-ink);
+  border-color: var(--started-border);
+}
+
+.state-pill--planned {
+  background: var(--surface);
+  color: var(--test-ink);
+  border: 1px dashed var(--test);
+}
+
+.state-pill--tests_ended,
+.state-pill--ended,
+.state-pill--no_periods {
+  background: var(--archived-bg);
+  color: var(--archived-ink);
+  border-color: var(--archived-border);
+}
+
+.period-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: var(--radius-chip);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.period-chip--test {
+  background: var(--test-soft);
+  color: var(--test-ink);
+  border-color: var(--test-soft-border);
+}
+
+.period-chip--change {
+  background: var(--change-soft);
+  color: var(--change-ink);
+  border-color: var(--change-soft-border);
+}
+
+.period-chip--planned-test {
+  background: var(--surface);
+  color: var(--test-ink);
+  border: 1px dashed var(--test);
+}
+
+.period-chip--planned-change {
+  background: var(--surface);
+  color: var(--change-ink);
+  border: 1px dashed var(--change);
+}
+
+.period-chip--ended {
+  background: var(--surface);
+  color: var(--change-ink);
+  border-color: var(--change-soft-border);
+}
+
+.scope-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.scope-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: var(--radius-chip);
+  background: var(--tag-bg);
+  border: 1px solid var(--tag-border);
+  font-size: 12px;
+  color: var(--ink-chip);
+  white-space: nowrap;
+}
+
+.scope-tag--removable {
+  height: 28px;
+  padding-right: 2px;
+}
+
+.scope-tag button {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  background: transparent;
+  color: var(--ink-2);
+  display: grid;
+  place-items: center;
+}
+
+/* ---------------------------------------------------------------- the list */
+
+.change-table {
+  --columns: 64px minmax(0, 1fr) minmax(200px, 380px) 190px 120px 48px;
+  display: flex;
+  flex-direction: column;
+}
+
+.change-table__head,
+.change-row {
+  display: grid;
+  grid-template-columns: var(--columns);
+  gap: 16px;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.change-table__head {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background: var(--surface-header);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.change-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.change-row {
+  position: relative;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--divider);
+}
+
+.change-row:last-child {
+  border-bottom: 0;
+}
+
+.change-row:hover {
+  background: color-mix(in oklab, var(--surface), var(--ink) 2.5%);
+}
+
+.change-row__key {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-chip);
+}
+
+.change-row__what {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.change-row__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The whole row opens the change, while chips and owner stay readable text. */
+.change-row__title::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.change-row__title:focus-visible {
+  outline: none;
+}
+
+.change-row:has(.change-row__title:focus-visible) {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
+}
+
+.change-row__why {
+  font-size: 13px;
+  color: var(--ink-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.change-row__periods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.change-row__owner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  min-width: 0;
+}
+
+.change-row__owner .avatar {
+  --size: 28px;
+}
+
+.change-row__posts {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+@media (max-width: 1100px) {
+  .change-table__head {
+    display: none;
+  }
+
+  .change-row {
+    grid-template-columns: 64px minmax(0, 1fr);
+    grid-template-areas:
+      "key what"
+      "key periods"
+      "key now"
+      "key owner";
+    row-gap: 8px;
+  }
+
+  .change-row__key { grid-area: key; align-self: start; }
+  .change-row__what { grid-area: what; }
+  .change-row__periods { grid-area: periods; }
+  .change-row__now { grid-area: now; }
+  .change-row__owner { grid-area: owner; }
+  .change-row__posts { display: none; }
+}
+
+/* ---------------------------------------------------------------- the timeline */
+
+.gantt-legend {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--ink-chip);
+}
+
+.gantt-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gantt-legend__summary {
+  margin-left: auto;
+  color: var(--ink-2);
+}
+
+.gantt-swatch {
+  display: inline-block;
+  width: 28px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.gantt-swatch--test {
+  background: var(--test);
+}
+
+.gantt-swatch--change {
+  background: var(--change);
+  border-radius: 3px 0 0 3px;
+  clip-path: polygon(0 0, 72% 0, 100% 50%, 72% 100%, 0 100%);
+}
+
+.gantt-swatch--planned {
+  width: 24px;
+  height: 10px;
+  border: 2px dashed var(--test);
+}
+
+.gantt-swatch--today {
+  width: 2px;
+  height: 16px;
+  background: var(--ink);
+}
+
+.gantt {
+  overflow: hidden;
+}
+
+.gantt__scroll {
+  overflow-x: auto;
+}
+
+.gantt__inner {
+  position: relative;
+}
+
+.gantt__head {
+  display: flex;
+  height: 40px;
+  background: var(--surface-header);
+  border-bottom: 1px solid var(--border);
+}
+
+.gantt__label-head {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  width: 300px;
+  flex-shrink: 0;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  background: var(--surface-header);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.gantt__axis {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.gantt__month {
+  position: absolute;
+  top: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-chip);
+  white-space: nowrap;
+}
+
+.gantt__body {
+  position: relative;
+  padding-bottom: 28px; /* room for the "Today" label below the last row */
+}
+
+.gantt__grid {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.gantt__gridline {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--gantt-grid);
+}
+
+.gantt__today {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--ink);
+  z-index: 2;
+}
+
+.gantt__today-label {
+  position: absolute;
+  bottom: 6px;
+  z-index: 2;
+  padding: 0 3px;
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.gantt__row {
+  position: relative;
+  display: flex;
+  height: 56px;
+  border-bottom: 1px solid var(--divider-soft);
+}
+
+.gantt__row:hover,
+.gantt__row:focus-within {
+  background: color-mix(in oklab, var(--surface-header) 45%, transparent);
+  z-index: 5;
+}
+
+.gantt__label {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  width: 300px;
+  flex-shrink: 0;
+  padding: 0 16px 0 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.gantt__title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.gantt__key {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-2);
+  flex-shrink: 0;
+}
+
+.gantt__name {
+  font-size: 14px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gantt__shape {
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+.gantt__track {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.gantt__line {
+  position: absolute;
+  top: 27px;
+  height: 2px;
+  background: var(--gantt-track);
+}
+
+/* Exactly as wide as its bar: tests a day or two apart must not cover each other. */
+.gantt-bar__hit {
+  position: absolute;
+  top: 8px;
+  height: 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  z-index: 1;
+}
+
+.gantt-bar {
+  display: block;
+  flex-shrink: 0;
+  height: 16px;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
+.gantt-bar--test {
+  background: var(--test);
+}
+
+.gantt-bar--change {
+  background: var(--change);
+  border-radius: 4px 0 0 4px;
+}
+
+.gantt-bar--planned.gantt-bar--test {
+  background: var(--surface);
+  border: 2px dashed var(--test);
+}
+
+.gantt-bar--planned.gantt-bar--change {
+  background: var(--surface);
+  border: 2px dashed var(--change);
+}
+
+/* Started before the window: a straight left edge says "it goes on to the left". */
+.gantt-bar--clipped {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.gantt-bar__arrow {
+  flex-shrink: 0;
+  fill: var(--change);
+}
+
+.gantt-bar__hit:hover .gantt-bar,
+.gantt-bar__hit:focus-visible .gantt-bar {
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ink);
+}
+
+.gantt-bar__hit:focus-visible {
+  outline: none;
+}
+
+.gantt-tip {
+  position: absolute;
+  top: 50px;
+  z-index: 10;
+  width: 250px;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: var(--radius-control);
+  background: var(--sidebar);
+  color: var(--tip-ink);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  box-shadow: var(--shadow-pop);
+  pointer-events: none;
+}
+
+.gantt-tip__title {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.gantt-tip__kind {
+  font-size: 12px;
+  color: var(--sidebar-ink-2);
+}
+
+.gantt-tip__dates {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.gantt-tip__scope {
+  padding-top: 3px;
+  border-top: 1px solid var(--sidebar-border);
+  font-size: 12px;
+  color: var(--tip-accent);
+}
+
+/* ---------------------------------------------------------------- the drawer's details */
+
+.period-card {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--divider);
+  border-radius: var(--radius-control);
+}
+
+.period-card__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.period-card__head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.period-card__label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.period-card__dates {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-chip);
+}
+
+.period-card__view {
+  align-self: center;
+  padding: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.period-swatch {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 10px;
+  height: 22px;
+  margin-top: 2px;
+  border-radius: 3px;
+  background: var(--test);
+}
+
+.period-swatch--change {
+  background: var(--change);
+}
+
+.segmented--small .period-swatch {
+  width: 14px;
+  height: 8px;
+  margin: 0 6px 0 0;
+}
+
+.glance {
+  position: relative;
+  height: 28px;
+  border-radius: var(--radius-small);
+  background: var(--ground);
+}
+
+.glance__line {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: 13px;
+  height: 2px;
+  background: var(--gantt-track);
+}
+
+.glance__bar {
+  position: absolute;
+  top: 6px;
+  height: 16px;
+  border-radius: 3px;
+}
+
+.glance__bar--open {
+  border-radius: 3px 0 0 3px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%);
+}
+
+/* ---------------------------------------------------------------- conversation */
+
+.period-post__card {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-panel);
+  overflow: hidden;
+  border: 1px solid var(--test-soft-border);
+}
+
+.period-post--change .period-post__card {
+  border-color: var(--change-soft-border);
+}
+
+.period-post__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  background: var(--test-soft);
+  color: var(--test-ink);
+}
+
+.period-post--change .period-post__head {
+  background: var(--change-soft);
+  color: var(--change-ink);
+}
+
+.period-post__head .period-swatch {
+  width: 22px;
+  height: 10px;
+  margin: 0;
+}
+
+.period-swatch--open {
+  clip-path: polygon(0 0, 70% 0, 100% 50%, 70% 100%, 0 100%);
+}
+
+.period-post__label {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.period-post__dates {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.period-post__actions {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+
+.period-post__actions .link-button {
+  font-size: 12px;
+  color: inherit;
+}
+
+.period-post__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+}
+
+.post-byline {
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+.post-byline .link-button,
+.post__head .link-button {
+  font-size: 12px;
+  padding: 0 2px;
+}
+
+.change-composer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 28px 18px;
+  border-top: 1px solid var(--divider);
+  background: var(--surface-sunken);
+}
+
+.change-composer > .segmented {
+  align-self: flex-start;
+}
+
+.change-composer .composer {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.period-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.period-form__box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+}
+
+.period-form__dates {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 140px 140px;
+  gap: 8px;
+}
+
+.period-form__dates .input {
+  height: 40px;
+}
+
+.period-form__foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.period-form__foot .field-hint {
+  flex: 1;
+}
+
+.tag-input {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 4px 6px;
+  box-sizing: border-box;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-small);
+  background: var(--surface);
+}
+
+.tag-input input {
+  flex: 1;
+  min-width: 140px;
+  height: 28px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.tag-input:focus-within {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 1px;
+}
+
+.end-date-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.end-date-form .input {
+  width: auto;
+  height: 40px;
+}
+
+.history {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.history__version {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--divider);
+}
+
+.history__version:last-child {
+  border-bottom: 0;
+}
+
+.history__meta {
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+@media (max-width: 560px) {
+  .period-form__dates {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .change-composer {
+    padding: 12px 16px 16px;
+  }
+}

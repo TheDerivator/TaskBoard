@@ -2,8 +2,10 @@
 
 Team task board (FastAPI + SQLAlchemy backend, static Preact/htm frontend). Read in this order:
 
-1. [`docs/PLAN.md`](docs/PLAN.md): milestones, what is done, what is next. **Keep its status
-   table and checkboxes current** when you finish work.
+1. [`docs/PLAN2.md`](docs/PLAN2.md): the current plan (process changes, process knowledge,
+   search; milestones M11–M20), what is done, what is next. **Keep its status table and
+   checkboxes current** when you finish work. [`docs/PLAN.md`](docs/PLAN.md) is the original
+   build (M0–M10, the Tasks module).
 2. [`docs/CODEMAP.md`](docs/CODEMAP.md): generated tree of every file with a one-line summary.
    Use it to jump to the right file instead of searching.
 3. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): layers, data model, access control,

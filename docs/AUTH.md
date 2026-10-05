@@ -10,15 +10,47 @@ How TaskBoard decides who someone is and what they may do. Code: `taskboard/doma
 |---|---|
 | **User** | A login account. Built-in: `admin` (break-glass administrator) and `anonymous` (every visitor who is not logged in). |
 | **Person** | Someone on the board (leads/helps on tasks). Optionally linked 1:1 to a user. |
-| **Permission** | `task.view`, `task.edit`, `task.comment`, `task.delete` (per section); `project.manage`, `people.manage`, `users.manage` (global only). |
+| **Permission** | Per section: `task.view`, `task.edit`, `task.comment`, `task.delete`, `change.view`, `change.edit`, `change.comment`, `change.delete`, `knowledge.view`, `knowledge.edit`, `knowledge.release`. Global only: `knowledge.configure`, `project.manage`, `people.manage`, `users.manage`. See the table below. |
 | **Role** | A named set of permissions. Built-in: *Viewer*, *Editor*, *Administrator*; their permissions are re-synced from code at every start. Custom roles are possible. |
 | **Assignment** | A user holds a role at a **scope**: everywhere, one department (all its sections), or one section. |
-| **Section** | The organizational section (Department › Section, e.g. STL › Quality). Every task has exactly one, and that decides which assignments apply to the task. Project nodes are *not* permission scopes. |
+| **Section** | The organizational section (Department › Section, e.g. STL › Quality). Every task has exactly one, and every **process** names one (its owning section; D-080): that section decides which assignments apply to the task, or to the process's changes and map. Project nodes are *not* permission scopes. |
+
+### Permissions and built-in roles
+
+| Permission | Scope | Viewer | Editor | Administrator | Allows |
+|---|---|:-:|:-:|:-:|---|
+| `task.view` | section | ✔ | ✔ | ✔ | see tasks, their conversation and images |
+| `task.edit` | section | | ✔ | ✔ | create and edit tasks, reorder them, place them in projects |
+| `task.comment` | section | | ✔ | ✔ | post and attach images in a task's conversation |
+| `task.delete` | section | | | ✔ | delete tasks for good (archiving is the usual way) |
+| `change.view` | section | ✔ | ✔ | ✔ | see a process's changes, their periods and conversation |
+| `change.edit` | section | | ✔ | ✔ | create and edit process changes, post periods, link them to the map |
+| `change.comment` | section | | ✔ | ✔ | comment and attach images in a change's conversation |
+| `change.delete` | section | | | ✔ | delete process changes for good |
+| `knowledge.view` | section | ✔ | ✔ | ✔ | see a process's map, FMEA and control plan, and their versions |
+| `knowledge.edit` | section | | ✔ | ✔ | edit the map: boxes, links, controls, defects |
+| `knowledge.release` | section | | ✔ | ✔ | release a new FMEA and control plan version (no approval step; D-081) |
+| `knowledge.configure` | global | | | ✔ | configure box kinds and link types for all maps |
+| `project.manage` | global | | | ✔ | create projects and edit their sections |
+| `people.manage` | global | | | ✔ | departments, sections, **processes** and people |
+| `users.manage` | global | | | ✔ | accounts, roles, access rights, the audit log |
+
+"Search everything" (Ctrl K) searches each kind of object only where its view right holds
+(`task.view`, `change.view`, `knowledge.view`), exactly like the views: nothing it lists can be
+missing from a view you may open (D-094).
+
+Since the second design (D-079), *Viewer* and *Editor* also cover process changes and process
+knowledge. Anonymous visitors hold *Viewer* everywhere by default, so they can read those too
+until an administrator narrows the anonymous visitor's assignments. Built-in roles cannot be
+edited: to keep releasing (or editing maps) to fewer people, give them a custom role instead of
+*Editor*.
 
 ## Rules
 
 1. A per-section permission applies to a task if the user holds it globally, for the task's
-   department, or for the task's section.
+   department, or for the task's section. The same goes for a process (its changes and its map)
+   with the process's owning section; a process owned by STL › Process is reached by grants on
+   that section, on STL, or everywhere, never by grants on STL › Quality.
 2. A global permission (`*.manage`) only counts when assigned globally. An *Administrator* role
    assigned to one section gives full task rights there, but no user or project management.
 3. **Anonymous rights are a floor**: every logged-in user also has what `anonymous` has, so logging

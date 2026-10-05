@@ -16,6 +16,8 @@ from taskboard.schemas.admin import (
     PersonAdminOut,
     PersonIn,
     PersonUpdate,
+    ProcessIn,
+    ProcessUpdate,
     ProviderInfo,
     RoleCreate,
     RoleOut,
@@ -27,7 +29,7 @@ from taskboard.schemas.admin import (
     UserOut,
     UserUpdate,
 )
-from taskboard.schemas.reference import DepartmentOut
+from taskboard.schemas.reference import DepartmentOut, ProcessOut
 
 router = APIRouter(prefix="/admin", tags=["administration"])
 
@@ -168,6 +170,30 @@ def update_section(
 @router.delete("/sections/{section_id}")
 def delete_section(section_id: int, organization: Organization) -> DepartmentOut:
     return organization.delete_section(section_id)
+
+
+@router.get("/processes")
+def list_processes(organization: Organization) -> list[ProcessOut]:
+    """Every process, whoever may see it, in display order."""
+    return organization.list_processes()
+
+
+@router.post("/processes", status_code=status.HTTP_201_CREATED)
+def create_process(body: ProcessIn, organization: Organization) -> ProcessOut:
+    """The code (letters and digits, e.g. CC) is unique and cannot be changed later."""
+    return organization.create_process(body)
+
+
+@router.patch("/processes/{process_id}")
+def update_process(process_id: int, body: ProcessUpdate, organization: Organization) -> ProcessOut:
+    """Rename, reorder, or give the process another owning section (that moves its rights)."""
+    return organization.update_process(process_id, body)
+
+
+@router.delete("/processes/{process_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_process(process_id: int, organization: Organization) -> None:
+    """Only while nothing refers to it."""
+    organization.delete_process(process_id)
 
 
 @router.get("/people")

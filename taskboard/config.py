@@ -1,5 +1,6 @@
 """Typed application settings, read from environment variables prefixed `TASKBOARD_` (or `.env`)."""
 
+from datetime import date
 from enum import StrEnum
 from functools import lru_cache
 from pathlib import Path
@@ -106,6 +107,10 @@ class Settings(BaseSettings):
     # (the proxy strips the prefix before forwarding). Used for the page's <base href>.
     base_path: str = "/"
 
+    # Pretend it is this date (YYYY-MM-DD) instead of the server's own: process-change states
+    # ("Test running", "Planned") depend on it. Meant for tests and frozen demos only.
+    today: date | None = None
+
     # For `python -m taskboard serve`.
     host: str = "127.0.0.1"
     port: int = 8000
@@ -129,6 +134,10 @@ class Settings(BaseSettings):
     @property
     def uploads_dir(self) -> Path:
         return self.data_dir / "uploads"
+
+    def current_date(self) -> date:
+        """Today on the server (in its own time zone), unless `today` pins it."""
+        return self.today or date.today()
 
 
 @lru_cache

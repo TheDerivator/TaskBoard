@@ -71,7 +71,7 @@ function PostItem({ post, lookup, taskKey, onChanged }) {
         </div>
         ${editing
           ? html`<${Composer}
-              taskKey=${taskKey}
+              uploadPath=${`/tasks/${encodeURIComponent(taskKey)}/attachments`}
               initial=${{ body_md: post.body_md, is_update: post.is_update }}
               submitLabel="Save"
               onSubmit=${save}
@@ -121,7 +121,7 @@ export function ConversationPanel({ taskKey, lookup, updatesOnly, onCount }) {
         )}
         <div ref=${bottom}></div>
       </div>
-      ${data.can_comment && html`<${Composer} taskKey=${taskKey} onSubmit=${post} />`}
+      ${data.can_comment && html`<${Composer} uploadPath=${`/tasks/${encodeURIComponent(taskKey)}/attachments`} onSubmit=${post} />`}
     </div>
   `;
 }

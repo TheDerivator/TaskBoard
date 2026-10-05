@@ -1,4 +1,4 @@
-/** Small full-page views: not found, login required, error, and views still to be built. */
+/** Small full-page views: not found, login required, no access, error. */
 import { LoginForm } from "../components/auth-dialogs.js";
 import { useTitle } from "../hooks.js";
 import { href } from "../router.js";
@@ -43,14 +43,14 @@ export function ErrorView({ error, onRetry }) {
   `;
 }
 
-export function ComingSoonView({ title, milestone }) {
-  useTitle(title);
+export function NoAccessView() {
+  useTitle("No access");
   return html`
-    <section class="page">
-      <header class="view-head">
-        <div class="view-head__text"><h1>${title}</h1></div>
-      </header>
-      <div class="panel coming-soon">This view is built in milestone ${milestone}.</div>
+    <section class="center-page">
+      <div class="center-card">
+        <h1>No access yet</h1>
+        <p class="muted">Your account may not see this part of the board. Ask an administrator for access.</p>
+      </div>
     </section>
   `;
 }

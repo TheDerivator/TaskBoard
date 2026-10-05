@@ -13,14 +13,15 @@ const ImageIcon = () => html`
 
 /**
  * @param {{
- *   taskKey: string,
+ *   uploadPath: string,  // where images go, e.g. "/tasks/K7Q2MX/attachments"
+ *   allowUpdate?: boolean,  // offer "Post as status update" (tasks only)
  *   initial?: {body_md: string, is_update: boolean},  // editing an existing post
  *   submitLabel?: string,
  *   onSubmit: (body_md: string, is_update: boolean) => Promise<void>,
  *   onCancel?: () => void,
  * }} props
  */
-export function Composer({ taskKey, initial = null, submitLabel = "Post", onSubmit, onCancel }) {
+export function Composer({ uploadPath, allowUpdate = true, initial = null, submitLabel = "Post", onSubmit, onCancel }) {
   const [body, setBody] = useState(initial?.body_md ?? "");
   const [isUpdate, setIsUpdate] = useState(initial?.is_update ?? false);
   const [mode, setMode] = useState("write");
@@ -61,7 +62,7 @@ export function Composer({ taskKey, initial = null, submitLabel = "Post", onSubm
       try {
         const form = new FormData();
         form.append("file", file, file.name || "pasted-image.png");
-        const uploaded = await api.upload(`/tasks/${taskKey}/attachments`, form);
+        const uploaded = await api.upload(uploadPath, form);
         setFiles((current) => [...current, uploaded]);
         // On its own line after the caret's line, so it never splits formatted text.
         setBody((current) => {
@@ -209,7 +210,8 @@ export function Composer({ taskKey, initial = null, submitLabel = "Post", onSubm
         </div>`}
       </div>
       <div class="composer__foot">
-        <label><input type="checkbox" checked=${isUpdate} onChange=${(e) => setIsUpdate(e.currentTarget.checked)} />Post as status update</label>
+        ${allowUpdate &&
+        html`<label><input type="checkbox" checked=${isUpdate} onChange=${(e) => setIsUpdate(e.currentTarget.checked)} />Post as status update</label>`}
         <span class="composer__hint">Markdown · paste or drop images · Ctrl+Enter to send</span>
         ${onCancel && html`<button type="button" class="btn" onClick=${onCancel}>Cancel</button>`}
         <button type="submit" class="btn btn--primary" disabled=${busy || uploading > 0 || !body.trim()}>${submitLabel}</button>

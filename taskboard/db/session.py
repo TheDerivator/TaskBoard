@@ -22,7 +22,8 @@ _WRITE_OPTION = "taskboard_write"
 
 # Names of the locks that exist (rows are created by the seed).
 TASK_RANKING_LOCK = "task_ranking"
-LOCK_NAMES = (TASK_RANKING_LOCK,)
+CHANGE_NUMBER_LOCK = "change_numbers"  # the next free number of a process's change keys
+LOCK_NAMES = (TASK_RANKING_LOCK, CHANGE_NUMBER_LOCK)
 
 
 def acquire_lock(session: Session, name: str) -> None:

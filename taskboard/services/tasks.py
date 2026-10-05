@@ -11,7 +11,16 @@ from sqlalchemy import Select, delete, func, or_, select, update
 from sqlalchemy.orm import Session, selectinload
 
 from taskboard.db.base import utcnow
-from taskboard.db.models import Attachment, Event, Placement, Post, Task, TaskHelper
+from taskboard.db.models import (
+    Attachment,
+    Event,
+    Placement,
+    Post,
+    PostRevision,
+    Reference,
+    Task,
+    TaskHelper,
+)
 from taskboard.db.session import TASK_RANKING_LOCK, acquire_lock
 from taskboard.db.text import contains_ci
 from taskboard.domain.access import Permission
@@ -286,6 +295,9 @@ class TaskService:
         files = list(
             self.session.scalars(select(Attachment.public_id).where(Attachment.task_id == task.id))
         )
+        posts = select(Post.id).where(Post.task_id == task.id)
+        self.session.execute(delete(PostRevision).where(PostRevision.post_id.in_(posts)))
+        self.session.execute(delete(Reference).where(Reference.task_id == task.id))
         for model in (Attachment, Post, Event):
             self.session.execute(delete(model).where(model.task_id == task.id))
         self.session.delete(task)  # helpers and placements go with it (ORM cascade)

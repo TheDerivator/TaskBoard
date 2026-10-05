@@ -10,12 +10,21 @@ from enum import StrEnum
 
 
 class Permission(StrEnum):
-    """Everything that can be granted. Scoped permissions apply per organizational section."""
+    """Everything that can be granted. Scoped permissions apply per organizational section:
+    a task's section, or the owning section of a process (its changes and its map)."""
 
     TASK_VIEW = "task.view"
     TASK_EDIT = "task.edit"
     TASK_COMMENT = "task.comment"
     TASK_DELETE = "task.delete"  # destructive (archiving exists); only Administrators by default
+    CHANGE_VIEW = "change.view"
+    CHANGE_EDIT = "change.edit"
+    CHANGE_COMMENT = "change.comment"
+    CHANGE_DELETE = "change.delete"  # like task.delete: only Administrators by default
+    KNOWLEDGE_VIEW = "knowledge.view"
+    KNOWLEDGE_EDIT = "knowledge.edit"
+    KNOWLEDGE_RELEASE = "knowledge.release"
+    KNOWLEDGE_CONFIGURE = "knowledge.configure"  # box kinds and link types, shared by all maps
     PROJECT_MANAGE = "project.manage"
     PEOPLE_MANAGE = "people.manage"
     USERS_MANAGE = "users.manage"
@@ -30,14 +39,38 @@ PERMISSION_DESCRIPTIONS: dict[Permission, str] = {
     Permission.TASK_EDIT: "Create and edit tasks, reorder them, place them in projects",
     Permission.TASK_COMMENT: "Write posts and attach images in the conversation",
     Permission.TASK_DELETE: "Delete tasks for good (archiving is the usual way)",
+    Permission.CHANGE_VIEW: "See process changes, their periods and conversation",
+    Permission.CHANGE_EDIT: "Create and edit process changes, post periods, link them to the map",
+    Permission.CHANGE_COMMENT: "Write comments and attach images in a change's conversation",
+    Permission.CHANGE_DELETE: "Delete process changes for good",
+    Permission.KNOWLEDGE_VIEW: "See process maps, FMEA and control plans, and their versions",
+    Permission.KNOWLEDGE_EDIT: "Edit process maps: boxes, links, controls and defects",
+    Permission.KNOWLEDGE_RELEASE: "Release a new FMEA and control plan version",
+    Permission.KNOWLEDGE_CONFIGURE: "Configure the box kinds and link types of all process maps",
     Permission.PROJECT_MANAGE: "Create projects and edit their sections",
-    Permission.PEOPLE_MANAGE: "Manage departments, sections and people",
+    Permission.PEOPLE_MANAGE: "Manage departments, sections, processes and people",
     Permission.USERS_MANAGE: "Manage accounts, roles and access rights; read the audit log",
 }
 
 SCOPED_PERMISSIONS = frozenset(
-    {Permission.TASK_VIEW, Permission.TASK_EDIT, Permission.TASK_COMMENT, Permission.TASK_DELETE}
+    {
+        Permission.TASK_VIEW,
+        Permission.TASK_EDIT,
+        Permission.TASK_COMMENT,
+        Permission.TASK_DELETE,
+        Permission.CHANGE_VIEW,
+        Permission.CHANGE_EDIT,
+        Permission.CHANGE_COMMENT,
+        Permission.CHANGE_DELETE,
+        Permission.KNOWLEDGE_VIEW,
+        Permission.KNOWLEDGE_EDIT,
+        Permission.KNOWLEDGE_RELEASE,
+    }
 )
+
+# Seeing any of these somewhere is what gives access to the board's reference data (departments,
+# people, processes).
+VIEW_PERMISSIONS = (Permission.TASK_VIEW, Permission.CHANGE_VIEW, Permission.KNOWLEDGE_VIEW)
 
 
 class BuiltinRole(StrEnum):
@@ -56,11 +89,19 @@ class BuiltinRole(StrEnum):
         return BUILTIN_ROLE_PERMISSIONS[self]
 
 
+_VIEWER = frozenset(VIEW_PERMISSIONS)
+
 BUILTIN_ROLE_PERMISSIONS: dict[BuiltinRole, frozenset[Permission]] = {
-    BuiltinRole.VIEWER: frozenset({Permission.TASK_VIEW}),
-    BuiltinRole.EDITOR: frozenset(
-        {Permission.TASK_VIEW, Permission.TASK_EDIT, Permission.TASK_COMMENT}
-    ),
+    BuiltinRole.VIEWER: _VIEWER,
+    BuiltinRole.EDITOR: _VIEWER
+    | {
+        Permission.TASK_EDIT,
+        Permission.TASK_COMMENT,
+        Permission.CHANGE_EDIT,
+        Permission.CHANGE_COMMENT,
+        Permission.KNOWLEDGE_EDIT,
+        Permission.KNOWLEDGE_RELEASE,
+    },
     BuiltinRole.ADMIN: frozenset(Permission),
 }
 
