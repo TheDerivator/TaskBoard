@@ -251,7 +251,7 @@ function ControlPlan({ page, route, boot, lookup }) {
 
   const requested = route.params.defect ? String(route.params.defect).toLowerCase() : null;
   const filter = process?.id ?? null;
-  const groups = defectGroups(index, { process: filter, query, keep: requested });
+  const groups = defectGroups(index, { process: filter, query });
   const first = groups[0]?.defects[0]?.key ?? null;
   const defectKey = requested ?? first;
   const defect = defectKey && index.byKey.get(defectKey)?.process_id == null ? index.byKey.get(defectKey) : null;
@@ -299,7 +299,7 @@ function ControlPlan({ page, route, boot, lookup }) {
           onReview=${() => setReviewing(true)}
         />`}
         ${requested && !defect && html`<div class="panel empty-state" role="alert">This defect does not exist, or you may not see it.</div>`}
-        ${!requested && !defect && html`<div class="panel empty-state">${process ? `No known defects come from ${process.name}.` : `${department.name} has no defects yet.`}</div>`}
+        ${!requested && !defect && html`<div class="panel empty-state">${department.name} has no defects yet.</div>`}
         ${defect &&
         html`
           <div class="cpl-defect-info">
@@ -313,7 +313,7 @@ function ControlPlan({ page, route, boot, lookup }) {
         `}
       </div>
     </div>
-    <${ControlPlanSheet} index=${index} groups=${defectGroups(index, { process: filter })} department=${department} process=${process} processOrder=${processOrder} today=${boot.today} version=${bar ? versionText(releases.data, viewing) : "current draft"} />
+    <${ControlPlanSheet} index=${index} groups=${defectGroups(index, { process: filter, caused: filter != null })} department=${department} process=${process} processOrder=${processOrder} today=${boot.today} version=${bar ? versionText(releases.data, viewing) : "current draft"} />
     ${reviewing &&
     bar &&
     html`<${ReleaseDialog}

@@ -78,16 +78,17 @@ export function groupOf(defect) {
 
 /**
  * The defect list: groups (the defect kind's "group" field; none is "Other", last) in the order
- * they first appear in the catalogue, each defect with its number of known causes. With a process
- * chosen, only the defects it can cause (and `keep`, the one shown); a query narrows by name.
+ * they first appear in the catalogue, each defect with its number of known causes (with a process
+ * chosen, its causes in that process). Every defect is listed, also one without causes yet (D-096);
+ * `caused` keeps only those with causes; a query narrows by name.
  * @returns {{name: string, defects: {key: string, name: string, count: number}[]}[]}
  */
-export function defectGroups(index, { process = null, query = "", keep = null } = {}) {
+export function defectGroups(index, { process = null, query = "", caused = false } = {}) {
   const needle = query.trim().toLocaleLowerCase();
   const groups = [];
   for (const defect of index.defects) {
     const count = causesOf(index, defect.key, { process }).length;
-    if (process != null && count === 0 && defect.key !== keep) continue;
+    if (caused && count === 0) continue;
     if (needle && !defect.name.toLocaleLowerCase().includes(needle)) continue;
     const name = groupOf(defect);
     let group = groups.find((g) => g.name === name);

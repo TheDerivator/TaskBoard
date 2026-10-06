@@ -115,7 +115,11 @@ def test_the_control_plan_of_one_process(live_server: str, page: Page) -> None:
     _defects(page).get_by_role("link", name=re.compile("Blisters")).click()
     tabs.get_by_role("link", name="Ladle metallurgy").click()
     expect(page).to_have_url(re.compile(r"cpl/STL/d-blisters\?process=LM$"))
-    expect(_defects(page).locator(".cpl-defect")).to_have_text([re.compile("Blisters")])
+    # Every defect stays listed (D-096), even with no causes in this process.
+    expect(_defects(page).locator(".cpl-defect")).to_have_count(7)
+    expect(_defects(page).locator(".cpl-defect__count")).to_have_text(
+        [re.compile(r"known causes: 0$")] * 7
+    )
     expect(_diagram(page)).to_contain_text("No known causes in Ladle metallurgy yet.")
     tabs.get_by_role("link", name="Continuous casting").click()
     expect(_defects(page).locator(".cpl-defect")).to_have_count(7)

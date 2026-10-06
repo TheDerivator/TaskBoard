@@ -72,7 +72,8 @@ export function FmeaSheet({ graph, tree, index, department, today, version = "cu
   `;
 }
 
-/** The control plan as tables: per defect of the list, its causes, how, and their controls. */
+/** The control plan as tables: per defect of the list (of one process: those it can cause, D-096),
+ * its causes, how, and their controls. */
 export function ControlPlanSheet({ index, groups, department, process, processOrder, today, version = "current draft" }) {
   const name = (key) => index.byKey.get(key)?.name ?? key;
   return html`

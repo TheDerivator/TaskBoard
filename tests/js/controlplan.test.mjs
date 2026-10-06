@@ -84,8 +84,11 @@ test("the causes of a defect in map order, with where they sit and how they lead
 test("one process's causes, and the defects it can cause", () => {
   assert.equal(causes("d-sliver", { process: CC }).length, 4);
   assert.equal(causes("d-sliver", { process: LM }).length, 0);
-  assert.deepEqual(defectGroups(INDEX, { process: LM }), []);
-  assert.deepEqual(defectGroups(INDEX, { process: LM, keep: "d-incl" }), [{ name: "Internal", defects: [{ key: "d-incl", name: "Inclusions", count: 0 }] }]);
+  // Every defect stays listed (D-096), with its number of causes in that process.
+  const listed = (options) => defectGroups(INDEX, options).flatMap((g) => g.defects.map((d) => `${d.key} ${d.count}`));
+  assert.deepEqual(listed({ process: LM }), ["d-sliver 0", "d-blisters 0", "d-incl 0", "d-trans 0", "d-long 0", "d-corner 0", "d-edge 0"]);
+  assert.deepEqual(listed({ process: CC }), ["d-sliver 4", "d-blisters 1", "d-incl 1", "d-trans 2", "d-long 1", "d-corner 1", "d-edge 1"]);
+  assert.deepEqual(defectGroups(INDEX, { process: LM, caused: true }), []);
   // Process order comes first: the same causes in another process would be listed before CC's.
   const plan = { ...PLAN, boxes: PLAN.boxes.map((b) => (b.key === "fm-powder" ? { ...b, process_id: LM, parent_key: null } : b)) };
   assert.deepEqual(causesOf(planIndex(plan), "d-sliver", { processOrder: ORDER }).map((c) => c.key), ["fm-powder", "fm-clog", "fm-slag", "fm-level"]);
@@ -108,6 +111,15 @@ test("the diagram: causes in rows, each where level with its causes, the defect 
   const stubs = (x) => diagram.lines.filter((l) => l.x + l.width === x && l.height === 2).length;
   assert.equal(stubs(DIAGRAM.where.x), 2);
   assert.equal(stubs(DIAGRAM.cause.x), 4);
+});
+
+test("a new defect without causes is listed, with one process chosen too", () => {
+  const plan = { ...PLAN, boxes: [...PLAN.boxes, { key: "d-pits", process_id: null, parent_key: null, position: 1, kind: "defect", name: "Scale pits", fields: { group: "Surface" } }] };
+  for (const process of [null, CC, LM]) {
+    const surface = defectGroups(planIndex(plan), { process }).find((g) => g.name === "Surface");
+    assert.deepEqual(surface.defects.at(-1), { key: "d-pits", name: "Scale pits", count: 0 });
+  }
+  assert.equal(defectGroups(planIndex(plan), { process: CC, caused: true }).flatMap((g) => g.defects).some((d) => d.key === "d-pits"), false);
 });
 
 test("a defect without known causes stands alone", () => {
