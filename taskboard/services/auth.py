@@ -1,7 +1,8 @@
 """Authentication use cases: who is calling, log in, log out, change password.
 
-Order of identification for a request: a valid session cookie; else an ambient SSO provider
-(trusted proxy header), if one is configured; else the anonymous principal.
+Order of identification for a request: an API token (`Authorization: Bearer`), which then
+decides alone; else a valid session cookie; else an ambient SSO provider (trusted proxy header),
+if one is configured; else the anonymous principal.
 """
 
 from collections.abc import Mapping
@@ -12,8 +13,13 @@ from sqlalchemy.orm import Session
 
 from taskboard.config import Settings
 from taskboard.db.models import User
-from taskboard.domain.errors import InvalidCredentialsError, RuleViolationError
-from taskboard.identity import password_login, provisioning, sessions
+from taskboard.domain.errors import (
+    AuthenticationRequiredError,
+    InvalidCredentialsError,
+    PermissionDeniedError,
+    RuleViolationError,
+)
+from taskboard.identity import api_tokens, password_login, provisioning, sessions
 from taskboard.identity.passwords import hash_password, password_problems, verify_password
 from taskboard.identity.principal import Principal, anonymous_principal, principal_for_user
 from taskboard.identity.providers import IdentityProviders
@@ -36,7 +42,17 @@ class AuthService:
         session_token: str | None,
         headers: Mapping[str, str],
         proxy: str | None = None,
+        api_token: str | None = None,
     ) -> Principal:
+        if api_token is not None:
+            # A token never falls back to the cookie or to anonymous access: an agent with a
+            # wrong token is told so instead of quietly seeing less (D-097).
+            principal = api_tokens.principal_for_secret(self.session, api_token)
+            if principal is None:
+                raise AuthenticationRequiredError(
+                    "the API token is unknown, revoked or expired: ask its owner for a new one"
+                )
+            return principal
         user = sessions.user_for_token(self.session, session_token)
         if user is not None:
             return principal_for_user(self.session, user)
@@ -115,6 +131,8 @@ class AuthService:
         session_token: str | None,
     ) -> None:
         """Change the caller's own password; other sessions of this account are logged out."""
+        if principal.token_id is not None:
+            raise PermissionDeniedError("an API token cannot change its owner's password")
         user = self.session.get(User, principal.user_id)
         if user is None or principal.is_anonymous:
             raise InvalidCredentialsError("log in first")

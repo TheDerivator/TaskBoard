@@ -57,6 +57,7 @@ from taskboard.schemas.conversation import (
     PostVersion,
     TimelineItem,
 )
+from taskboard.services.actors import actor
 from taskboard.services.attachments import AttachmentStore, attachment_out, store_image
 from taskboard.services.changes import ChangeService, period_out
 from taskboard.services.knowledge import KnowledgeService
@@ -191,9 +192,8 @@ class ConversationService:
         ).all()
         return dict(rows)
 
-    @staticmethod
-    def _actor(user: User) -> Actor:
-        return Actor(user_id=user.id, display_name=user.display_name, person_id=user.person_id)
+    def _actor(self, user: User, token_id: int | None) -> Actor:
+        return actor(self.session, user, token_id)
 
     def _is_author(self, post: Post) -> bool:
         return post.author_user_id == self.principal.user_id and not self.principal.is_anonymous
@@ -207,10 +207,12 @@ class ConversationService:
             can_edit = self._is_author(post)
         return PostOut(
             id=post.id,
-            author=self._actor(post.author),
+            author=self._actor(post.author, post.api_token_id),
             created_at=post.created_at,
             edited_at=post.edited_at,
-            edited_by=self._actor(post.edited_by) if post.edited_by else None,
+            edited_by=self._actor(post.edited_by, post.edited_api_token_id)
+            if post.edited_by
+            else None,
             versions=versions,
             is_update=post.is_update,
             body_md=post.body_md,
@@ -224,7 +226,7 @@ class ConversationService:
             id=event.id,
             kind=event.kind,
             data=event.data,
-            actor=self._actor(event.actor) if event.actor else None,
+            actor=self._actor(event.actor, event.api_token_id) if event.actor else None,
             created_at=event.created_at,
         )
 
@@ -236,18 +238,22 @@ class ConversationService:
             select(PostRevision).where(PostRevision.post_id == post.id).order_by(PostRevision.rev)
         ).all()
         versions = [
-            self._version(r.rev, r.written_by, r.written_at, r.content, period) for r in revisions
+            self._version(
+                r.rev, self._actor(r.written_by, r.api_token_id), r.written_at, r.content, period
+            )
+            for r in revisions
         ]
         current = self._content(post, period)
-        author = post.edited_by or post.author
         written_at = post.edited_at or post.created_at
-        versions.append(self._version(len(revisions) + 1, author, written_at, current, period))
+        versions.append(
+            self._version(len(revisions) + 1, self._last_writer(post), written_at, current, period)
+        )
         return versions
 
     def _version(
         self,
         rev: int,
-        user: User,
+        written_by: Actor,
         written_at: datetime,
         content: dict[str, Any],
         period: ChangePeriod | None,
@@ -267,7 +273,7 @@ class ConversationService:
             )
         return PostVersion(
             rev=rev,
-            written_by=self._actor(user),
+            written_by=written_by,
             written_at=written_at,
             is_update=bool(content.get("is_update", False)),
             body_md=content["body_md"],
@@ -298,13 +304,22 @@ class ConversationService:
                 rev=(count or 0) + 1,
                 content=self._content(post, period),
                 written_by_user_id=post.edited_by_user_id or post.author_user_id,
+                api_token_id=post.edited_api_token_id
+                if post.edited_by_user_id
+                else post.api_token_id,
                 written_at=post.edited_at or post.created_at,
             )
         )
 
+    def _last_writer(self, post: Post) -> Actor:
+        if post.edited_by is not None:
+            return self._actor(post.edited_by, post.edited_api_token_id)
+        return self._actor(post.author, post.api_token_id)
+
     def _mark_edited(self, post: Post) -> None:
         post.edited_at = utcnow()
         post.edited_by_user_id = self.principal.user_id
+        post.edited_api_token_id = self.principal.token_id
 
     # ------------------------------------------------------------------ posting
 
@@ -318,6 +333,7 @@ class ConversationService:
             task_id=thread.task_id,
             change_id=thread.change_id,
             author_user_id=self.principal.user_id,
+            api_token_id=self.principal.token_id,
             body_md=body,
             is_update=data.is_update and not thread.is_change,
         )
@@ -336,6 +352,7 @@ class ConversationService:
         post = Post(
             change_id=thread.change_id,
             author_user_id=self.principal.user_id,
+            api_token_id=self.principal.token_id,
             body_md=data.body_md.strip(),
         )
         self.session.add(post)

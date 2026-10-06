@@ -41,7 +41,7 @@ function NavItem({ path, label, icon, count, current }) {
   `;
 }
 
-function UserBlock({ boot, lookup, onLogin, collapsed }) {
+function UserBlock({ boot, lookup, onLogin, collapsed, current }) {
   const me = boot.me;
   if (me.is_anonymous) {
     return html`
@@ -57,13 +57,13 @@ function UserBlock({ boot, lookup, onLogin, collapsed }) {
   const via = me.signed_in_by ? `Signed in through ${me.signed_in_by}` : null;
   const title = collapsed ? [`${me.display_name} (${meta})`, via].filter(Boolean).join("\n") : via;
   return html`
-    <div class="sidebar__user" title=${title ?? undefined}>
+    <a class="sidebar__user" href=${href("profile")} title=${title ?? "Your profile and API tokens"} aria-current=${current ? "page" : undefined}>
       <${Avatar} person=${person} name=${me.display_name} />
       <div class="sidebar__user-text">
         <span class="sidebar__user-name">${me.display_name}</span>
         <span class="sidebar__user-meta">${meta}</span>
       </div>
-    </div>
+    </a>
   `;
 }
 
@@ -177,7 +177,7 @@ export function Sidebar({ boot, lookup, route, collapsed, onToggleCollapsed, onL
       `}
 
       <div class="sidebar__footer">
-        <${UserBlock} boot=${boot} lookup=${lookup} onLogin=${onLogin} collapsed=${collapsed} />
+        <${UserBlock} boot=${boot} lookup=${lookup} onLogin=${onLogin} collapsed=${collapsed} current=${route.name === "profile"} />
         <div class="sidebar__tools">
           <button
             type="button"

@@ -43,6 +43,7 @@ VIEWS = [
     "admin/people",
     "admin/groups",
     "admin/audit",
+    "profile",
 ]
 
 
@@ -184,6 +185,16 @@ def test_dialogs_and_drawers(live_server: str, themed: Page) -> None:
     page.get_by_role("button", name="New change").click()
     expect(page.get_by_role("button", name="Create change")).to_be_visible()
     assert_accessible(page, "new change drawer")
+
+    page.goto(f"{live_server}profile")
+    page.get_by_role("button", name="New token").click()
+    new_token = page.get_by_role("dialog", name="New API token")
+    expect(new_token.get_by_label("Name")).to_be_visible()
+    assert_accessible(page, "new token dialog")
+    new_token.get_by_label("Name").fill("Axe")
+    new_token.get_by_role("button", name="Create token").click()
+    expect(page.get_by_role("dialog", name="Your new token")).to_be_visible()
+    assert_accessible(page, "the new token, shown once")
 
 
 def test_small_screens_and_the_collapsed_sidebar(live_server: str, themed: Page) -> None:

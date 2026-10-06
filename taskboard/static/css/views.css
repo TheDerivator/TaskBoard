@@ -1,4 +1,4 @@
-/* View-specific styles: Priority list (ranked table that becomes cards on narrow screens). */
+/* View-specific styles: Priority list (ranked table that becomes cards on narrow screens), Profile. */
 
 /* ---------------------------------------------------------------- filters */
 
@@ -299,4 +299,89 @@ button.grip:focus-visible {
   padding: 40px 24px;
   text-align: center;
   color: var(--ink-2);
+}
+
+/* ---------------------------------------------------------------- Profile (API tokens, D-097) */
+
+.page--profile {
+  max-width: 1040px;
+}
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+}
+
+.profile-card__name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.profile-section {
+  margin-top: 24px;
+}
+
+.profile-section .section-head p {
+  max-width: 72ch;
+}
+
+.token-steps {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 14px;
+  color: var(--ink-2);
+  display: grid;
+  gap: 4px;
+}
+
+.token-steps__title {
+  font-size: 15px;
+}
+
+.field__hint {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink-3);
+}
+
+.token-scope {
+  align-items: flex-start;
+}
+
+.token-scope input {
+  margin-top: 2px;
+}
+
+.token-commands {
+  display: grid;
+  gap: 10px;
+}
+
+.token-command .row {
+  gap: 8px;
+}
+
+.token-command__code {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+
+.token-row {
+  font-size: 14px;
+  flex-wrap: wrap;
+}
+
+.data-table tr.is-expired td {
+  color: var(--ink-3);
 }

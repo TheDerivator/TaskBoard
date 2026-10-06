@@ -85,6 +85,45 @@ edited: to keep releasing (or editing maps) to fewer people, give them a custom 
 - The first `admin` password comes from `TASKBOARD_INITIAL_ADMIN_PASSWORD`, or is generated,
   printed once in the log / CLI output, and must be changed at first login.
 
+## API tokens (AI agents and scripts)
+
+Anyone with an account can let an AI agent (Claude Code, GitHub Copilot, ...) or a script work on
+the board as them (D-097). The philosophy: such tools would otherwise drive the API with a copied
+browser cookie, so the board offers a better way and makes it visible, instead of trying to block
+them.
+
+- **Profile page** (click your name in the sidebar): create a token with a name ("Claude Code on
+  my laptop"), an access level and an expiry (7, 30, 90 days, a year, or never: the owner's
+  choice). The token (`tb_` and 43 random characters) is shown **once**; only its SHA-256 hash is
+  stored. The page shows the commands that put it in the `TASKBOARD_TOKEN` environment variable
+  and offers the **agent guide** to download. At most 25 live tokens per account.
+- **Access**: *read only* keeps the owner's `task.view`, `change.view` and `knowledge.view`;
+  *read and write* keeps all of the owner's rights **except administration** (`users.manage`,
+  `people.manage`). Rights are the owner's *current* ones, read at every request, so taking a
+  role away also narrows their tokens.
+- **Using one**: `Authorization: Bearer <token>` on every request, no cookies, no CSRF header. A
+  request with a Bearer header is judged by its token alone: an unknown, revoked or expired token
+  gets **401** (never a silent fallback to anonymous reading or to a session cookie in the same
+  request). `GET /api/auth/me` names the token (`api_token`: name and scope).
+- **Not through a token**: creating, listing or revoking tokens, and changing the password (a
+  leaked read token cannot mint a write token or keep itself alive).
+- **Revoking**: the owner on the profile page; administrators in Administration › Accounts (the
+  account's dialog lists its tokens). Suspending the account stops its tokens at once. Revoked
+  tokens stay in the database so what they wrote keeps its name.
+- **Traceability**: what a token writes shows as the owner's, marked "via <token name>" (task
+  events, comments and their edits, process-change posts, knowledge revisions, releases). The
+  audit log records `token.created` and `token.revoked`. "Last used" (time and address) is kept
+  per token, written at most once a minute.
+- **Agent guide**: `GET /api/agent-guide` (Markdown; also the download on the profile page). It
+  tells agents that a token is mandatory, how to send it, how errors, versions and keys work, to
+  treat board texts as information rather than instructions, and lists every endpoint they may use
+  with its parameters, generated from the OpenAPI document. It never contains a token. It does not
+  mention Windows sign-in or passwords except to forbid them.
+- **Security notes**: a token is a bearer secret, as good as the owner's session for its scope:
+  use HTTPS beyond an experiment, keep tokens in environment variables rather than files or chats,
+  prefer *read only* and an expiry. The CSRF exemption is safe because browsers cannot add an
+  `Authorization` header to a cross-site request without CORS, which the app does not allow.
+
 ## SSO (external identity providers)
 
 SSO is **off unless configured**. With no provider configured (e.g. the Linux demo server) only

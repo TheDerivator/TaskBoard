@@ -23,6 +23,7 @@ gate's own tests). Keep the status table and the checkboxes current as work land
 | M18 | Releases                                                | ☑ done        |
 | M19 | Global search and stable links                          | ☑ done        |
 | M20 | Hardening of the new modules                            | ☑ done (live demo reseed: owner) |
+| M21 | API tokens for AI agents (beyond the design)            | ☑ done        |
 
 Legend: ☐ not started · ◐ in progress · ☑ done
 
@@ -447,6 +448,27 @@ Met (2026-10-05, 670 tests green with `--e2e`): `tests/api/test_scale_processes.
 `tests/unit/test_mssql_schema.py`, `tests/integration/test_session.py` (any number of ids),
 `tests/integration/test_backup.py` (releases and box images come back), the parameter guard in
 `tests/conftest.py`. Still open from M10: a run of the suites against a real SQL Server.
+
+### M21 · API tokens for AI agents (beyond the design)
+Asked for on 2026-10-06: let people control the board through their AI assistant (D-097).
+- [x] `api_tokens` table and migration; Bearer authentication that never falls back to cookies or
+      anonymous access; CSRF exemption for Bearer requests; read and write scopes, never
+      administration; expiry by choice; at most 25 live tokens; "last used" kept.
+- [x] Token endpoints (`/api/auth/tokens`, `/api/admin/users/{id}/tokens`), audit entries, tokens
+      cannot manage tokens or passwords; `GET /api/auth/me` names the token.
+- [x] "via <token name>" on task events, posts and their edits and history, knowledge revisions,
+      releases (`services/actors.py`, `ViaBadge`, `actorName`).
+- [x] Profile page (the sidebar's user block links to it): tokens, new token, the token shown once
+      with the commands for `TASKBOARD_TOKEN`; the agent guide (`GET /api/agent-guide`), its
+      endpoint list generated from OpenAPI; tokens in the admin's account dialog.
+
+**Acceptance gate**: API tests for every refusal (read scope, administration, bad/revoked/expired
+token, suspended owner, managing tokens through a token, a Bearer header borrowing a session) and
+for the "via" marks; unit tests for scopes and the guide; JS tests; a browser test from creating a
+token to an agent's post marked "via" and revoking; axe clean on the profile page and its dialogs.
+Met (2026-10-06): `tests/api/test_tokens.py`, `tests/unit/test_agent_guide.py`,
+`tests/unit/test_access_policy.py`, `tests/js/tokens.test.mjs`, `tests/e2e/test_tokens.py`,
+`tests/e2e/test_accessibility.py` (profile, new token, the token shown once).
 
 ---
 

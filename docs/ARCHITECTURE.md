@@ -197,11 +197,14 @@ From `team-tasks-design/DESIGN.md`, plus access control.
     freezes the revision of every object in its scope (`domain/releases.py`, D-093). The draft is
     computed (`services/releases.py`), and an old version is rebuilt from its frozen revisions as
     unsaved objects (`services/frozen.py`): `?release=N` on the map and the control plan.
-- `events(id, task_id, actor_user_id?, created_at, kind, data JSON)`: lifecycle changes, lead
-  changes, helpers added or removed, placement changes.
+- `events(id, task_id, actor_user_id?, api_token_id?, created_at, kind, data JSON)`: lifecycle
+  changes, lead changes, helpers added or removed, placement changes.
 - Identity: `users`, `external_identities(provider, subject)`, `roles`, `role_permissions`,
   `role_assignments(user_id, role_id, department_id?, section_id?)` (both NULL = global scope),
-  `sessions` (server-side, so suspending a user takes effect immediately), `audit_log`.
+  `sessions` (server-side, so suspending a user takes effect immediately), `audit_log`,
+  `api_tokens(user_id, name, token_hash, prefix, scope, expires_at?, last_used_at?, revoked_at?)`
+  (D-097). What a token writes names it: `api_token_id` on events, posts (and
+  `edited_api_token_id`), post revisions, knowledge revisions and releases.
 
 A **Person** (someone on the board) and a **User** (a login account) are separate and optionally
 linked 1:1. People who never log in can still lead tasks; built-in accounts are not people.
@@ -230,6 +233,15 @@ linked 1:1. People who never log in can still lead tasks; built-in accounts are 
   with `task.view` somewhere.
 - **Today** comes from the server (`bootstrap.today`; `TASKBOARD_TODAY` pins it for tests and
   demos), so process-change states ("Test running", "Planned") are the same in browser and server.
+
+- **API tokens** (D-097) let an AI agent or a script act as their owner:
+  `Authorization: Bearer tb_…`, checked on every request like a session. The principal keeps the
+  owner's grants narrowed to the token's scope (read: the `*.view` permissions; write: everything
+  but `users.manage` and `people.manage`) and carries the token's id, so services stamp
+  `api_token_id` on what they write and the views show "via <token name>". A Bearer request is
+  judged by its token alone (never cookies, never anonymous: a bad token is 401), which is why
+  the CSRF middleware lets it through. `GET /api/agent-guide` is the Markdown guide for agents,
+  its endpoint list generated from the OpenAPI document (`services/agent_guide.py`).
 
 Details, including SSO configuration: [`AUTH.md`](AUTH.md).
 

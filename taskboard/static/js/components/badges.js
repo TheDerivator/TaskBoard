@@ -17,6 +17,12 @@ export function Avatar({ person, name, size = "normal", ring = false, title }) {
   return html`<span class=${classes} style=${style} title=${label} aria-label=${label} role="img">${text}</span>`;
 }
 
+/** "via Claude Code" next to an author: written through an API token (D-097). */
+export function ViaBadge({ actor }) {
+  if (!actor?.via) return null;
+  return html`<span class="via-badge" title=${`Done by ${actor.display_name} through the API token “${actor.via}”`}>via ${actor.via}</span>`;
+}
+
 export function StatusPill({ status, small = false }) {
   return html`<span class=${`pill pill--${status}${small ? " pill--small" : ""}`}>${statusLabel(status)}</span>`;
 }

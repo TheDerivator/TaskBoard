@@ -10,7 +10,7 @@ const LinkIcon = () => html`
 `;
 
 /** Copy text; falls back to a hidden textarea where the Clipboard API is unavailable (plain HTTP). */
-async function copyText(text) {
+export async function copyText(text) {
   if (navigator.clipboard && window.isSecureContext) {
     await navigator.clipboard.writeText(text);
     return;

@@ -5,7 +5,7 @@ import { CopyLinkButton } from "../../components/copy-link.js";
 import { Dialog } from "../../components/dialog.js";
 import { EditIcon, ExternalIcon } from "../../components/icons.js";
 import { useApi } from "../../hooks.js";
-import { formatDate, shortName } from "../../lib/format.js";
+import { actorName, formatDate, shortName } from "../../lib/format.js";
 import { ancestors, typedLinks } from "../../lib/maplayout.js";
 import { formatDay } from "../../lib/periods.js";
 import { changesPath, knowledgePath } from "../../lib/routes.js";
@@ -115,7 +115,7 @@ function HistoryDialog({ boxKey, name, onClose }) {
               <li key=${`${r.object_type}${r.object_id}:${r.rev}`}>
                 <span>${r.summary}</span>
                 <span class="revision-list__meta">
-                  ${r.author?.display_name ?? "System"} · ${formatDate(r.created_at, { withTime: true })} · ${r.object_type} revision ${r.rev}
+                  ${actorName(r.author, "System")} · ${formatDate(r.created_at, { withTime: true })} · ${r.object_type} revision ${r.rev}
                 </span>
               </li>
             `,

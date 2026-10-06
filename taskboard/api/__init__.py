@@ -14,6 +14,7 @@ from taskboard.api.routers import (
     search,
     sso,
     tasks,
+    tokens,
     windows,
 )
 from taskboard.identity.providers import IdentityProviders
@@ -28,6 +29,7 @@ def build_api_router(providers: IdentityProviders | None = None) -> APIRouter:
     router = APIRouter()
     router.include_router(meta.router)
     router.include_router(auth.router)
+    router.include_router(tokens.router)
     if providers is not None and providers.redirect:
         router.include_router(sso.router)
     if providers is not None and providers.negotiate:

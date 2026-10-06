@@ -11,6 +11,8 @@ process's changes and map); the rest only counts when granted globally.
 import pytest
 
 from taskboard.domain.access import (
+    TOKEN_NEVER,
+    VIEW_PERMISSIONS,
     BuiltinRole,
     Grant,
     GrantSet,
@@ -18,6 +20,7 @@ from taskboard.domain.access import (
     Reach,
     Scope,
     SectionRef,
+    TokenScope,
 )
 
 QUALITY = SectionRef(id=11, department_id=1)
@@ -145,3 +148,11 @@ def test_scoped_permission_without_section_means_everywhere() -> None:
 def test_scope_validation() -> None:
     with pytest.raises(ValueError, match="global scope has no id"):
         Scope(Scope.everywhere().kind, 3)
+
+
+def test_tokens_keep_their_scope_and_never_administer() -> None:
+    """D-097: a read token keeps the view rights; a write token everything but administration."""
+    assert TokenScope.READ.permissions == frozenset(VIEW_PERMISSIONS)
+    assert TokenScope.WRITE.permissions == frozenset(Permission) - TOKEN_NEVER
+    assert {Permission.USERS_MANAGE, Permission.PEOPLE_MANAGE} == TOKEN_NEVER
+    assert all(p.value.endswith(".view") for p in TokenScope.READ.permissions)

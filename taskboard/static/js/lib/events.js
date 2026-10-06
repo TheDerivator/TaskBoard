@@ -1,4 +1,5 @@
 /** Human wording for automatic task events ("Anna Claes moved this from Idea to Started"). Pure. */
+import { actorName } from "./format.js";
 
 const STATUS = { idea: "Idea", started: "Started", done: "Done", archived: "Archived" };
 
@@ -23,12 +24,12 @@ function sectionLabel(lookup, id) {
 }
 
 /**
- * @param {{kind: string, data: object, actor: ?{display_name: string}}} event
+ * @param {{kind: string, data: object, actor: ?{display_name: string, via?: ?string}}} event
  * @param {object} lookup  from lib/lookup.js
  * @returns {{actor: string, text: string}}  shown as "<strong>actor</strong> text"
  */
 export function describeEvent(event, lookup) {
-  const actor = event.actor?.display_name ?? "Someone";
+  const actor = actorName(event.actor);
   const d = event.data ?? {};
   switch (event.kind) {
     case "created":

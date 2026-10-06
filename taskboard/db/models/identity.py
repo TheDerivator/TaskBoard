@@ -1,4 +1,5 @@
-"""Accounts and access control: users, external identities, roles, assignments, sessions, audit."""
+"""Accounts and access control: users, external identities, roles, assignments, sessions, API
+tokens, audit."""
 
 from datetime import datetime
 from typing import Any
@@ -28,7 +29,7 @@ from taskboard.db.base import (
 )
 from taskboard.db.models.org import Department, Section
 from taskboard.db.models.people import Person
-from taskboard.domain.access import Scope, ScopeKind, UserKind, UserStatus
+from taskboard.domain.access import Scope, ScopeKind, TokenScope, UserKind, UserStatus
 
 
 class User(Base):
@@ -232,6 +233,27 @@ class UserSession(Base):
     last_seen_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)
     ip_address: Mapped[str | None] = mapped_column(Unicode(45))
     user_agent: Mapped[str | None] = mapped_column(Unicode(300))
+
+    user: Mapped[User] = relationship()
+
+
+class ApiToken(Base):
+    """A personal API token for an AI agent or a script, acting as its owner (D-097). Only the
+    hash is stored. Revoked tokens stay, so what was done through them keeps its name."""
+
+    __tablename__ = "api_tokens"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    name: Mapped[str] = mapped_column(ShortText)  # "Claude Code on my laptop"
+    token_hash: Mapped[str] = mapped_column(Unicode(64), unique=True)
+    prefix: Mapped[str] = mapped_column(Unicode(16))  # the token's start, to recognize it
+    scope: Mapped[TokenScope] = mapped_column(str_enum(TokenScope))
+    created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)
+    expires_at: Mapped[datetime | None] = mapped_column(UTCDateTime)  # None: never
+    last_used_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
+    last_used_ip: Mapped[str | None] = mapped_column(Unicode(45))
+    revoked_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
 
     user: Mapped[User] = relationship()
 

@@ -1,6 +1,6 @@
 /** Releases of the FMEA and control plan (pure): versions in links ("v3"), the release bar's
  * wording, the version picker. */
-import { plural } from "./format.js";
+import { actorName, plural } from "./format.js";
 import { formatDay } from "./periods.js";
 
 /** "v3" (or "3") in a link → 3; anything else → null. */
@@ -27,7 +27,7 @@ export function draftText(draft) {
 
 /** "Released 12 Sep 2026 · Anna Claes" */
 export function releasedText(release) {
-  const by = release.released_by ? ` · ${release.released_by.display_name}` : "";
+  const by = release.released_by ? ` · ${actorName(release.released_by)}` : "";
   return `Released ${releaseDay(release.released_at)}${by}`;
 }
 

@@ -29,6 +29,7 @@ APP_ROUTES = frozenset(
         "fmea",
         "cpl",
         "box",
+        "profile",
     }
 )
 

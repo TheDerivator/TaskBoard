@@ -33,7 +33,6 @@ from taskboard.db.models import (
     Revision,
     Section,
     Task,
-    User,
 )
 from taskboard.db.text import contains_ci
 from taskboard.domain.access import Permission
@@ -64,7 +63,7 @@ from taskboard.domain.knowledge import (
 from taskboard.domain.outline import Outline, TreeNode
 from taskboard.domain.task_keys import display_key
 from taskboard.identity.principal import Principal
-from taskboard.schemas.conversation import Actor, AttachmentOut
+from taskboard.schemas.conversation import AttachmentOut
 from taskboard.schemas.knowledge import (
     BoxContent,
     BoxCreate,
@@ -96,6 +95,7 @@ from taskboard.schemas.knowledge import (
     RelatedTask,
     RevisionOut,
 )
+from taskboard.services.actors import actor_by_id
 from taskboard.services.attachments import AttachmentStore, attachment_out, store_image
 from taskboard.services.changes import ChangeService
 from taskboard.services.frozen import frozen_state
@@ -707,6 +707,7 @@ class KnowledgeService:
                 content=content,
                 deleted=deleted,
                 author_user_id=None if self.principal.is_anonymous else self.principal.user_id,
+                api_token_id=self.principal.token_id,
             )
         )
 
@@ -1092,24 +1093,15 @@ class KnowledgeService:
             ident = (revision.object_type, revision.object_id)
             before = previous.get(ident)
             previous[ident] = revision.content
-            author = (
-                self.session.get(User, revision.author_user_id)
-                if revision.author_user_id is not None
-                else None
-            )
             result.append(
                 RevisionOut(
                     object_type=revision.object_type,
                     object_id=revision.object_id,
                     rev=revision.rev,
                     created_at=revision.created_at,
-                    author=Actor(
-                        user_id=author.id,
-                        display_name=author.display_name,
-                        person_id=author.person_id,
-                    )
-                    if author
-                    else None,
+                    author=actor_by_id(
+                        self.session, revision.author_user_id, revision.api_token_id
+                    ),
                     deleted=revision.deleted,
                     changed=[] if revision.deleted else changed_fields(before, revision.content),
                     summary=self.summary(revision, before, names),

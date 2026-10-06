@@ -243,6 +243,7 @@ class Revision(Base):
     content: Mapped[dict[str, Any]] = mapped_column(JSON)
     deleted: Mapped[bool] = mapped_column(default=False)
     author_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    api_token_id: Mapped[int | None] = mapped_column(ForeignKey("api_tokens.id"))  # D-097
     created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)
 
 
@@ -261,6 +262,7 @@ class Release(Base):
     number: Mapped[int]
     note: Mapped[str] = mapped_column(Text, default="")
     released_by_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    api_token_id: Mapped[int | None] = mapped_column(ForeignKey("api_tokens.id"))  # D-097
     released_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)
 
 

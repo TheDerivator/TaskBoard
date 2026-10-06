@@ -10,9 +10,10 @@ from typing import Annotated
 from fastapi import Depends, Request
 from sqlalchemy.orm import Session
 
-from taskboard.api.client import proxy_host
+from taskboard.api.client import client_ip, proxy_host
 from taskboard.config import Settings
 from taskboard.db.session import Database
+from taskboard.identity import api_tokens
 from taskboard.identity.principal import Principal
 from taskboard.identity.providers import IdentityProviders
 from taskboard.identity.sessions import SESSION_COOKIE
@@ -28,6 +29,7 @@ from taskboard.services.releases import ReleaseService
 from taskboard.services.search import SearchService
 from taskboard.services.sso import SsoService
 from taskboard.services.tasks import TaskService
+from taskboard.services.tokens import TokenService
 from taskboard.services.users import UserAdminService
 
 SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
@@ -61,12 +63,29 @@ def get_auth_service(
 Auth = Annotated[AuthService, Depends(get_auth_service)]
 
 
+def bearer_token(request: Request) -> str | None:
+    """The API token of `Authorization: Bearer <token>`, if the request carries one."""
+    scheme, _, credentials = request.headers.get("authorization", "").partition(" ")
+    return credentials.strip() if scheme.lower() == "bearer" else None
+
+
 def get_principal(request: Request, auth: Auth) -> Principal:
-    return auth.principal_for_request(
+    principal = auth.principal_for_request(
         session_token=request.cookies.get(SESSION_COOKIE),
         headers=request.headers,
         proxy=proxy_host(request),
+        api_token=bearer_token(request),
     )
+    if api_tokens.due_for_touch(principal) and principal.token_id is not None:
+        ip = client_ip(request)
+        if request.method in SAFE_METHODS:
+            # A reading request has a reading session: note the use in a short write of its own.
+            database: Database = request.app.state.database
+            with database.session(write=True) as session:
+                api_tokens.touch(session, principal.token_id, ip_address=ip)
+        else:
+            api_tokens.touch(auth.session, principal.token_id, ip_address=ip)  # saved with the rest
+    return principal
 
 
 CurrentPrincipal = Annotated[Principal, Depends(get_principal)]
@@ -149,6 +168,11 @@ def get_sso_service(session: DbSession, settings: AppSettings, providers: Provid
     return SsoService(session, settings, providers)
 
 
+def get_token_service(session: DbSession, principal: CurrentPrincipal) -> TokenService:
+    return TokenService(session, principal)
+
+
+Tokens = Annotated[TokenService, Depends(get_token_service)]
 UserAdmin = Annotated[UserAdminService, Depends(get_user_admin)]
 Sso = Annotated[SsoService, Depends(get_sso_service)]
 Organization = Annotated[OrganizationService, Depends(get_organization)]

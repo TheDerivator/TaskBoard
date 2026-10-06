@@ -5,7 +5,7 @@ import { describeEvent } from "../lib/events.js";
 import { formatDate } from "../lib/format.js";
 import { dataChanged } from "../store.js";
 import { html, useEffect, useRef, useState } from "../ui.js";
-import { Avatar } from "./badges.js";
+import { Avatar, ViaBadge } from "./badges.js";
 import { Composer } from "./composer.js";
 import { showError, showToast } from "./toasts.js";
 
@@ -58,6 +58,7 @@ function PostItem({ post, lookup, taskKey, onChanged }) {
       <div class="post__main">
         <div class="post__head">
           <span class="post__author">${post.author.display_name}</span>
+          <${ViaBadge} actor=${post.author} />
           ${post.is_update && html`<span class="update-badge">Update</span>`}
           <time class="post__time" datetime=${post.created_at} title=${post.edited_at ? `Edited ${formatDate(post.edited_at, { withTime: true })}` : undefined}>
             ${formatDate(post.created_at, { withTime: true })}${post.edited_at ? " · edited" : ""}

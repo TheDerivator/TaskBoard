@@ -66,6 +66,7 @@ export function parseRoute(pathname, search = "", base = "/") {
 
   if (parts.length === 0) return { name: "home", params: {} };
   if (head === "priority" && rest.length === 0) return { name: "priority", params: {} };
+  if (head === "profile" && rest.length === 0) return { name: "profile", params: {} };
   if (head === "people" && rest.length <= 2) {
     return { name: "people", params: { department: rest[0] ?? null, section: rest[1] ?? null } };
   }

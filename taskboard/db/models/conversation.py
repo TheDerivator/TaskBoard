@@ -35,10 +35,12 @@ class Post(Base):
     task_id: Mapped[int | None] = mapped_column(ForeignKey("tasks.id"), index=True)
     change_id: Mapped[int | None] = mapped_column(ForeignKey("changes.id"), index=True)
     author_user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    api_token_id: Mapped[int | None] = mapped_column(ForeignKey("api_tokens.id"))  # D-097
     created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)
     edited_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
     # Who edited last; a period post may be edited by others than its author.
     edited_by_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    edited_api_token_id: Mapped[int | None] = mapped_column(ForeignKey("api_tokens.id"))
     body_md: Mapped[str] = mapped_column(Text)
     is_update: Mapped[bool] = mapped_column(default=False)  # highlighted "status update" (tasks)
 
@@ -58,6 +60,7 @@ class PostRevision(Base):
     # The content as it was (body, and a period's fields), who wrote it and when.
     content: Mapped[dict[str, Any]] = mapped_column(JSON)
     written_by_user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    api_token_id: Mapped[int | None] = mapped_column(ForeignKey("api_tokens.id"))  # D-097
     written_at: Mapped[datetime] = mapped_column(UTCDateTime)
 
     written_by: Mapped[User] = relationship()
@@ -91,6 +94,7 @@ class Event(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     task_id: Mapped[int] = mapped_column(ForeignKey("tasks.id"), index=True)
     actor_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    api_token_id: Mapped[int | None] = mapped_column(ForeignKey("api_tokens.id"))  # D-097
     created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)
     kind: Mapped[EventKind] = mapped_column(str_enum(EventKind, length=40))
     data: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)

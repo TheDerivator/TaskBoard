@@ -31,6 +31,12 @@ export function formatDate(value, { withTime = false } = {}) {
   return `${day}, ${hh}:${mm}`;
 }
 
+/** "Anna Claes", or "Anna Claes via Claude Code" for what was done through an API token (D-097). */
+export function actorName(actor, fallback = "Someone") {
+  if (!actor) return fallback;
+  return actor.via ? `${actor.display_name} via ${actor.via}` : actor.display_name;
+}
+
 export function plural(count, one, many = `${one}s`) {
   return `${count} ${count === 1 ? one : many}`;
 }

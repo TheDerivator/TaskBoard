@@ -30,6 +30,7 @@ taskboard/                                  TaskBoard: a team task board with a 
       search.py                             Search everything (M19): tasks, process changes, knowledge boxes and defects you may see.
       sso.py                                SSO endpoints for redirect providers: start a sign-in, and the provider's callback.
       tasks.py                              Task endpoints: list/filter, read, create, edit, move in the ranking, delete, placements.
+      tokens.py                             API token endpoints (D-097): your own tokens, anyone's for user administrators, and the guide
       windows.py                            Windows sign-in endpoint: the HTTP Negotiate handshake (Kerberos or NTLM) with the browser.
     client.py                               Who is on the other end of a request: the client, and the trusted reverse proxy in between.
     cookies.py                              Setting and clearing the session cookie (shared by password login and SSO sign-in).
@@ -46,12 +47,13 @@ taskboard/                                  TaskBoard: a team task board with a 
         20261004_a58ea5830fe1_box_images.py  box images
         20261004_accb969d56e3_process_knowledge.py  process knowledge
         20261004_d8d4a375aeac_releases.py   releases
+        20261006_743649b1221b_api_tokens.py  api tokens (and which token wrote each event, post, revision and release)
       env.py                                Alembic environment: migrates the database named in the config (or in TASKBOARD_ settings).
       script.py.mako
     models/                                 All tables. Importing this package registers every model on `Base.metadata`.
       changes.py                            Process changes: one per change to a process, and its periods (tests and permanent changes).
       conversation.py                       Conversations of tasks and process changes: Markdown posts (with their earlier versions),
-      identity.py                           Accounts and access control: users, external identities, roles, assignments, sessions, audit.
+      identity.py                           Accounts and access control: users, external identities, roles, assignments, sessions, API
       knowledge.py                          Process knowledge: kinds and link types, the boxes of each process's map (and the defect
       org.py                                Organization tables: departments, their sections (the scopes for access rights) and processes.
       people.py                             People on the board (task leads and helpers). Not the same as login accounts (users).
@@ -82,6 +84,7 @@ taskboard/                                  TaskBoard: a team task board with a 
       header.py                             SSO through a trusted reverse proxy that authenticates users and passes them in headers.
       negotiate.py                          Windows sign-in by the app itself: HTTP Negotiate (Kerberos or NTLM), checked by Windows SSPI.
       oidc.py                               OpenID Connect sign-in (authorization code flow with PKCE), e.g. Microsoft Entra ID.
+    api_tokens.py                           API tokens for AI agents and scripts (D-097): `Authorization: Bearer tb_…`, only the hash stored.
     password_login.py                       Username + password login for built-in accounts, with throttling against password guessing.
     passwords.py                            Password hashing (argon2id), verification, rehash checks, and generated initial passwords.
     principal.py                            The principal: who is making a request and what they may do (loaded once per request).
@@ -97,9 +100,13 @@ taskboard/                                  TaskBoard: a team task board with a 
     reference.py                            Reference data shapes: departments and sections, people, lifecycle states, bootstrap.
     search.py                               Search results (M19): grouped by type (knowledge, process changes, tasks, defects), each hit
     tasks.py                                Task shapes: list filters, summaries and details, create/update/move commands, placements.
+    tokens.py                               API token shapes (D-097): a token as listed (never its secret), creating one, the new secret.
   services/                                 Service layer: use cases. Each service owns its transaction and enforces the access policy.
     data/
+      agent-guide.md
       sample-data.json
+    actors.py                               Who did something, as shown in timelines and histories: the user, and the API token they did it
+    agent_guide.py                          The guide for AI agents (D-097): Markdown that tells an agent how to use the board's API with a
     attachments.py                          Uploaded images: type sniffing, size limits, atomic writes, deletion, and their rows and links.
     audit.py                                Append-only audit trail of security-relevant actions (account, role and login events).
     auth.py                                 Authentication use cases: who is calling, log in, log out, change password.
@@ -120,6 +127,7 @@ taskboard/                                  TaskBoard: a team task board with a 
     setup.py                                Bring a database up to date: apply migrations, then create the built-in data.
     sso.py                                  SSO sign-ins that start a session: the OpenID Connect round trip, and Windows sign-in.
     tasks.py                                Task use cases: list (filtered, visible only), read, create, edit, re-rank, delete, placements.
+    tokens.py                               API token use cases (D-097): your own tokens (list, create, revoke) and, for user
     users.py                                User administration: accounts, passwords, role assignments, custom roles, the audit log.
     visibility.py                           The one place that decides what a principal can see: every task query goes through it, and
   static/
@@ -137,7 +145,7 @@ taskboard/                                  TaskBoard: a team task board with a 
       processes.css                         Process changes and Process knowledge: the shared bar with department, process tabs and page switch.
       task.css                              Task drawer and task page: header, tabs, detail form, people and placements; drag states.
       tokens.css                            Design tokens (DESIGN.md "Visual system") for the light theme, with dark-theme overrides.
-      views.css                             View-specific styles: Priority list (ranked table that becomes cards on narrow screens).
+      views.css                             View-specific styles: Priority list (ranked table that becomes cards on narrow screens), Profile.
     img/
     js/
       components/
@@ -180,6 +188,7 @@ taskboard/                                  TaskBoard: a team task board with a 
         signin.js                           Windows sign-in decisions: when the page tries it by itself, and which failures to mention. Pure.
         teams.js                            Teams for the People view (pure): everyone, a department or a section; found from the URL.
         timeline.js                         The process-change timeline (Gantt), pure: the window shown, which changes, and the bars.
+        tokens.js                           API tokens for AI agents (pure, D-097): the choices for a new token, what the profile page says
       views/
         admin/
           audit.js                          Administration › Audit log: security-relevant actions, newest first, with "Show older".
@@ -188,7 +197,7 @@ taskboard/                                  TaskBoard: a team task board with a 
           organization.js                   Administration › Organization: departments, their sections (the scopes for access rights) and processes.
           people.js                         Administration › People: the people on the board (leads and helpers), active or not.
           roles.js                          Administration › Roles: built-in roles (read-only) and custom roles with chosen permissions.
-          users.js                          Administration › Accounts: list, create (local or SSO pre-provisioned), edit, rights, passwords.
+          users.js                          Administration › Accounts: list, create (local or SSO pre-provisioned), edit, rights, passwords,
         changes/
           change.js                         A process change: a drawer over the list, or its own page; plus the "New change" drawer.
           index.js                          Process changes of one process: the list or the timeline (Gantt) of its tests and changes.
@@ -207,6 +216,7 @@ taskboard/                                  TaskBoard: a team task board with a 
           switch.js                         The Knowledge / FMEA / CPL switch of Process knowledge, and each view's path for a process.
         people.js                           People view: one lane per person of a team (everyone, a department or a section), cards in team priority order.
         priority.js                         Priority view: every visible task in one team-wide ranked list, with search and filters.
+        profile.js                          Profile: your account, and API tokens that let an AI agent or a script work on the board as you
         projects.js                         Projects view: project tree on the left, the selected project or section unfolded as an outline.
         simple.js                           Small full-page views: not found, login required, no access, error.
         task.js                             The task: a drawer over the list, or its own page at /t/{key}; plus the "New task" drawer.
@@ -254,6 +264,7 @@ tests/                                      Test suite: unit/ (pure logic), api/
     test_search.py                          Search everything (milestone M19): every type is found, grouped and ranked, with links; nothing
     test_sso_provisioning.py                SSO readiness: pre-provisioned accounts get exactly the rights an admin prepared.
     test_tasks.py                           Task API on the sample board: listing and filters, keys, create, edit, events, delete, access.
+    test_tokens.py                          API tokens for AI agents (D-097): acting as the owner, scopes, never administration, refusals,
     test_trusted_header.py                  SSO through a trusted reverse proxy header (e.g. IIS Windows authentication).
     test_windows_auth.py                    Windows sign-in by the app itself (HTTP Negotiate): challenges, the handshake, the session.
   architecture/                             Tests that keep the codebase's structure honest (layers, docs that must not go stale).
@@ -276,6 +287,7 @@ tests/                                      Test suite: unit/ (pure logic), api/
     test_shell.py                           The app shell and the Priority view in a real browser: filters, theme, sidebar, login.
     test_sso.py                             SSO sign-in in a real browser (milestone M9): the full redirect round trip.
     test_tasks.py                           Priority interactions and the task drawer in a real browser (milestone M5).
+    test_tokens.py                          API tokens in a real browser (D-097): create one on the profile page, let an "agent" use it, see
     test_windows_signin.py                  Windows sign-in in a real browser: Chromium answers the Negotiate challenge through SSPI.
   fixtures/
     change_states.json
@@ -305,8 +317,10 @@ tests/                                      Test suite: unit/ (pure logic), api/
     signin.test.mjs                         Unit tests for static/js/lib/signin.js: when Windows sign-in is tried, and what is said when it fails.
     teams.test.mjs                          Unit tests for static/js/lib/teams.js: finding a team from its URL, its label, members and path.
     timeline.test.mjs                       Unit tests for static/js/lib/timeline.js: the window, which changes it shows, and bar geometry.
+    tokens.test.mjs                         Unit tests for static/js/lib/tokens.js, the "via" wording of lib/format.js and lib/events.js, and
   unit/                                     Fast tests of pure logic: no database, no HTTP.
     test_access_policy.py                   The access policy matrix: who may view, edit, comment and manage, in which section.
+    test_agent_guide.py                     The agent guide's generated part: short types from OpenAPI schemas, and the endpoint list.
     test_changes.py                         Process changes: the derived state (the shared table of cases), period rules, tags and keys.
     test_cli.py                             Command line: argument parsing, and the database commands end to end.
     test_config.py                          Settings defaults and environment overrides.

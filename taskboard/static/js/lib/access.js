@@ -17,6 +17,7 @@ const NEEDS = {
 
 /** True when the visitor may see what the route shows (somewhere: details are per section). */
 export function routeAllowed(me, routeName) {
+  if (routeName === "profile") return !me.is_anonymous; // your account and API tokens
   const permission = NEEDS[routeName];
   if (permission) return canSomewhere(me, permission);
   return ["task.view", "change.view", "knowledge.view"].some((p) => canSomewhere(me, p));

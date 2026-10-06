@@ -241,6 +241,7 @@ class ProjectService:
                 Event(
                     task_id=task_id,
                     actor_user_id=self.principal.user_id,
+                    api_token_id=self.principal.token_id,
                     kind=EventKind.PLACEMENT_MOVED,
                     data={"project": project.id, "from": from_node, "to": parent},
                 )

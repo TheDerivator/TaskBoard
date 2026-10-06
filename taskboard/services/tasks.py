@@ -401,5 +401,11 @@ class TaskService:
 
     def _event(self, task: Task, kind: EventKind, data: dict[str, Any]) -> None:
         self.session.add(
-            Event(task_id=task.id, actor_user_id=self.principal.user_id, kind=kind, data=data)
+            Event(
+                task_id=task.id,
+                actor_user_id=self.principal.user_id,
+                api_token_id=self.principal.token_id,
+                kind=kind,
+                data=data,
+            )
         )

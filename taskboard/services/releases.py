@@ -25,7 +25,6 @@ from taskboard.db.models import (
     Release,
     ReleaseItem,
     Revision,
-    User,
 )
 from taskboard.domain.access import Permission
 from taskboard.domain.errors import ConflictError, RuleViolationError
@@ -42,7 +41,6 @@ from taskboard.domain.releases import (
     warnings,
 )
 from taskboard.identity.principal import Principal
-from taskboard.schemas.conversation import Actor
 from taskboard.schemas.knowledge import (
     Draft,
     DraftEntry,
@@ -51,6 +49,7 @@ from taskboard.schemas.knowledge import (
     ReleaseList,
     ReleaseOut,
 )
+from taskboard.services.actors import actor_by_id
 from taskboard.services.frozen import FrozenState, frozen_state, snapshot
 from taskboard.services.knowledge import KnowledgeService
 
@@ -92,12 +91,6 @@ class ReleaseService:
 
     # ------------------------------------------------------------------ reading
 
-    def _actor(self, user_id: int | None) -> Actor | None:
-        user = self.session.get(User, user_id) if user_id is not None else None
-        if user is None:
-            return None
-        return Actor(user_id=user.id, display_name=user.display_name, person_id=user.person_id)
-
     def _out(self, release: Release) -> ReleaseOut:
         items = self.session.scalar(
             select(func.count()).where(ReleaseItem.release_id == release.id)
@@ -106,7 +99,9 @@ class ReleaseService:
             number=release.number,
             label=label(release.number),
             note=release.note,
-            released_by=self._actor(release.released_by_user_id),
+            released_by=actor_by_id(
+                self.session, release.released_by_user_id, release.api_token_id
+            ),
             released_at=release.released_at,
             items=items or 0,
         )
@@ -260,7 +255,9 @@ class ReleaseService:
             object_type=item.object_type,
             verb=item.verb,
             summary=summary,
-            author=self._actor(revision.author_user_id) if revision else None,
+            author=actor_by_id(self.session, revision.author_user_id, revision.api_token_id)
+            if revision
+            else None,
             at=revision.created_at if revision else None,
             before=item.before,
             after=item.after,
@@ -289,6 +286,7 @@ class ReleaseService:
             number=next_number(r.number for r in releases),
             note=data.note,
             released_by_user_id=self.principal.user_id,
+            api_token_id=self.principal.token_id,
         )
         self.session.add(release)
         try:

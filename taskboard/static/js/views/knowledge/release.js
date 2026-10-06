@@ -4,7 +4,7 @@ import { api, ApiError } from "../../api.js";
 import { Dialog } from "../../components/dialog.js";
 import { FailureModeIcon, PrintIcon } from "../../components/icons.js";
 import { showToast } from "../../components/toasts.js";
-import { formatDate } from "../../lib/format.js";
+import { actorName, formatDate } from "../../lib/format.js";
 import { documentsText, draftText, releaseDay, releasedText, releaseLabel, versionOptions } from "../../lib/releases.js";
 import { html, useState } from "../../ui.js";
 
@@ -119,7 +119,7 @@ export function ReleaseDialog({ process, department, list, onClose, onReleased, 
                       (line, i) => html`
                         <span key=${i} class="release-change__what">${line.summary}</span>
                         <span key=${`m${i}`} class="release-change__who">
-                          ${[line.author?.display_name, line.at && formatDate(line.at), revisionText(line)].filter(Boolean).join(" · ")}
+                          ${[line.author && actorName(line.author), line.at && formatDate(line.at), revisionText(line)].filter(Boolean).join(" · ")}
                         </span>
                       `,
                     )}

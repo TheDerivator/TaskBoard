@@ -6,6 +6,7 @@ lists. The anonymous visitor is a principal too (the built-in `anonymous` user a
 
 from collections.abc import Mapping
 from dataclasses import dataclass
+from datetime import datetime
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
@@ -26,6 +27,7 @@ from taskboard.domain.access import (
     Permission,
     Reach,
     SectionRef,
+    TokenScope,
     UserKind,
 )
 from taskboard.domain.errors import (
@@ -47,6 +49,11 @@ class Principal:
     sections: Mapping[int, SectionRef]  # every organizational section, to resolve scopes
     # Set when a trusted proxy identifies the user on every request (there is no logging out).
     ambient_provider: str | None = None
+    # Set when the request carries an API token (D-097): the grants are already narrowed to it.
+    token_id: int | None = None
+    token_name: str | None = None
+    token_scope: TokenScope | None = None
+    token_last_used_at: datetime | None = None
 
     def can(self, permission: Permission, section_id: int | None = None) -> bool:
         if self.must_change_password:

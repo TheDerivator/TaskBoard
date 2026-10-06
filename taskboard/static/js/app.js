@@ -16,6 +16,7 @@ import { BoxLinkView } from "./views/knowledge/box-link.js";
 import { KnowledgeView } from "./views/knowledge/index.js";
 import { PeopleView } from "./views/people.js";
 import { PriorityView } from "./views/priority.js";
+import { ProfileView } from "./views/profile.js";
 import { ProjectsView } from "./views/projects.js";
 import { ErrorView, LoginRequiredView, NoAccessView, NotFoundView } from "./views/simple.js";
 import { TaskDrawer, TaskPage } from "./views/task.js";
@@ -60,6 +61,8 @@ function View({ route, boot, lookup, background = null }) {
       return html`<${ProjectsView} boot=${boot} lookup=${lookup} route=${route} />`;
     case "admin":
       return html`<${AdminView} boot=${boot} lookup=${lookup} route=${route} />`;
+    case "profile":
+      return html`<${ProfileView} boot=${boot} lookup=${lookup} />`;
     case "changes":
       return html`<${ChangesView} boot=${boot} lookup=${lookup} route=${route} />`;
     case "change":

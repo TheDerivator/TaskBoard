@@ -16,6 +16,7 @@ class Actor(BaseModel):
     user_id: int | None
     display_name: str
     person_id: int | None  # for the avatar; None for accounts that are not people
+    via: str | None = None  # the API token it was done through (D-097), by its name
 
 
 class PeriodOut(BaseModel):

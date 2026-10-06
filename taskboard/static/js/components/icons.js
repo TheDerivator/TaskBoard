@@ -34,6 +34,7 @@ export const KnowledgeIcon = () =>
 export const FailureModeIcon = () => svg(html`<path d="M12 3L2 20h20z" /><path d="M12 10v4M12 17h.01" />`, { size: 14, width: 2.2 });
 export const InfoIcon = () => svg(html`<circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7.5h.01" />`, { size: 14 });
 export const ExternalIcon = ({ size = 14 } = {}) => svg(html`<path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6" />`, { size });
+export const DownloadIcon = () => svg(html`<path d="M12 4v11M7 10l5 5 5-5M5 20h14" />`, { size: 14 });
 export const PrintIcon = () =>
   svg(html`<path d="M6 9V3h12v6" /><rect x="3" y="9" width="18" height="8" rx="2" /><path d="M7 14h10v7H7z" />`, { size: 14 });
 export const RuleIcon = () => svg(html`<path d="M8 3h8l5 5v8l-5 5H8l-5-5V8z" /><path d="M8 12h8" />`, { size: 14 });

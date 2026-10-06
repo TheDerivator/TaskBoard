@@ -2,11 +2,11 @@
  * composer, editing a period (also "Set end date"), and the earlier versions of edited posts. */
 import { api } from "../api.js";
 import { useApi } from "../hooks.js";
-import { formatDate } from "../lib/format.js";
+import { actorName, formatDate } from "../lib/format.js";
 import { formatDay, periodDuration, periodSentence } from "../lib/periods.js";
 import { dataChanged } from "../store.js";
 import { html, useEffect, useRef, useState } from "../ui.js";
-import { Avatar } from "./badges.js";
+import { Avatar, ViaBadge } from "./badges.js";
 import { Composer } from "./composer.js";
 import { Dialog } from "./dialog.js";
 import { CloseIcon } from "./icons.js";
@@ -16,9 +16,9 @@ import { showError, showToast } from "./toasts.js";
 function Byline({ post, onHistory }) {
   return html`
     <span class="post-byline">
-      ${post.author.display_name} · <time datetime=${post.created_at}>${formatDate(post.created_at, { withTime: true })}</time>
+      ${actorName(post.author)} · <time datetime=${post.created_at}>${formatDate(post.created_at, { withTime: true })}</time>
       ${post.versions > 1 &&
-      html` · <button type="button" class="link-button" onClick=${onHistory} title=${post.edited_by ? `Edited by ${post.edited_by.display_name}` : undefined}>
+      html` · <button type="button" class="link-button" onClick=${onHistory} title=${post.edited_by ? `Edited by ${actorName(post.edited_by)}` : undefined}>
           edited
         </button>`}
     </span>
@@ -263,6 +263,7 @@ function CommentPost({ post, lookup, uploadPath, onChanged, onHistory }) {
       <div class="post__main">
         <div class="post__head">
           <span class="post__author">${post.author.display_name}</span>
+          <${ViaBadge} actor=${post.author} />
           <time class="post__time" datetime=${post.created_at}>${formatDate(post.created_at, { withTime: true })}</time>
           ${post.versions > 1 && html`<button type="button" class="link-button" onClick=${onHistory}>edited</button>`}
           ${post.can_edit &&
@@ -299,7 +300,7 @@ function HistoryDialog({ postId, onClose }) {
           (v, index) => html`
             <section key=${v.rev} class="history__version" aria-label=${`Version ${v.rev}`}>
               <p class="history__meta">
-                ${index === data.length - 1 ? "Now" : `Version ${v.rev}`} · ${v.written_by.display_name} ·
+                ${index === data.length - 1 ? "Now" : `Version ${v.rev}`} · ${actorName(v.written_by)} ·
                 ${" "}${formatDate(v.written_at, { withTime: true })}
               </p>
               ${v.period && html`<p class="history__period"><strong>${v.period.label}</strong> · ${periodDuration(v.period)}</p>`}

@@ -102,6 +102,24 @@
   font-weight: 600;
 }
 
+/* Written through an API token (D-097): "via Claude Code". */
+.via-badge {
+  height: 20px;
+  padding: 0 7px;
+  border-radius: var(--radius-chip);
+  border: 1px solid var(--kind-violet-border);
+  background: var(--kind-violet);
+  color: var(--kind-violet-ink);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  display: inline-block;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .update-badge {
   height: 20px;
   padding: 0 7px;

@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 from taskboard.domain.access import Permission
 from taskboard.identity.principal import Principal
 from taskboard.identity.providers import IdentityProviders
+from taskboard.schemas.tokens import TokenInfo
 
 
 class LoginRequest(BaseModel):
@@ -50,6 +51,8 @@ class Me(BaseModel):
     # The display name of the proxy sign-in that identifies this user on every request, if any
     # (e.g. "Windows sign-in"); such users cannot log out.
     signed_in_by: str | None = None
+    # The API token this request came with (D-097); None in a browser.
+    api_token: TokenInfo | None = None
     permissions: dict[Permission, PermissionReach]
     login: LoginOptions
 
@@ -71,6 +74,9 @@ class Me(BaseModel):
                 (p.display_name for p in providers.ambient if p.name == principal.ambient_provider),
                 None,
             ),
+            api_token=TokenInfo(name=principal.token_name, scope=principal.token_scope)
+            if principal.token_name is not None and principal.token_scope is not None
+            else None,
             permissions=permissions,
             login=LoginOptions(
                 password=True,

@@ -4,6 +4,10 @@ Every response makes sure the browser has a random `taskboard_csrf` cookie (read
 JavaScript). Every state-changing request to `/api/` must echo it in the `X-CSRF-Token` header. A
 foreign site can make the browser send the cookie, but it cannot read it to set the header.
 Session cookies are also SameSite=Lax, so this is a second layer.
+
+Requests with an API token (`Authorization: Bearer`, D-097) are exempt: such a request is judged
+by its token alone, never by cookies, and a foreign page cannot make a browser add that header
+(it would need CORS, which the app does not allow).
 """
 
 import secrets
@@ -29,7 +33,12 @@ class CSRFMiddleware:
             return
         request = Request(scope)
         cookie = request.cookies.get(CSRF_COOKIE)
-        if request.method not in _SAFE_METHODS and request.url.path.startswith("/api/"):
+        bearer = request.headers.get("authorization", "")[:7].lower() == "bearer "
+        if (
+            request.method not in _SAFE_METHODS
+            and request.url.path.startswith("/api/")
+            and not bearer
+        ):
             header = request.headers.get(CSRF_HEADER, "")
             if not cookie or not secrets.compare_digest(cookie.encode(), header.encode()):
                 response = JSONResponse(

@@ -106,6 +106,27 @@ BUILTIN_ROLE_PERMISSIONS: dict[BuiltinRole, frozenset[Permission]] = {
 }
 
 
+class TokenScope(StrEnum):
+    """What an API token (for AI agents and scripts) may do on behalf of its owner (D-097)."""
+
+    READ = "read"
+    WRITE = "write"
+
+    @property
+    def permissions(self) -> frozenset[Permission]:
+        """The owner's permissions a token keeps; administration is never among them."""
+        return TOKEN_PERMISSIONS[self]
+
+
+# Administration (accounts, roles, organization, people, the audit log) is never done by a token.
+TOKEN_NEVER = frozenset({Permission.USERS_MANAGE, Permission.PEOPLE_MANAGE})
+
+TOKEN_PERMISSIONS: dict[TokenScope, frozenset[Permission]] = {
+    TokenScope.READ: _VIEWER,
+    TokenScope.WRITE: frozenset(Permission) - TOKEN_NEVER,
+}
+
+
 class ScopeKind(StrEnum):
     GLOBAL = "global"
     DEPARTMENT = "department"

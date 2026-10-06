@@ -1,4 +1,5 @@
-/** Administration › Accounts: list, create (local or SSO pre-provisioned), edit, rights, passwords. */
+/** Administration › Accounts: list, create (local or SSO pre-provisioned), edit, rights, passwords,
+ * API tokens. */
 import { api } from "../../api.js";
 import { Avatar } from "../../components/badges.js";
 import { Dialog } from "../../components/dialog.js";
@@ -7,6 +8,7 @@ import { showError, showToast } from "../../components/toasts.js";
 import { useApi } from "../../hooks.js";
 import { formatDate } from "../../lib/format.js";
 import { parseScope, scopeOptions } from "../../lib/scopes.js";
+import { expiryText, lastUsedText, scopeLabel } from "../../lib/tokens.js";
 import { refreshBoot } from "../../store.js";
 import { html, useState } from "../../ui.js";
 
@@ -148,6 +150,37 @@ function NewUserDialog({ open, onClose, roles, boot, onCreated }) {
   `;
 }
 
+/** The account's API tokens (D-097): what acts as this person, and revoking it. */
+function UserTokens({ user }) {
+  const tokens = useApi(`/admin/users/${user.id}/tokens`);
+  const revoke = async (token) => {
+    if (!window.confirm(`Revoke “${token.name}” of ${user.display_name}?`)) return;
+    try {
+      await api.delete(`/admin/users/${user.id}/tokens/${token.id}`);
+      showToast(`${token.name} revoked.`);
+      tokens.reload();
+    } catch (err) {
+      showError(err);
+    }
+  };
+  if (!tokens.data) return null;
+  return html`
+    <div class="stack" style=${{ gap: "8px" }}>
+      <span class="field__label">API tokens (AI agents and scripts)</span>
+      ${tokens.data.length === 0 && html`<span class="muted">None.</span>`}
+      ${tokens.data.map(
+        (t) => html`
+          <div key=${t.id} class="row token-row">
+            <span><strong>${t.name}</strong> · ${scopeLabel(t.scope)} · ${expiryText(t)} · ${lastUsedText(t)}</span>
+            <span class="spacer" style=${{ flex: 1 }}></span>
+            <button type="button" class="btn btn--danger" onClick=${() => revoke(t)}>Revoke</button>
+          </div>
+        `,
+      )}
+    </div>
+  `;
+}
+
 function UserDialog({ user, onClose, roles, boot, me, onChanged }) {
   const [form, setForm] = useState({ display_name: user.display_name, email: user.email ?? "", person_id: user.person_id ?? "" });
   const [grant, setGrant] = useState({ role_id: roles[0]?.id, scope: "global" });
@@ -233,6 +266,7 @@ function UserDialog({ user, onClose, roles, boot, me, onChanged }) {
           </div>
         </div>
 
+        ${!anonymous && html`<${UserTokens} user=${user} />`}
         ${!anonymous &&
         html`<div class="row" style=${{ flexWrap: "wrap" }}>
           <button type="button" class="btn" onClick=${reset}>Reset password</button>

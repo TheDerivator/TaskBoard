@@ -4,6 +4,7 @@ from taskboard.db.base import Base
 from taskboard.db.models.changes import Change, ChangePeriod
 from taskboard.db.models.conversation import Attachment, Event, Post, PostRevision
 from taskboard.db.models.identity import (
+    ApiToken,
     AuditEntry,
     ExternalIdentity,
     GroupRoleMapping,
@@ -34,6 +35,7 @@ from taskboard.db.models.system import AppLock
 from taskboard.db.models.tasks import Placement, Task, TaskHelper
 
 __all__ = [
+    "ApiToken",
     "AppLock",
     "Attachment",
     "AuditEntry",
