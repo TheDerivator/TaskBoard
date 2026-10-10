@@ -56,6 +56,39 @@ def test_a_task_reference_opens_that_task(live_server: str, page: Page) -> None:
     expect(page.locator(".drawer .task-panel__key")).to_have_text("T-117")
 
 
+def test_an_image_opens_full_size_over_the_page_and_a_click_closes_it(
+    live_server: str, page: Page, console_errors: list[str]
+) -> None:
+    page.goto(f"{live_server}priority")
+    page.get_by_role("link", name="Root-cause analysis of surface defects on line 2").click()
+    drawer = page.get_by_role("dialog", name="Task 104")
+    drawer.get_by_role("link", name="Conversation").click()
+    thumbnail = drawer.locator(".md img").first
+    lightbox = page.get_by_role("dialog", name="Image: defect map")
+
+    thumbnail.click()
+    expect(lightbox).to_be_visible()
+    image = lightbox.get_by_role("img", name="defect map")
+    expect(image).to_have_attribute("src", re.compile(r"/api/attachments/[0-9a-f]{32}/"))
+    # Full size: the 520 by 200 pixel sample is shown as is, not scaled down to fit a post.
+    assert image.evaluate("img => img.complete && img.width === img.naturalWidth")
+    image.click()  # a click on the image itself closes it
+    expect(lightbox).to_have_count(0)
+    expect(drawer).to_be_visible()
+
+    thumbnail.click()
+    expect(lightbox).to_be_visible()
+    page.mouse.click(8, 8)  # so does a click beside it
+    expect(lightbox).to_have_count(0)
+
+    thumbnail.click()
+    expect(lightbox).to_be_visible()
+    page.keyboard.press("Escape")  # and Escape, which leaves the drawer open
+    expect(lightbox).to_have_count(0)
+    expect(drawer).to_be_visible()
+    assert console_errors == []
+
+
 def test_post_an_update_with_formatting_preview_and_an_image(
     live_server: str, page: Page, tmp_path: Path, console_errors: list[str]
 ) -> None:

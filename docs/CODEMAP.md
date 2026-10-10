@@ -158,8 +158,9 @@ taskboard/                                  TaskBoard: a team task board with a 
         conversation.js                     The Conversation tab: events and posts in time order, own-post editing, and the composer.
         copy-link.js                        "Copy link" button: puts the full URL of an app path on the clipboard (task permalinks, team views).
         dialog.js                           Modal dialogs on the native <dialog> element (focus trapping and backdrop for free).
-        drawer.js                           Side drawer on a modal <dialog>: slides in from the right, Escape/backdrop close it.
+        drawer.js                           Side drawer on a modal <dialog>: slides in from the right, Escape/backdrop close it, can widen.
         icons.js                            Inline SVG icons (paths from the design mockups). Decorative: hidden from screen readers.
+        lightbox.js                         Images in Markdown open full size over the page; a click anywhere (or Escape) closes them again.
         markdown-field.js                   A Markdown text field for forms (a box's description): Write/Preview, a formatting toolbar and,
         person-picker.js                    Searchable person list in a popover (lead picker, "Add person"); keyboard and pointer friendly.
         placement-dialog.js                 "Add to another project" / "Move" dialog: step 1 pick a project, step 2 pick a node or top level.

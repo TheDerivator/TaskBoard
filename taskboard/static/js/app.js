@@ -1,6 +1,7 @@
 /** The application: loads the bootstrap document, lays out sidebar + view, routes, dialogs. */
 import { LoginDialog, PasswordDialog } from "./components/auth-dialogs.js";
 import { MenuIcon } from "./components/icons.js";
+import { Lightbox } from "./components/lightbox.js";
 import { SearchDialog } from "./components/search-dialog.js";
 import { Sidebar } from "./components/sidebar.js";
 import { Toasts, showError } from "./components/toasts.js";
@@ -173,6 +174,7 @@ export function App() {
         required=${mustChangePassword}
         onClose=${() => setPasswordOpen(false)}
       />
+      <${Lightbox} />
       <${Toasts} />
     </div>
   `;

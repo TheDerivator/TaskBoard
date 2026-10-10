@@ -4,7 +4,7 @@
 import { api, ApiError } from "../../api.js";
 import { BoxPicker } from "../../components/box-picker.js";
 import { Dialog } from "../../components/dialog.js";
-import { Drawer } from "../../components/drawer.js";
+import { Drawer, DrawerWidthToggle } from "../../components/drawer.js";
 import { CloseIcon, TrashIcon } from "../../components/icons.js";
 import { MarkdownField } from "../../components/markdown-field.js";
 import { FieldLabel } from "../../components/task-fields.js";
@@ -496,7 +496,10 @@ export function BoxEditorDrawer({ graph, tree, boot, lookup, boxKey = null, pare
             <span class="field-hint">${title}</span>
             <h2 class="editor-title__name">${name}</h2>
           </div>
-          <button type="button" class="icon-btn" aria-label="Close" onClick=${guardedClose}><${CloseIcon} /></button>
+          <div class="task-panel__tools">
+            <${DrawerWidthToggle} />
+            <button type="button" class="icon-btn" aria-label="Close" onClick=${guardedClose}><${CloseIcon} /></button>
+          </div>
         </header>
         ${error && html`<div class="task-panel__body"><p role="alert">${error.message}</p></div>`}
         ${boxKey && !saved && !error && html`<div class="task-panel__body muted">Loading…</div>`}

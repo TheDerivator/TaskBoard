@@ -1,14 +1,15 @@
 /* App shell: sidebar (full, collapsed rail, or off-canvas on narrow screens) and main area. */
 
 .app {
+  --sidebar-shown: var(--sidebar-width); /* what a full-width drawer leaves free */
   display: grid;
-  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  grid-template-columns: var(--sidebar-shown) minmax(0, 1fr);
   min-height: 100vh;
   min-height: 100dvh;
 }
 
 .app.is-collapsed {
-  grid-template-columns: var(--sidebar-rail) minmax(0, 1fr);
+  --sidebar-shown: var(--sidebar-rail);
 }
 
 .main,
@@ -368,6 +369,7 @@
 
   .app,
   .app.is-collapsed {
+    --sidebar-shown: 0px;
     grid-template-columns: minmax(0, 1fr);
   }
 

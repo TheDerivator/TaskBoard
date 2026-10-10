@@ -3,7 +3,7 @@
 import re
 
 from fastapi.testclient import TestClient
-from playwright.sync_api import Page, expect
+from playwright.sync_api import Locator, Page, expect
 from sqlalchemy import select
 
 from taskboard.config import Settings
@@ -192,6 +192,47 @@ def test_visitors_see_a_read_only_task(live_server: str, page: Page) -> None:
     page.keyboard.press("Escape")
     expect(drawer).to_be_hidden()
     expect(page).to_have_url(f"{live_server}priority")
+
+
+def test_the_drawer_can_take_the_full_width(live_server: str, page: Page) -> None:
+    def edges(drawer: Locator) -> tuple[float, float]:
+        """Where the drawer starts and ends, once it has finished sliding in or widening."""
+        drawer.evaluate("d => Promise.all(d.getAnimations().map((a) => a.finished))")
+        box = drawer.bounding_box()
+        assert box is not None
+        return round(box["x"]), round(box["x"] + box["width"])
+
+    page.goto(f"{live_server}priority")
+    screen = page.evaluate("document.documentElement.clientWidth")
+    page.get_by_role("link", name="Root-cause analysis of surface defects on line 2").click()
+    drawer = page.get_by_role("dialog", name="Task 104")
+    toggle = drawer.get_by_role("button", name="Full width")
+    expect(toggle).to_have_attribute("aria-pressed", "false")
+    assert edges(drawer) == (screen - 560, screen)
+
+    toggle.click()  # everything but the sidebar
+    expect(toggle).to_have_attribute("aria-pressed", "true")
+    assert edges(drawer) == (232, screen)
+    drawer.get_by_role("link", name="Conversation").click()
+    expect(drawer.locator(".post")).to_have_count(4)
+    assert edges(drawer) == (232, screen)  # the tabs keep it
+    page.keyboard.press("Escape")
+    expect(drawer).to_be_hidden()
+
+    # Remembered for the next drawer, and it follows the collapsed sidebar.
+    page.get_by_role("button", name="Collapse sidebar").click()
+    page.get_by_role("link", name="Coating adhesion trial, batch 3").click()
+    other = page.get_by_role("dialog", name="Task 130")
+    toggle = other.get_by_role("button", name="Full width")
+    expect(toggle).to_have_attribute("aria-pressed", "true")
+    assert edges(other) == (68, screen)
+    toggle.click()
+    expect(toggle).to_have_attribute("aria-pressed", "false")
+    assert edges(other) == (screen - 560, screen)
+
+    page.goto(f"{live_server}t/104")  # the task's own page is wide enough already
+    expect(page.get_by_role("region", name="Task T-104")).to_be_visible()
+    expect(page.get_by_role("button", name="Full width")).to_have_count(0)
 
 
 def test_the_permalink_opens_the_task_page_and_can_be_copied(live_server: str, page: Page) -> None:

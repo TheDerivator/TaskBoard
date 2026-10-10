@@ -78,7 +78,7 @@ static/js/
   hooks.js            useApi (GET + reload on revision), useTitle
   theme*.js, prefs.js theme and per-browser preferences
   lib/                pure logic, unit-tested with `node --test tests/js/*.test.mjs`
-  components/         shared UI (sidebar, badges, dialog, toasts, icons)
+  components/         shared UI (sidebar, badges, dialog, drawer, lightbox, toasts, icons)
   views/              one module per screen
 ```
 

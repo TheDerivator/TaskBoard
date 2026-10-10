@@ -24,6 +24,7 @@ gate's own tests). Keep the status table and the checkboxes current as work land
 | M19 | Global search and stable links                          | ☑ done        |
 | M20 | Hardening of the new modules                            | ☑ done (live demo reseed: owner) |
 | M21 | API tokens for AI agents (beyond the design)            | ☑ done        |
+| M22 | Full-width drawers, image lightbox (beyond the design)  | ☑ done        |
 
 Legend: ☐ not started · ◐ in progress · ☑ done
 
@@ -469,6 +470,21 @@ token to an agent's post marked "via" and revoking; axe clean on the profile pag
 Met (2026-10-06): `tests/api/test_tokens.py`, `tests/unit/test_agent_guide.py`,
 `tests/unit/test_access_policy.py`, `tests/js/tokens.test.mjs`, `tests/e2e/test_tokens.py`,
 `tests/e2e/test_accessibility.py` (profile, new token, the token shown once).
+
+### M22 · Full-width drawers and an image lightbox (beyond the design)
+Asked for on 2026-10-10: a focused conversation instead of a side panel, and images that open
+over the page (D-098, D-099).
+- [x] "Full width" toggle in every drawer's header (`components/drawer.js`): everything but the
+      sidebar (full or rail), the content in a readable middle column, remembered per browser; no
+      toggle on phones or on the task and change pages.
+- [x] Lightbox (`components/lightbox.js`): any image in rendered Markdown opens full size (never
+      larger than the screen) over the page; a click anywhere or Escape closes it and leaves a
+      drawer below open; Ctrl/⌘ click opens the image in a new tab.
+
+**Acceptance gate**: browser tests for the widths (side panel, full width, collapsed sidebar,
+remembered, tabs keep it) and for opening and closing the lightbox; axe clean on both, both themes.
+Met (2026-10-10): `tests/e2e/test_tasks.py` (full width), `tests/e2e/test_conversation.py`
+(lightbox), `tests/e2e/test_accessibility.py` (the full-width drawer and the lightbox).
 
 ---
 

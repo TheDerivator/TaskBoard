@@ -52,6 +52,8 @@ export const SunIcon = () =>
 export const MoonIcon = () => svg(html`<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />`);
 export const CollapseIcon = () => svg(html`<rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16M15 10l-2 2 2 2" />`);
 export const ExpandIcon = () => svg(html`<rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16M13 10l2 2-2 2" />`);
+export const MaximizeIcon = () => svg(html`<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />`);
+export const RestoreIcon = () => svg(html`<path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7" />`);
 export const MenuIcon = () => svg(html`<path d="M4 6h16M4 12h16M4 18h16" />`, { size: 22 });
 export const LoginIcon = () => svg(html`<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" />`, { size: 16 });
 export const LogoutIcon = () => svg(html`<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />`);

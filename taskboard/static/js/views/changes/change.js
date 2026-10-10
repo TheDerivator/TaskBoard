@@ -4,7 +4,7 @@ import { Avatar } from "../../components/badges.js";
 import { BoxLinksField } from "../../components/box-links-field.js";
 import { ChangeConversation, ScopeTags } from "../../components/change-conversation.js";
 import { CopyLinkButton } from "../../components/copy-link.js";
-import { Drawer } from "../../components/drawer.js";
+import { Drawer, DrawerWidthToggle } from "../../components/drawer.js";
 import { CloseIcon } from "../../components/icons.js";
 import { PersonPicker } from "../../components/person-picker.js";
 import { FieldLabel } from "../../components/task-fields.js";
@@ -327,6 +327,7 @@ export function ChangePanel({ changeKey, tab, route = null, onClose, layout, dir
         </div>
         <div class="task-panel__tools">
           <${CopyLinkButton} path=${pathOf(change)} label="Copy link to this change" />
+          <${DrawerWidthToggle} />
           ${onClose && html`<button type="button" class="icon-btn" aria-label="Close" onClick=${onClose}><${CloseIcon} /></button>`}
         </div>
       </header>
@@ -421,7 +422,10 @@ export function NewChangePanel({ processId, onClose }) {
     <div class="task-panel" role="region" aria-label="New process change">
       <header class="task-panel__head">
         <div class="task-panel__ids"><span class="task-panel__key">New process change</span></div>
-        <button type="button" class="icon-btn" aria-label="Close" onClick=${onClose}><${CloseIcon} /></button>
+        <div class="task-panel__tools">
+          <${DrawerWidthToggle} />
+          <button type="button" class="icon-btn" aria-label="Close" onClick=${onClose}><${CloseIcon} /></button>
+        </div>
       </header>
       <form class="task-panel__form" onSubmit=${create}>
         <div class="task-panel__body">

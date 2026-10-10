@@ -468,6 +468,63 @@
   gap: 10px;
 }
 
+/* ---------------------------------------------------------------- image lightbox */
+
+/* The whole viewport is the dialog, so every click lands on it and closes it. */
+.lightbox {
+  width: 100vw;
+  max-width: none;
+  height: 100vh;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-out;
+}
+
+.lightbox[open] {
+  display: grid;
+  place-items: center;
+  animation: lightbox-in 0.15s ease-out;
+}
+
+.lightbox::backdrop {
+  background: rgba(10, 12, 14, 0.86);
+}
+
+/* Full size, but never larger than the screen (small images are not blown up). */
+.lightbox__image {
+  max-width: calc(100vw - 48px);
+  max-height: calc(100vh - 48px);
+  max-height: calc(100dvh - 48px);
+  object-fit: contain;
+  border-radius: var(--radius-small);
+  background: var(--surface);
+  box-shadow: var(--shadow-pop);
+}
+
+.lightbox__close {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
+
+.lightbox__close:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
 /* ---------------------------------------------------------------- toasts */
 
 .toasts {

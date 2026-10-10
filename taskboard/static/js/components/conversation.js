@@ -46,12 +46,6 @@ function PostItem({ post, lookup, taskKey, onChanged }) {
     }
   };
 
-  // Images open full size in a new tab.
-  const onClick = (event) => {
-    const image = event.target.closest?.("img");
-    if (image) window.open(image.src, "_blank", "noopener");
-  };
-
   return html`
     <article class=${`post${post.is_update ? " post--update" : ""}`} aria-label=${`Post by ${post.author.display_name}`}>
       <${Avatar} person=${person} name=${post.author.display_name} />
@@ -78,7 +72,7 @@ function PostItem({ post, lookup, taskKey, onChanged }) {
               onSubmit=${save}
               onCancel=${() => setEditing(false)}
             />`
-          : html`<div class="md" onClick=${onClick} dangerouslySetInnerHTML=${{ __html: post.html }}></div>`}
+          : html`<div class="md" dangerouslySetInnerHTML=${{ __html: post.html }}></div>`}
       </div>
     </article>
   `;

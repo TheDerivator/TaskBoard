@@ -219,7 +219,11 @@
   max-height: 320px;
   border: 1px solid var(--border);
   border-radius: var(--radius-small);
-  cursor: zoom-in;
+  cursor: zoom-in; /* opens in the lightbox (components/lightbox.js) */
+}
+
+.md a img {
+  cursor: pointer; /* an image its author made a link follows that link */
 }
 
 .md table {

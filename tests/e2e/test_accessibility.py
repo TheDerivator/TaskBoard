@@ -85,6 +85,20 @@ def test_every_view(live_server: str, themed: Page) -> None:
         assert_accessible(page, path)
 
 
+def test_the_full_width_drawer_and_the_image_lightbox(live_server: str, themed: Page) -> None:
+    page = themed
+    page.goto(f"{live_server}priority")
+    page.get_by_role("link", name="Root-cause analysis of surface defects on line 2").click()
+    drawer = page.get_by_role("dialog", name="Task 104")
+    drawer.get_by_role("button", name="Full width").click()
+    drawer.get_by_role("link", name="Conversation").click()
+    expect(drawer.locator(".post")).to_have_count(4)
+    assert_accessible(page, "full-width task drawer")
+    drawer.locator(".md img").first.click()
+    expect(page.get_by_role("dialog", name="Image: defect map")).to_be_visible()
+    assert_accessible(page, "image lightbox")
+
+
 def test_dialogs_and_drawers(live_server: str, themed: Page) -> None:
     page = themed
     page.goto(f"{live_server}priority")

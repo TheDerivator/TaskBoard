@@ -46,6 +46,7 @@
   background: var(--surface);
   color: var(--ink);
   box-shadow: var(--shadow-drawer);
+  transition: width 0.18s ease-out;
 }
 
 .drawer[open] {
@@ -62,6 +63,35 @@
   from {
     transform: translateX(24px);
     opacity: 0.6;
+  }
+}
+
+/* "Full width" (the header's toggle): everything but the sidebar, for a focused conversation. The
+   content keeps a readable column in the middle; the scroll bars stay at the drawer's edge. */
+@media (min-width: 561px) {
+  .drawer--wide {
+    width: calc(100% - var(--sidebar-shown));
+    max-width: none;
+  }
+
+  .drawer--wide .task-panel__body,
+  .drawer--wide .task-panel__foot,
+  .drawer--wide .timeline,
+  .drawer--wide .conversation > .composer,
+  .drawer--wide .change-composer {
+    padding-left: max(28px, calc((100% - 960px) / 2));
+    padding-right: max(28px, calc((100% - 960px) / 2));
+  }
+
+  .drawer--wide .md img {
+    max-height: 480px;
+  }
+}
+
+/* A phone's drawer already takes the whole screen. */
+@media (max-width: 560px) {
+  .drawer-width-toggle {
+    display: none;
   }
 }
 

@@ -1,7 +1,7 @@
 /** The task: a drawer over the list, or its own page at /t/{key}; plus the "New task" drawer. */
 import { api, ApiError } from "../api.js";
 import { BoxLinksField } from "../components/box-links-field.js";
-import { Drawer } from "../components/drawer.js";
+import { Drawer, DrawerWidthToggle } from "../components/drawer.js";
 import { ConversationPanel } from "../components/conversation.js";
 import { CopyLinkButton } from "../components/copy-link.js";
 import { CloseIcon } from "../components/icons.js";
@@ -210,6 +210,7 @@ export function TaskPanel({ taskKey, tab, onClose, layout, dirtyRef }) {
         </div>
         <div class="task-panel__tools">
           <${CopyLinkButton} path=${taskPath(task.key)} label="Copy link to this task" />
+          <${DrawerWidthToggle} />
           ${onClose && html`<button type="button" class="icon-btn" aria-label="Close" onClick=${onClose}><${CloseIcon} /></button>`}
         </div>
       </header>
@@ -319,7 +320,10 @@ export function NewTaskPanel({ onClose, initialPlacements = [] }) {
     <div class="task-panel" role="region" aria-label="New task">
       <header class="task-panel__head">
         <div class="task-panel__ids"><span class="task-panel__key">New task</span></div>
-        <button type="button" class="icon-btn" aria-label="Close" onClick=${onClose}><${CloseIcon} /></button>
+        <div class="task-panel__tools">
+          <${DrawerWidthToggle} />
+          <button type="button" class="icon-btn" aria-label="Close" onClick=${onClose}><${CloseIcon} /></button>
+        </div>
       </header>
       <form class="task-panel__form" onSubmit=${create}>
       <div class="task-panel__body">
