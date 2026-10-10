@@ -1,18 +1,24 @@
-"""Backup and restore: one archive with a consistent database snapshot and the uploaded images."""
+"""Backup and restore: one archive with a consistent, sound database snapshot and the uploaded
+images; the backup folder keeps what the retention says (D-100)."""
 
 import json
+import sqlite3
 import zipfile
+from contextlib import closing
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
 from alembic import command
 from alembic.script import ScriptDirectory
-from sqlalchemy import func, select
+from sqlalchemy import func, select, text
 
 from taskboard.cli import main
 from taskboard.config import Settings, get_settings
+from taskboard.db.base import utcnow
 from taskboard.db.migrate import alembic_config, current_revision
 from taskboard.db.models import (
+    BackupSettings,
     Box,
     Change,
     ChangePeriod,
@@ -23,10 +29,20 @@ from taskboard.db.models import (
     User,
 )
 from taskboard.db.session import Database
+from taskboard.db.sqlite_files import database_problems
+from taskboard.domain.backups import Retention
+from taskboard.services import backup
 from taskboard.services.attachments import AttachmentStore, store_image
-from taskboard.services.backup import BackupError, create_backup, restore_backup
+from taskboard.services.backup import (
+    BackupError,
+    create_backup,
+    list_backups,
+    prune_backups,
+    restore_backup,
+)
 from taskboard.services.sample_data import defect_map_png, load_sample_data
 from tests.conftest import requires_sqlite, sqlite_url
+from tests.helpers import fake_backups
 
 pytestmark = requires_sqlite  # other databases are backed up with their own tools
 
@@ -194,3 +210,134 @@ def test_process_changes_and_knowledge_come_back_with_their_images(
     report = restore_backup(archive, url, uploads)
     assert report.uploads == 2  # the task conversation's image and the box's
     assert counts(url) == before
+
+
+def test_an_image_deleted_meanwhile_is_left_out(
+    settings: Settings, sample_database: Database, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """An unposted draft image removed between listing the uploads and zipping them."""
+    del sample_database
+    [image] = settings.uploads_dir.iterdir()
+    gone = settings.uploads_dir / "f00dcafe"
+    monkeypatch.setattr(backup, "_uploads", lambda _folder: [gone, image])
+    report = create_backup(settings.resolved_database_url, settings.uploads_dir, tmp_path / "b.zip")
+    with zipfile.ZipFile(report.path) as zf:
+        assert json.loads(zf.read("manifest.json"))["uploads"] == report.uploads == 1
+        assert f"uploads/{image.name}" in zf.namelist()
+
+
+def test_a_damaged_database_is_not_backed_up(tmp_path: Path) -> None:
+    path = tmp_path / "damaged.sqlite3"
+    with closing(sqlite3.connect(path)) as db:
+        db.execute("create table t (id integer primary key, name text)")
+        db.execute("create index ix_t_name on t (name)")
+        db.executemany("insert into t (name) values (?)", [(f"name {i:05}",) for i in range(3000)])
+        db.commit()
+    data = bytearray(path.read_bytes())
+    data[5 * 4096 : 5 * 4096 + 200] = b"\xab" * 200  # garbage in the middle of a table page
+    path.write_bytes(bytes(data))
+    assert database_problems(path)
+
+    with pytest.raises(BackupError, match="integrity check"):
+        create_backup(sqlite_url(path), tmp_path / "uploads", tmp_path / "backups")
+    assert not (tmp_path / "backups").exists() or list((tmp_path / "backups").iterdir()) == []
+    assert database_problems(tmp_path / "missing.sqlite3") == []  # created empty: sound
+
+
+def test_the_backup_folder_keeps_what_the_retention_says(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    folder = tmp_path / "backups"
+    old, monthly, weekly, gone, newer, newest = fake_backups(
+        folder, "2025-01-10", "2025-02-10", "2025-03-03", "2025-03-04", "2025-03-05", "2025-03-06"
+    )
+    others = ["pristine-demo.zip", "notes.txt", "taskboard-backup-20251332-120000.zip"]
+    for name in [*others, f"{newest}.partial"]:
+        (folder / name).write_bytes(b"not a backup of the folder")
+    backups = list_backups(folder)
+    assert [b.path.name for b in backups] == [newest, newer, gone, weekly, monthly, old]
+    assert backups[0].taken_at == datetime(2025, 3, 6, 12, tzinfo=UTC) and backups[0].size == 6000
+
+    report = prune_backups(folder, Retention(newest=2, weekly=1, monthly=2), tz=UTC)
+    assert [p.name for p in report.removed] == sorted([gone, old], reverse=True)
+    assert report.failed == []
+    assert sorted(p.name for p in folder.iterdir()) == sorted(
+        [newest, newer, weekly, monthly, *others, f"{newest}.partial"]
+    )
+
+    def refuse(path: Path) -> None:
+        raise PermissionError(13, "Access is denied", str(path))
+
+    monkeypatch.setattr(Path, "unlink", refuse)
+    report = prune_backups(folder, Retention(newest=2, weekly=1, monthly=1), tz=UTC)
+    assert report.removed == [] and report.failed == [(folder / monthly, "Access is denied")]
+
+
+def run_cli(monkeypatch: pytest.MonkeyPatch, settings: Settings, *args: str, **env: str) -> int:
+    monkeypatch.setenv("TASKBOARD_DATA_DIR", str(settings.data_dir))
+    monkeypatch.setenv("TASKBOARD_DATABASE_URL", settings.resolved_database_url)
+    for name, value in env.items():
+        monkeypatch.setenv(f"TASKBOARD_{name}", value)
+    get_settings.cache_clear()
+    try:
+        return main(list(args))
+    finally:
+        get_settings.cache_clear()
+
+
+def test_the_cli_deletes_the_backups_no_longer_kept(
+    settings: Settings,
+    database: Database,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """The retention an administrator chose applies; the newest backup is the one just made."""
+    folder = tmp_path / "share" / "TaskBoard"
+    names = fake_backups(folder, "2020-01-06", "2020-01-07", "2020-02-03")
+    with database.session(write=True) as s:
+        s.add(
+            BackupSettings(id=1, keep_newest=2, keep_weekly=1, keep_monthly=1, updated_at=utcnow())
+        )
+
+    assert run_cli(monkeypatch, settings, "backup", "--output", str(tmp_path)) == 0
+    assert sorted(p.name for p in folder.iterdir()) == names  # an extra backup elsewhere
+
+    assert run_cli(monkeypatch, settings, "backup", BACKUP_DIR=str(folder)) == 0
+    [made] = [b.path.name for b in list_backups(folder) if b.taken_at.year > 2020]
+    assert sorted(p.name for p in folder.iterdir()) == sorted([made, names[2]])
+    out = capsys.readouterr().out
+    assert f"Deleted {names[0]}: no longer kept." in out and f"Deleted {names[1]}" in out
+
+
+def test_the_cli_says_when_the_backup_folder_is_out_of_reach(
+    settings: Settings,
+    database: Database,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    del database
+    blocker = tmp_path / "a file"
+    blocker.write_text("not a folder")
+    assert run_cli(monkeypatch, settings, "backup", BACKUP_DIR=str(blocker / "backups")) == 1
+    assert capsys.readouterr().out.startswith("Backup failed: ")
+
+
+def test_the_backup_is_kept_when_cleaning_up_fails(
+    settings: Settings,
+    database: Database,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """New code, but the service has not yet upgraded the schema (no retention table)."""
+    with database.session(write=True) as s:
+        s.execute(text("DROP TABLE backup_settings"))
+    folder = tmp_path / "backups"
+    old = fake_backups(folder, "2020-01-06", "2020-01-07", "2020-01-08")
+    assert run_cli(monkeypatch, settings, "backup", BACKUP_DIR=str(folder)) == 1
+    assert len(list_backups(folder)) == 4  # the new one, and nothing deleted
+    assert all((folder / name).exists() for name in old)
+    out = capsys.readouterr().out
+    assert out.startswith("Wrote ") and "Older backups were not cleaned up" in out

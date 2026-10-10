@@ -1,10 +1,12 @@
 """Back up and restore everything TaskBoard stores: the database and the uploaded images.
 
 A backup is one zip file holding `manifest.json`, `taskboard.sqlite3` (a consistent snapshot,
-taken while the app keeps running) and `uploads/`. A restore first sets aside what it replaces
-(`<name>.before-restore-<time>`, next to the original), then brings the schema up to date, so
-backups made by older versions restore too. With a non-SQLite database the archive holds the
-uploads only; back the database up with its own tools (docs/OPERATIONS.md).
+taken while the app keeps running, that passed SQLite's integrity check) and `uploads/`. In the
+backup folder, backups are named after the time they were taken (UTC), and older ones are deleted
+as the retention allows (domain/backups.py); other files there are left alone. A restore first
+sets aside what it replaces (`<name>.before-restore-<time>`, next to the original), then brings the
+schema up to date, so backups made by older versions restore too. With a non-SQLite database the
+archive holds the uploads only; back the database up with its own tools (docs/OPERATIONS.md).
 """
 
 import json
@@ -13,18 +15,22 @@ import shutil
 import tempfile
 import zipfile
 from dataclasses import dataclass
+from datetime import UTC, datetime, tzinfo
 from pathlib import Path
 from typing import Any
 
 from taskboard import __version__
 from taskboard.db.base import utcnow
 from taskboard.db.migrate import current_revision, is_known_revision, upgrade_database
-from taskboard.db.sqlite_files import copy_database, sqlite_file
+from taskboard.db.sqlite_files import copy_database, database_problems, sqlite_file
+from taskboard.domain.backups import KeptAs, Retention, kept_backups
 
 FORMAT = 1
 MANIFEST = "manifest.json"
 DATABASE = "taskboard.sqlite3"
+STAMP = "%Y%m%d-%H%M%S"
 _UPLOAD_ENTRY = re.compile(r"^uploads/[A-Za-z0-9]+$")
+_BACKUP_NAME = re.compile(r"^taskboard-backup-(\d{8}-\d{6})\.zip$")
 
 
 class BackupError(Exception):
@@ -39,6 +45,19 @@ class BackupReport:
 
 
 @dataclass(frozen=True, slots=True)
+class BackupFile:
+    path: Path
+    taken_at: datetime  # UTC, from the file name
+    size: int
+
+
+@dataclass(frozen=True, slots=True)
+class PruneReport:
+    removed: list[Path]
+    failed: list[tuple[Path, str]]  # and why each could not be deleted
+
+
+@dataclass(frozen=True, slots=True)
 class RestoreReport:
     created_at: str
     with_database: bool
@@ -47,7 +66,7 @@ class RestoreReport:
 
 
 def _stamp() -> str:
-    return utcnow().strftime("%Y%m%d-%H%M%S")
+    return utcnow().strftime(STAMP)
 
 
 def _uploads(uploads_dir: Path) -> list[Path]:
@@ -58,37 +77,91 @@ def _uploads(uploads_dir: Path) -> list[Path]:
 
 
 def create_backup(database_url: str, uploads_dir: Path, destination: Path) -> BackupReport:
-    """Write a backup archive; `destination` is a .zip file, or a folder to put a new one in."""
+    """Write a backup archive; `destination` is a .zip file, or a folder to put a new one in.
+
+    Nothing is left behind when it fails, e.g. on a database that fails the integrity check.
+    """
     archive = (
         destination / f"taskboard-backup-{_stamp()}.zip" if destination.is_dir() else destination
     )
     database = sqlite_file(database_url)
     if database is not None and not database.exists():
         raise BackupError(f"there is no database at {database}")
-    uploads = _uploads(uploads_dir)
-    manifest = {
+    manifest: dict[str, Any] = {
         "format": FORMAT,
         "app_version": __version__,
         "created_at": utcnow().isoformat(timespec="seconds"),
         "schema_revision": current_revision(database_url),
         "database": DATABASE if database is not None else None,
-        "uploads": len(uploads),
     }
     partial = archive.with_name(f"{archive.name}.partial")
     archive.parent.mkdir(parents=True, exist_ok=True)
-    with (
-        tempfile.TemporaryDirectory() as scratch,
-        zipfile.ZipFile(partial, "w", compression=zipfile.ZIP_DEFLATED) as zf,
-    ):
-        zf.writestr(MANIFEST, json.dumps(manifest, indent=2))
-        if database is not None:
-            snapshot = Path(scratch) / DATABASE
-            copy_database(database, snapshot)
-            zf.write(snapshot, DATABASE)
-        for path in uploads:  # images are compressed already
-            zf.write(path, f"uploads/{path.name}", compress_type=zipfile.ZIP_STORED)
+    try:
+        with (
+            tempfile.TemporaryDirectory() as scratch,
+            zipfile.ZipFile(partial, "w", compression=zipfile.ZIP_DEFLATED) as zf,
+        ):
+            if database is not None:  # first, so every image it refers to exists already
+                snapshot = Path(scratch) / DATABASE
+                copy_database(database, snapshot)
+                if problems := database_problems(snapshot):
+                    raise BackupError(
+                        f"the database failed SQLite's integrity check ({problems[0]})"
+                    )
+                zf.write(snapshot, DATABASE)
+            uploads = 0
+            for path in _uploads(uploads_dir):
+                try:  # images are compressed already
+                    zf.write(path, f"uploads/{path.name}", compress_type=zipfile.ZIP_STORED)
+                except FileNotFoundError:  # deleted meanwhile, e.g. a draft nobody posted
+                    continue
+                uploads += 1
+            zf.writestr(MANIFEST, json.dumps(manifest | {"uploads": uploads}, indent=2))
+    except BaseException:
+        partial.unlink(missing_ok=True)
+        raise
     partial.replace(archive)
-    return BackupReport(path=archive, with_database=database is not None, uploads=len(uploads))
+    return BackupReport(path=archive, with_database=database is not None, uploads=uploads)
+
+
+def list_backups(folder: Path) -> list[BackupFile]:
+    """The backups in the backup folder, newest first (raises OSError if it cannot be read)."""
+    backups: list[BackupFile] = []
+    for path in folder.iterdir():
+        match = _BACKUP_NAME.match(path.name)
+        if not match or not path.is_file():
+            continue
+        try:
+            taken_at = datetime.strptime(match[1], STAMP).replace(tzinfo=UTC)
+        except ValueError:  # a name like it with an impossible date
+            continue
+        backups.append(BackupFile(path=path, taken_at=taken_at, size=path.stat().st_size))
+    return sorted(backups, key=lambda b: b.taken_at, reverse=True)
+
+
+def kept_as(
+    backups: list[BackupFile], retention: Retention, tz: tzinfo | None = None
+) -> dict[Path, list[KeptAs]]:
+    """Why each backup is kept (nothing: the next backup deletes it). Weeks and months are the
+    server's own (`tz`, by default its local time zone)."""
+    local = {b.taken_at.astimezone(tz): b.path for b in backups}
+    kept = kept_backups(local, retention)
+    return {path: kept.get(moment, []) for moment, path in local.items()}
+
+
+def prune_backups(folder: Path, retention: Retention, tz: tzinfo | None = None) -> PruneReport:
+    """Delete the backups the retention does not keep."""
+    report = PruneReport(removed=[], failed=[])
+    for path, reasons in kept_as(list_backups(folder), retention, tz).items():
+        if reasons:
+            continue
+        try:
+            path.unlink()
+        except OSError as error:
+            report.failed.append((path, error.strerror or str(error)))
+        else:
+            report.removed.append(path)
+    return report
 
 
 def _read_manifest(zf: zipfile.ZipFile) -> dict[str, Any]:

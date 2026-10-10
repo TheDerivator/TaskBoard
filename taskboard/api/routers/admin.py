@@ -1,11 +1,13 @@
-"""Administration endpoints: users, passwords, role assignments, roles, organization, audit log."""
+"""Administration endpoints: users, passwords, role assignments, roles, organization, audit log,
+backups."""
 
 from fastapi import APIRouter, status
 
-from taskboard.api.deps import Organization, Providers, UserAdmin
+from taskboard.api.deps import BackupAdmin, Organization, Providers, UserAdmin
 from taskboard.schemas.admin import (
     AssignmentIn,
     AuditEntryOut,
+    BackupOverview,
     DepartmentIn,
     DepartmentUpdate,
     GroupMappingIn,
@@ -19,6 +21,7 @@ from taskboard.schemas.admin import (
     ProcessIn,
     ProcessUpdate,
     ProviderInfo,
+    RetentionIn,
     RoleCreate,
     RoleOut,
     RoleUpdate,
@@ -133,6 +136,19 @@ def audit_log(
 ) -> list[AuditEntryOut]:
     """Newest first; page back with `before_id`."""
     return admin.audit_log(limit=limit, before_id=before_id)
+
+
+@router.get("/backups")
+def backups(admin: BackupAdmin) -> BackupOverview:
+    """The backup folder and the backups in it, each with why it is kept. Backups are made by
+    `python -m taskboard backup` on the server, never through the API."""
+    return admin.overview()
+
+
+@router.put("/backups/retention")
+def set_backup_retention(body: RetentionIn, admin: BackupAdmin) -> BackupOverview:
+    """How many backups to keep; the next backup deletes the ones no longer kept."""
+    return admin.update_retention(body)
 
 
 # ---------------------------------------------------------------- organization (people.manage)

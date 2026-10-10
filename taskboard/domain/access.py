@@ -49,7 +49,10 @@ PERMISSION_DESCRIPTIONS: dict[Permission, str] = {
     Permission.KNOWLEDGE_CONFIGURE: "Configure the box kinds and link types of all process maps",
     Permission.PROJECT_MANAGE: "Create projects and edit their sections",
     Permission.PEOPLE_MANAGE: "Manage departments, sections, processes and people",
-    Permission.USERS_MANAGE: "Manage accounts, roles and access rights; read the audit log",
+    Permission.USERS_MANAGE: (
+        "Manage accounts, roles and access rights; read the audit log; see backups, set how many"
+        " are kept"
+    ),
 }
 
 SCOPED_PERMISSIONS = frozenset(

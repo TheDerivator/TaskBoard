@@ -31,7 +31,7 @@ from taskboard.db.models.knowledge import (
 from taskboard.db.models.org import Department, Process, Section
 from taskboard.db.models.people import Person
 from taskboard.db.models.projects import Project, ProjectNode
-from taskboard.db.models.system import AppLock
+from taskboard.db.models.system import AppLock, BackupSettings
 from taskboard.db.models.tasks import Placement, Task, TaskHelper
 
 __all__ = [
@@ -39,6 +39,7 @@ __all__ = [
     "AppLock",
     "Attachment",
     "AuditEntry",
+    "BackupSettings",
     "Base",
     "Box",
     "BoxKind",

@@ -1,8 +1,9 @@
-/** Administration: tabs for accounts, roles, organization, people, SSO groups and the audit log. */
+/** Administration: tabs for accounts, roles, organization, people, SSO groups, the audit log and backups. */
 import { useTitle } from "../../hooks.js";
 import { href } from "../../router.js";
 import { html } from "../../ui.js";
 import { AuditTab } from "./audit.js";
+import { BackupsTab } from "./backups.js";
 import { GroupsTab } from "./groups.js";
 import { OrganizationTab } from "./organization.js";
 import { PeopleTab } from "./people.js";
@@ -16,6 +17,7 @@ const TABS = [
   { tab: "people", label: "People", permission: "people.manage", view: PeopleTab },
   { tab: "groups", label: "SSO groups", permission: "users.manage", view: GroupsTab },
   { tab: "audit", label: "Audit log", permission: "users.manage", view: AuditTab },
+  { tab: "backups", label: "Backups", permission: "users.manage", view: BackupsTab },
 ];
 
 /** Tabs the user may open (the manage permissions only count when granted everywhere). */

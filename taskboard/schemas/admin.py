@@ -1,4 +1,5 @@
-"""Administration shapes: users, passwords, role assignments, roles, organization, audit log."""
+"""Administration shapes: users, passwords, role assignments, roles, organization, audit log,
+backups."""
 
 from datetime import datetime
 from typing import Annotated, Any
@@ -6,6 +7,7 @@ from typing import Annotated, Any
 from pydantic import BaseModel, Field, StringConstraints
 
 from taskboard.domain.access import Permission, ScopeKind, UserKind, UserStatus
+from taskboard.domain.backups import LIMITS, KeptAs
 
 Username = Annotated[
     str,
@@ -252,3 +254,47 @@ class AuditEntryOut(BaseModel):
     target_type: str | None
     target_id: str | None
     details: dict[str, Any]
+
+
+# ---------------------------------------------------------------- backups
+
+
+def _kept(kind: KeptAs) -> Any:
+    return Field(ge=LIMITS[kind].low, le=LIMITS[kind].high)
+
+
+class RetentionIn(BaseModel):
+    """How many backups to keep (D-100): the newest ones, and the first of each recent week and
+    month that has one."""
+
+    newest: Annotated[int, _kept(KeptAs.NEWEST)]
+    weekly: Annotated[int, _kept(KeptAs.WEEKLY)]
+    monthly: Annotated[int, _kept(KeptAs.MONTHLY)]
+
+
+class RetentionOut(BaseModel):
+    newest: int
+    weekly: int
+    monthly: int
+
+
+class RetentionLimit(BaseModel):
+    min: int
+    max: int
+
+
+class BackupOut(BaseModel):
+    name: str
+    taken_at: datetime
+    size: int  # bytes
+    kept_as: list[KeptAs]  # empty: the next backup deletes it
+
+
+class BackupOverview(BaseModel):
+    location: str  # TASKBOARD_BACKUP_DIR (a server setting, not changed here)
+    problem: str | None  # why the folder cannot be read
+    backups: list[BackupOut]  # newest first
+    total_size: int
+    overdue: bool  # no backup in the last two days
+    retention: RetentionOut
+    limits: dict[KeptAs, RetentionLimit]

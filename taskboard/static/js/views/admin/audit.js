@@ -37,7 +37,7 @@ export function AuditTab() {
   if (!first.data) return html`<div class="panel empty-state">Loading…</div>`;
   return html`
     <div class="section-head">
-      <div><h2>Audit log</h2><p>Logins, account and access changes, and organization changes. Newest first.</p></div>
+      <div><h2>Audit log</h2><p>Logins, account and access changes, organization changes and backup settings. Newest first.</p></div>
     </div>
     <div class="panel table-wrap">
       <table class="data-table">

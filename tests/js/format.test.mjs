@@ -25,6 +25,7 @@ test("dates", () => {
   const date = new Date(2026, 8, 19, 14, 2);
   assert.equal(formatDate(date), "19 Sep");
   assert.equal(formatDate(date, { withTime: true }), "19 Sep, 14:02");
+  assert.equal(formatDate(date, { withTime: true, withYear: true }), "19 Sep 2026, 14:02");
   assert.equal(plural(1, "task"), "1 task");
   assert.equal(plural(3, "task"), "3 tasks");
 });

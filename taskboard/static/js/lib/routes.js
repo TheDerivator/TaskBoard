@@ -1,7 +1,7 @@
 /** Map URL paths to app routes and back. Pure: the deployment's base path is passed in. */
 
 const TASK_TABS = new Set(["details", "conversation"]);
-export const ADMIN_TABS = ["users", "roles", "organization", "people", "groups", "audit"];
+export const ADMIN_TABS = ["users", "roles", "organization", "people", "groups", "audit", "backups"];
 export const TIMELINE_RANGES = [3, 6, 12]; // months back; planned periods are always included
 const CHANGE_KEY = /^[A-Za-z0-9]+-\d+$/; // "LM-07"
 

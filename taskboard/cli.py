@@ -4,7 +4,8 @@ serve                       run the web server
 db upgrade                  apply database migrations
 seed [--sample] [--demo-password PW]
                             create built-in roles/users; optionally load the sample board
-backup [--output PATH]      write a backup archive (database + uploaded images)
+backup [--output PATH]      write a backup archive (database + uploaded images) into the backup
+                            folder and delete the ones no longer kept, or write it elsewhere
 restore ARCHIVE [--replace] restore a backup archive (stop the server first)
 """
 
@@ -12,10 +13,13 @@ import argparse
 from collections.abc import Sequence
 from pathlib import Path
 
+from sqlalchemy.exc import SQLAlchemyError
+
 from taskboard.config import get_settings
 from taskboard.db.session import Database
 from taskboard.services.attachments import AttachmentStore
-from taskboard.services.backup import BackupError, create_backup, restore_backup
+from taskboard.services.backup import BackupError, create_backup, prune_backups, restore_backup
+from taskboard.services.backup_admin import load_retention
 from taskboard.services.sample_data import load_sample_data
 from taskboard.services.setup import prepare_database
 
@@ -87,18 +91,36 @@ def _seed(args: argparse.Namespace) -> int:
 
 def _backup(args: argparse.Namespace) -> int:
     settings = get_settings()
-    destination = args.output or settings.data_dir / "backups"
-    if args.output is None:
-        destination.mkdir(parents=True, exist_ok=True)
+    folder = settings.resolved_backup_dir
     try:
-        report = create_backup(settings.resolved_database_url, settings.uploads_dir, destination)
-    except BackupError as error:
+        if args.output is None:
+            folder.mkdir(parents=True, exist_ok=True)
+        report = create_backup(
+            settings.resolved_database_url, settings.uploads_dir, args.output or folder
+        )
+    except (BackupError, OSError) as error:  # OSError: e.g. a network share out of reach
         print(f"Backup failed: {error}")
         return 1
     print(f"Wrote {report.path} ({report.uploads} uploaded images).")
     if not report.with_database:
         print("The database is not SQLite: back it up with its own tools (docs/OPERATIONS.md).")
-    return 0
+    if args.output is not None:
+        return 0  # an extra backup elsewhere: the backup folder is left as it is
+    database = _database()
+    try:
+        with database.session() as session:
+            retention = load_retention(session)
+        pruned = prune_backups(folder, retention)
+    except (SQLAlchemyError, OSError) as error:  # e.g. the service has not upgraded the schema
+        print(f"Older backups were not cleaned up: {error}")
+        return 1
+    finally:
+        database.dispose()
+    for path in pruned.removed:
+        print(f"Deleted {path.name}: no longer kept.")
+    for path, reason in pruned.failed:
+        print(f"Could not delete {path}: {reason}")
+    return 1 if pruned.failed else 0
 
 
 def _restore(args: argparse.Namespace) -> int:
@@ -147,9 +169,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     seed.set_defaults(handler=_seed)
 
-    backup = commands.add_parser("backup", help="write a backup archive (safe while running)")
+    backup = commands.add_parser(
+        "backup", help="write a backup archive (safe while running), delete those no longer kept"
+    )
     backup.add_argument(
-        "--output", type=Path, help="a .zip file or a folder (default: <data dir>/backups)"
+        "--output",
+        type=Path,
+        help="a .zip file or a folder, instead of the backup folder (then nothing is deleted)",
     )
     backup.set_defaults(handler=_backup)
 

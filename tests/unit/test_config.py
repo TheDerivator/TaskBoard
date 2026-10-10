@@ -12,6 +12,15 @@ def test_default_database_is_sqlite_inside_data_dir(tmp_path: Path) -> None:
     expected = f"sqlite:///{(tmp_path / 'taskboard.sqlite3').as_posix()}"
     assert settings.resolved_database_url == expected
     assert settings.uploads_dir == tmp_path / "uploads"
+    assert settings.resolved_backup_dir == tmp_path / "backups"
+
+
+def test_the_backup_folder_can_be_a_network_share(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setenv("TASKBOARD_BACKUP_DIR", "//fileserver/backups/TaskBoard")
+    settings = Settings(data_dir=tmp_path, _env_file=None)  # pyright: ignore[reportCallIssue]
+    assert settings.resolved_backup_dir == Path("//fileserver/backups/TaskBoard")
 
 
 def test_explicit_database_url_wins(tmp_path: Path) -> None:

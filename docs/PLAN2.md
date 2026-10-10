@@ -25,6 +25,7 @@ gate's own tests). Keep the status table and the checkboxes current as work land
 | M20 | Hardening of the new modules                            | ☑ done (live demo reseed: owner) |
 | M21 | API tokens for AI agents (beyond the design)            | ☑ done        |
 | M22 | Full-width drawers, image lightbox (beyond the design)  | ☑ done        |
+| M23 | Backups: what to keep, the Backups page (beyond the design) | ☑ done (server setup: owner) |
 
 Legend: ☐ not started · ◐ in progress · ☑ done
 
@@ -485,6 +486,30 @@ over the page (D-098, D-099).
 remembered, tabs keep it) and for opening and closing the lightbox; axe clean on both, both themes.
 Met (2026-10-10): `tests/e2e/test_tasks.py` (full width), `tests/e2e/test_conversation.py`
 (lightbox), `tests/e2e/test_accessibility.py` (the full-width drawer and the lightbox).
+
+### M23 · Backups: what to keep, and the Backups page (beyond the design)
+Asked for on 2026-10-10: a daily scheduled backup on the Windows server that keeps the last two
+nights, the first of the week and the first of the last two months, set in the app; the folder
+(possibly a network share) set on the server only (D-100 to D-102).
+- [x] The rule (`domain/backups.py`), the `backup_settings` table and migration;
+      `python -m taskboard backup` writes into `TASKBOARD_BACKUP_DIR` and deletes what is no longer
+      kept (with `--output`, nothing).
+- [x] Sound backups: the database first, checked with SQLite's integrity check; an image deleted
+      meanwhile is left out; no half-written file after a failure.
+- [x] *Administration › Backups* (`users.manage`): the folder, every backup with its size and why it
+      is kept, a warning after two days without a backup or when the folder cannot be read, and the
+      numbers to keep (within limits, audited). No button to make, restore or download backups.
+- [x] OPERATIONS.md: the Windows task as `SYSTEM`, network shares (UNC path, the computer account),
+      the Linux timer, trying a restore.
+- [ ] On the corporate server: the scheduled task, the backup folder, and one restore tried (owner).
+
+**Acceptance gate**: unit tests for the rule (missed nights, several backups a day, idle weeks, the
+new year); integration tests for deleting, the command, a damaged database and a vanished image;
+API tests for refusals (visitor, editor, token), limits and the audit entry; JS tests; a browser
+test from the list to saving the numbers; axe clean on the page in both themes.
+Met (2026-10-10): `tests/unit/test_backup_retention.py`, `tests/integration/test_backup.py`,
+`tests/api/test_backups.py`, `tests/js/backups.test.mjs`, `tests/e2e/test_admin.py` (backups),
+`tests/e2e/test_accessibility.py` (`admin/backups`).
 
 ---
 

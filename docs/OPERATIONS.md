@@ -41,6 +41,7 @@ Settings that matter in production:
 |---|---|
 | `TASKBOARD_ENVIRONMENT=production` | Serves the page from memory (development re-reads it per request). |
 | `TASKBOARD_DATA_DIR` | Outside the app folder, e.g. `/var/lib/taskboard` or `C:\ProgramData\TaskBoard`. |
+| `TASKBOARD_BACKUP_DIR` | Where backups go, e.g. a network share as `\\fileserver\backups\TaskBoard` ([Backups](#backups)). |
 | `TASKBOARD_INITIAL_ADMIN_PASSWORD` | Optional: choose the first `admin` password instead of reading it from the log. |
 | `TASKBOARD_BASE_PATH` | When published under a prefix, e.g. `/taskboard/` (the proxy strips it). |
 | `TASKBOARD_TRUSTED_PROXIES` | If the proxy runs on another machine: its address. |
@@ -320,14 +321,73 @@ or ask for one.
 
 ## Backups
 
-`python -m taskboard backup` writes one zip file with a consistent snapshot of the SQLite
-database (taken while the app keeps running) and every uploaded image, to
-`<data dir>/backups/` or `--output <folder or .zip>`. Copy backups off the machine.
+`python -m taskboard backup` writes one zip file: a consistent snapshot of the SQLite database
+(taken while the app keeps running, and checked with SQLite's integrity check) and every
+uploaded image. It writes into the **backup folder**, `TASKBOARD_BACKUP_DIR` (default
+`<data dir>/backups/`), and then deletes the backups there that are no longer kept. Other files in
+that folder are never touched. With `--output <folder or .zip>` it writes an extra backup
+elsewhere, before an upgrade for example, and deletes nothing. A failed backup deletes nothing
+either, and leaves no half-written file.
+
+**Which backups are kept** is set under *Administration › Backups* (user administrators; D-100):
+
+| Kept | Default | Allowed |
+|---|---|---|
+| The newest backups | 2 | 2 to 30 |
+| The first backup of each of the last weeks that have one (Monday to Sunday) | 1 | 1 to 26 |
+| The first backup of each of the last months that have one | 2 | 1 to 24 |
+
+"First" is the earliest backup of that week or month, so a night missed on the 1st still leaves
+one. With one backup a night, the defaults keep five at most: the last two nights, Monday's, and
+the 1st of this month and of the month before. Every zip holds all the images, so the folder takes
+up to five times the size of `uploads/`. A change to these numbers applies at the next backup.
+
+The same page shows the backup folder and every backup in it, with its size and why it is kept,
+and warns when the newest backup is more than two days old or the folder cannot be read. The
+folder itself is deliberately a server setting, shown but not editable there: the backup runs as
+`SYSTEM` and holds the whole database, so where it goes is decided by whoever runs the server
+(D-101). The app never makes, restores or hands out backups itself.
+
+**Copy backups off the machine**: put the backup folder on a network share, or on a disk that the
+server's own backup covers.
 
 With MS SQL, the database is backed up by the DBA's own tooling (`BACKUP DATABASE`); the
 command then archives the uploads only, which still need backing up.
 
-Daily on Linux, `/etc/systemd/system/taskboard-backup.service` plus a `.timer`:
+### Daily on Windows (Task Scheduler)
+
+Run the task as `SYSTEM`: no password to store, and it may read `C:\ProgramData\TaskBoard` (unless
+inheritance was switched off on that folder). The `.env` in the app folder applies, wherever the
+task starts (D-069). In an administrator's command prompt:
+
+```bat
+schtasks /Create /TN "TaskBoard backup" /SC DAILY /ST 02:00 /RU SYSTEM ^
+  /TR "C:\TaskBoard\app\.venv\Scripts\python.exe -m taskboard backup"
+schtasks /Run /TN "TaskBoard backup"
+```
+
+The second line makes a first backup now; *Administration › Backups* then lists it. Don't add
+`--output` to the task: backups written elsewhere are never cleaned up. In Task Scheduler, the
+task's *Last Run Result* is `0x0` when all went well and `0x1` when the backup failed or an old one
+could not be deleted.
+
+**On a network share**, in the `.env` file:
+
+```ini
+TASKBOARD_BACKUP_DIR=\\fileserver\backups\TaskBoard
+```
+
+- Use the UNC path. Drive letters such as `Z:` exist only in a signed-in user's session, not for
+  scheduled tasks and services.
+- `SYSTEM`, and the service running as `NT SERVICE\TaskBoard`, reach the network as the server's
+  computer account, `CORP\<server name>$`. Give that account *Modify* on the folder (share and
+  folder permissions); the task writes and deletes there, the Backups page only reads. A service
+  that runs as a domain account reads the folder as that account.
+- Restart the service after changing `.env`, so the Backups page shows the new folder.
+
+### Daily on Linux (systemd timer)
+
+`/etc/systemd/system/taskboard-backup.service` plus a `.timer`:
 
 ```ini
 # taskboard-backup.service
@@ -337,7 +397,6 @@ User=taskboard
 WorkingDirectory=/opt/taskboard
 EnvironmentFile=/etc/taskboard/taskboard.env
 ExecStart=/opt/taskboard/.venv/bin/python -m taskboard backup
-ExecStartPost=/usr/bin/find /var/lib/taskboard/backups -name 'taskboard-backup-*.zip' -mtime +30 -delete
 
 # taskboard-backup.timer
 [Timer]
@@ -345,13 +404,6 @@ OnCalendar=daily
 Persistent=true
 [Install]
 WantedBy=timers.target
-```
-
-Daily on Windows (Task Scheduler, as the service account):
-
-```bat
-schtasks /Create /TN "TaskBoard backup" /SC DAILY /ST 02:00 /RU CORP\svc-taskboard /RP * ^
-  /TR "C:\TaskBoard\app\.venv\Scripts\python.exe -m taskboard backup --output D:\Backups\TaskBoard"
 ```
 
 ### Restore
@@ -365,6 +417,22 @@ python -m taskboard restore <backup.zip> --replace
 Nothing is deleted: the database and uploads it replaces are kept next to the originals as
 `*.before-restore-<time>`. A backup made by an older TaskBoard is upgraded as it is restored; one
 made by a newer version is refused. Start the service again afterwards.
+
+### Try a restore once
+
+A restore into an empty folder leaves the running board alone, so it can be tried any time. On
+Windows, in PowerShell on the server (the other settings still come from `.env`; if it sets
+`TASKBOARD_DATABASE_URL`, this does not apply):
+
+```powershell
+$env:TASKBOARD_DATA_DIR = "C:\Temp\taskboard-restore-test"
+$env:TASKBOARD_PORT = "8099"
+C:\TaskBoard\app\.venv\Scripts\python.exe -m taskboard restore "<a backup .zip from the list>"
+C:\TaskBoard\app\.venv\Scripts\python.exe -m taskboard serve
+```
+
+Open port 8099 on the server itself (`https://` if the app serves HTTPS), check a few tasks and
+images, stop it with Ctrl+C, and delete `C:\Temp\taskboard-restore-test`.
 
 ## Upgrading
 
@@ -387,4 +455,5 @@ two processes never migrate at the same time.
 - The proxy accepts uploads of at least 10 MB (post images); the app enforces the real limit.
 - The app sends its own security headers (strict CSP, no framing, no sniffing; D-063); keep the
   proxy from overriding them.
-- Backups run, and a restore has been tried once.
+- Backups run (*Administration › Backups* shows no warning), are copied off the machine, and a
+  restore has been tried once.

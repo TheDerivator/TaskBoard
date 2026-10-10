@@ -19,7 +19,7 @@ app.py                                      ASGI entrypoint (`uvicorn app:app`).
 taskboard/                                  TaskBoard: a team task board with a team-wide priority list, people lanes and project trees.
   api/                                      HTTP API layer: thin FastAPI routers, request dependencies, error mapping. Mounted at `/api`.
     routers/                                One module per API resource. Routers parse input, call a service and shape the output.
-      admin.py                              Administration endpoints: users, passwords, role assignments, roles, organization, audit log.
+      admin.py                              Administration endpoints: users, passwords, role assignments, roles, organization, audit log,
       auth.py                               Authentication endpoints: current user, password login, logout, change own password.
       changes.py                            Process-change endpoints: a process's changes, one change, its conversation and periods.
       conversation.py                       Conversation endpoints: a task's timeline and posts, editing and history of any post, image
@@ -48,6 +48,7 @@ taskboard/                                  TaskBoard: a team task board with a 
         20261004_accb969d56e3_process_knowledge.py  process knowledge
         20261004_d8d4a375aeac_releases.py   releases
         20261006_743649b1221b_api_tokens.py  api tokens (and which token wrote each event, post, revision and release)
+        20261010_30378bcdd59a_backup_settings.py  backup settings (how many backups to keep, set under Administration › Backups)
       env.py                                Alembic environment: migrates the database named in the config (or in TASKBOARD_ settings).
       script.py.mako
     models/                                 All tables. Importing this package registers every model on `Base.metadata`.
@@ -58,16 +59,17 @@ taskboard/                                  TaskBoard: a team task board with a 
       org.py                                Organization tables: departments, their sections (the scopes for access rights) and processes.
       people.py                             People on the board (task leads and helpers). Not the same as login accounts (users).
       projects.py                           Projects and their node trees (sections and subsections, any depth).
-      system.py                             Infrastructure tables: named lock rows that serialize critical sections (see db/session.py).
+      system.py                             Infrastructure tables: named lock rows that serialize critical sections (see db/session.py),
       tasks.py                              Tasks, their helpers, and their placements in projects.
     base.py                                 Declarative base, constraint naming convention and portable column types (SQLite ↔ MS SQL).
     ids.py                                  `column IN (ids)` for any number of ids on every backend: the ids are written into the SQL as
     migrate.py                              Run Alembic programmatically: upgrade to the latest schema, check models against migrations.
     session.py                              Engine and session factory, SQLite connection tuning, and portable named locks.
-    sqlite_files.py                         SQLite database files: where they are, and consistent copies of them while they are in use.
+    sqlite_files.py                         SQLite database files: where they are, consistent copies of them while they are in use, and
     text.py                                 Case-insensitive text matching that works for all of Unicode on every backend.
   domain/                                   Domain layer: pure business rules (ranking, outlines, lifecycle, task keys).
     access.py                               Access-control vocabulary: permissions, built-in roles, scopes and account states.
+    backups.py                              Which backups to keep: the newest few, plus the first of each recent week and month (D-100).
     changes.py                              Process changes: keys (`LM-07`), period rules, scope tags, and the derived state of a change.
     errors.py                               Domain exceptions. The API layer maps each one to an HTTP status in a single place.
     events.py                               Kinds of automatic task events shown in the conversation timeline.
@@ -91,7 +93,7 @@ taskboard/                                  TaskBoard: a team task board with a 
     provisioning.py                         Map an external (SSO) identity to a local user, honouring what an admin set up in advance.
     sessions.py                             Server-side login sessions: the cookie carries a random token, the database only its hash.
   schemas/                                  Pydantic models for data going into and out of use cases; the API exposes them as-is.
-    admin.py                                Administration shapes: users, passwords, role assignments, roles, organization, audit log.
+    admin.py                                Administration shapes: users, passwords, role assignments, roles, organization, audit log,
     auth.py                                 Shapes for login, password change and the current-user ("me") document.
     changes.py                              Process-change shapes: changes with their periods and derived state, edit commands, periods.
     conversation.py                         Conversation shapes (tasks and process changes): timeline of posts, periods and events, post
@@ -111,6 +113,7 @@ taskboard/                                  TaskBoard: a team task board with a 
     audit.py                                Append-only audit trail of security-relevant actions (account, role and login events).
     auth.py                                 Authentication use cases: who is calling, log in, log out, change password.
     backup.py                               Back up and restore everything TaskBoard stores: the database and the uploaded images.
+    backup_admin.py                         Administration › Backups: what the backup folder holds, and how many backups to keep (D-100).
     catalog.py                              Reference data loaded once per request: sections, people, projects and their outlines.
     changes.py                              Process-change use cases: list a process's changes, read, create, edit, move, delete; scope tags.
     conversation.py                         Conversation use cases for tasks and process changes: timeline, posts, periods, history, images.
@@ -171,6 +174,7 @@ taskboard/                                  TaskBoard: a team task board with a 
         toasts.js                           Transient notifications: `showToast(text)`, `showError(error)`, and the <Toasts/> outlet.
       lib/
         access.js                           Which views a visitor may open, and where "home" leads (pure; the server enforces the rules).
+        backups.js                          Administration › Backups wording: sizes, why a backup is kept, the state of the backups. Pure.
         controlplan.js                      The control plan (pure): a department's defects in their groups, what leads to each defect in
         dnd.js                              Drag-and-drop reordering rules (pure): drop side, and the optimistic local reorder.
         editor.js                           Text operations for the Markdown composer (bold, lists, inserted images). Pure: each returns
@@ -193,8 +197,9 @@ taskboard/                                  TaskBoard: a team task board with a 
       views/
         admin/
           audit.js                          Administration › Audit log: security-relevant actions, newest first, with "Show older".
+          backups.js                        Administration › Backups: the backup folder, the backups in it and why each is kept, and how many to keep.
           groups.js                         Administration › SSO groups: members of an identity-provider group hold a role at a scope.
-          index.js                          Administration: tabs for accounts, roles, organization, people, SSO groups and the audit log.
+          index.js                          Administration: tabs for accounts, roles, organization, people, SSO groups, the audit log and backups.
           organization.js                   Administration › Organization: departments, their sections (the scopes for access rights) and processes.
           people.js                         Administration › People: the people on the board (leads and helpers), active or not.
           roles.js                          Administration › Roles: built-in roles (read-only) and custom roles with chosen permissions.
@@ -248,6 +253,7 @@ tests/                                      Test suite: unit/ (pure logic), api/
     conftest.py                             Fixtures for API tests on the sample board: a client, id lookups, and users with given roles.
     test_admin.py                           Administration API: accounts, passwords, rights, roles, organization, audit, lockout guard.
     test_auth.py                            Password login, sessions, logout, throttling, CSRF, suspension and password changes over HTTP.
+    test_backups.py                         Administration › Backups (D-100): who may see them, why each backup is kept, the retention.
     test_bootstrap.py                       The bootstrap document and the people list, for visitors with and without access.
     test_changes.py                         Process changes API (milestone M12): lists with derived states, editing, periods, history.
     test_conversation.py                    Conversation API: timeline, posting rights, editing, image uploads and their access rules.
@@ -293,7 +299,7 @@ tests/                                      Test suite: unit/ (pure logic), api/
   fixtures/
     change_states.json
   integration/                              Tests against a real (migrated) database: schema, constraints, seeding, sample data.
-    test_backup.py                          Backup and restore: one archive with a consistent database snapshot and the uploaded images.
+    test_backup.py                          Backup and restore: one archive with a consistent, sound database snapshot and the uploaded
     test_constraints.py                     The database itself guards the core invariants (so no code path can break them).
     test_migration_data.py                  Migrations also work on databases that already hold data (not only on empty ones).
     test_migrations.py                      Migrations build the whole schema, match the models exactly, and can be rolled back.
@@ -302,6 +308,7 @@ tests/                                      Test suite: unit/ (pure logic), api/
     test_seed.py                            Built-in roles and users: created once, idempotent, respectful of admin changes.
     test_session.py                         Engine setup: SQLite pragmas, UTC datetimes, serialized writers, long lists of ids.
   js/
+    backups.test.mjs                        Unit tests for static/js/lib/backups.js: sizes, why a backup is kept, the state of the backups
     controlplan.test.mjs                    Unit tests for static/js/lib/controlplan.js on the design's defects and Continuous casting map.
     conversation.test.mjs                   Unit tests for static/js/lib/events.js (event wording) and lib/editor.js (composer edits).
     dnd.test.mjs                            Unit tests for static/js/lib/dnd.js: drop sides, optimistic reordering, keyboard steps.
@@ -322,6 +329,7 @@ tests/                                      Test suite: unit/ (pure logic), api/
   unit/                                     Fast tests of pure logic: no database, no HTTP.
     test_access_policy.py                   The access policy matrix: who may view, edit, comment and manage, in which section.
     test_agent_guide.py                     The agent guide's generated part: short types from OpenAPI schemas, and the endpoint list.
+    test_backup_retention.py                Which backups to keep (D-100): the newest few, and the first of each recent week and month.
     test_changes.py                         Process changes: the derived state (the shared table of cases), period rules, tags and keys.
     test_cli.py                             Command line: argument parsing, and the database commands end to end.
     test_config.py                          Settings defaults and environment overrides.
@@ -339,7 +347,7 @@ tests/                                      Test suite: unit/ (pure logic), api/
   conftest.py                               Shared pytest fixtures: isolated settings and databases, sessions, sample data, an HTTP client.
   fake_idp.py                               An in-process OpenID Connect provider for tests: discovery, keys, authorization, tokens.
   fake_negotiate.py                         A stand-in for Windows SSPI in tests: accepts made-up Kerberos-like and NTLM-like tokens.
-  helpers.py                                Test helpers: users with given roles (built-in or custom), logging in, revision checks.
+  helpers.py                                Test helpers: users with given roles (built-in or custom), logging in, revision checks, backup
   scale.py                                  A big board for performance checks: thousands of tasks, process changes and map boxes.
 scripts/                                    Developer scripts: quality gate (check.py) and code map generator (gen_codemap.py).
   check.py                                  One-command quality gate: lint, format, types, architecture contracts, codemap, all tests.

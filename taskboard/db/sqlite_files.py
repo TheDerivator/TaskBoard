@@ -1,4 +1,5 @@
-"""SQLite database files: where they are, and consistent copies of them while they are in use.
+"""SQLite database files: where they are, consistent copies of them while they are in use, and
+whether a copy is sound.
 
 Copies go through SQLite's online backup API, page by page under SQLite's own locking, so a
 running app can keep reading and writing. Other backends (MS SQL) are copied with their own
@@ -28,3 +29,13 @@ def copy_database(source: Path, target: Path) -> None:
         closing(sqlite3.connect(target)) as to_db,
     ):
         from_db.backup(to_db)
+
+
+def database_problems(path: Path) -> list[str]:
+    """What SQLite's integrity check finds wrong with the database file; empty when it is sound."""
+    try:
+        with closing(sqlite3.connect(path)) as db:
+            rows = db.execute("PRAGMA integrity_check").fetchall()
+    except sqlite3.DatabaseError as error:  # too damaged to even be read
+        return [str(error)]
+    return [] if rows == [("ok",)] else [str(row[0]) for row in rows]

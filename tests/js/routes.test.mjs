@@ -55,6 +55,7 @@ test("task permalinks", () => {
 test("administration tabs", () => {
   assert.deepEqual(parseRoute("/admin"), { name: "admin", params: { tab: "users" } });
   assert.deepEqual(parseRoute("/admin/audit"), { name: "admin", params: { tab: "audit" } });
+  assert.deepEqual(parseRoute("/admin/backups"), { name: "admin", params: { tab: "backups" } });
   assert.equal(parseRoute("/admin/secrets").name, "notFound");
 });
 

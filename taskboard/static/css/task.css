@@ -260,6 +260,16 @@
   flex: 1;
 }
 
+.notice--quiet {
+  background: var(--surface-muted);
+  border-color: var(--border);
+}
+
+.notice--danger {
+  background: var(--danger-soft);
+  border-color: var(--danger);
+}
+
 .input--title {
   height: 48px;
   font-size: 18px;

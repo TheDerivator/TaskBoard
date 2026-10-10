@@ -12,8 +12,10 @@ import pytest
 from axe_playwright_python.sync_playwright import Axe
 from playwright.sync_api import Browser, Page, expect
 
+from taskboard.config import Settings
 from tests.conftest import TEST_ADMIN_PASSWORD
 from tests.e2e.conftest import log_in
+from tests.helpers import fake_backups
 
 VIEWS = [
     "priority",
@@ -43,6 +45,7 @@ VIEWS = [
     "admin/people",
     "admin/groups",
     "admin/audit",
+    "admin/backups",
     "profile",
 ]
 
@@ -73,8 +76,12 @@ def assert_accessible(page: Page, where: str) -> None:
     assert not problems, f"{where}:\n  " + "\n  ".join(problems)
 
 
-def test_every_view(live_server: str, themed: Page) -> None:
+def test_every_view(live_server: str, settings: Settings, themed: Page) -> None:
     page = themed
+    # Backups kept for every reason, one to be deleted, and the warning that they are old.
+    fake_backups(
+        settings.resolved_backup_dir, "2025-03-06", "2025-03-05", "2025-03-04", "2025-03-03"
+    )
     page.goto(f"{live_server}priority")
     expect(page.locator(".task-row").first).to_be_visible()
     assert_accessible(page, "priority, as a visitor")

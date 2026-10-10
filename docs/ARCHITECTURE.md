@@ -205,6 +205,10 @@ From `team-tasks-design/DESIGN.md`, plus access control.
   `api_tokens(user_id, name, token_hash, prefix, scope, expires_at?, last_used_at?, revoked_at?)`
   (D-097). What a token writes names it: `api_token_id` on events, posts (and
   `edited_api_token_id`), post revisions, knowledge revisions and releases.
+- System: `app_locks` (see *Transactions and concurrency*) and `backup_settings(keep_newest,
+  keep_weekly, keep_monthly)`, at most one row: how many backups `python -m taskboard backup`
+  keeps (D-100). The backups themselves are zip files in the backup folder, never in the database
+  (`services/backup.py`, the rule in `domain/backups.py`).
 
 A **Person** (someone on the board) and a **User** (a login account) are separate and optionally
 linked 1:1. People who never log in can still lead tasks; built-in accounts are not people.

@@ -1,6 +1,8 @@
-"""Test helpers: users with given roles (built-in or custom), logging in, revision checks."""
+"""Test helpers: users with given roles (built-in or custom), logging in, revision checks, backup
+files."""
 
 from collections.abc import Sequence
+from pathlib import Path
 
 from fastapi.testclient import TestClient
 from httpx2 import Response
@@ -110,3 +112,13 @@ def assert_revisions_match_rows(session: Session) -> None:
             assert revision.deleted, (
                 f"{object_type} {object_id} is gone without a deletion revision"
             )
+
+
+def fake_backups(folder: Path, *days: str) -> list[str]:
+    """Backup files as `python -m taskboard backup` names them, taken at noon UTC on these days
+    (the same day in any server time zone); the n-th is n kB. Keeping looks at names only."""
+    folder.mkdir(parents=True, exist_ok=True)
+    names = [f"taskboard-backup-{day.replace('-', '')}-120000.zip" for day in days]
+    for size, name in enumerate(names, start=1):
+        (folder / name).write_bytes(b"z" * 1000 * size)
+    return names

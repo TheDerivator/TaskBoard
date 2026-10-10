@@ -197,6 +197,32 @@
   font-size: 12px;
 }
 
+/* ---------------------------------------------------------------- backups */
+
+.backup-folder {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 16px;
+}
+
+.backup-folder code {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.data-table .backup-size {
+  white-space: nowrap;
+}
+
+.backup-retention {
+  padding: 16px;
+}
+
+.backup-retention h3 {
+  font-size: 15px;
+}
+
 /* ---------------------------------------------------------------- forms in dialogs */
 
 .form-grid {
@@ -207,6 +233,10 @@
 
 .form-grid .field--wide {
   grid-column: 1 / -1;
+}
+
+.form-grid--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .choice-row {

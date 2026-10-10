@@ -125,7 +125,13 @@ def test_administration_is_never_possible_through_a_token(
     assert me["permissions"]["users.manage"]["everywhere"] is False
     assert me["permissions"]["people.manage"]["everywhere"] is False
     assert me["permissions"]["task.delete"]["everywhere"] is True  # the rest of the owner's rights
-    for path in ("/api/admin/users", "/api/admin/roles", "/api/admin/audit", "/api/admin/people"):
+    for path in (
+        "/api/admin/users",
+        "/api/admin/roles",
+        "/api/admin/audit",
+        "/api/admin/people",
+        "/api/admin/backups",
+    ):
         assert agent.get(path).status_code == 403, path
     assert agent.post("/api/admin/departments", json={"code": "X", "name": "X"}).status_code == 403
 

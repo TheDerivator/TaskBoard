@@ -6,8 +6,10 @@ from collections.abc import Iterator
 import pytest
 from playwright.sync_api import Browser, Page, expect
 
+from taskboard.config import Settings
 from tests.conftest import TEST_ADMIN_PASSWORD
 from tests.e2e.conftest import log_in
+from tests.helpers import fake_backups
 
 
 @pytest.fixture
@@ -163,4 +165,30 @@ def test_sso_group_mappings(live_server: str, page: Page, console_errors: list[s
     expect(form.get_by_label("Group (as the provider sends it")).to_have_value("")
     row.get_by_role("button", name="Remove mapping for STL-Maintenance").click()
     expect(page.get_by_text("No group mappings yet.")).to_be_visible()
+    assert console_errors == []
+
+
+def test_backups_and_how_many_to_keep(
+    live_server: str, settings: Settings, page: Page, console_errors: list[str]
+) -> None:
+    folder = settings.resolved_backup_dir
+    fake_backups(folder, "2025-03-06", "2025-03-05", "2025-03-04", "2025-03-03", "2025-02-10")
+    open_admin(page, live_server)
+    page.locator(".admin-tabs").get_by_role("link", name="Backups").click()
+    expect(page.locator(".notice--danger")).to_contain_text("more than two days ago")
+    expect(page.locator(".backup-folder code")).to_have_text(str(folder))
+    rows = page.locator(".data-table tbody tr")
+    expect(rows).to_have_count(5)
+    expect(rows.nth(0)).to_contain_text("6 Mar 2025")
+    expect(rows.nth(2)).to_contain_text("Deleted at the next backup")
+    expect(rows.nth(3)).to_contain_text("First of the week")
+
+    form = page.get_by_role("form", name="How many to keep")
+    expect(form.get_by_role("button", name="Save")).to_be_disabled()  # nothing changed yet
+    form.get_by_label("Newest backups").fill("3")
+    form.get_by_role("button", name="Save").click()
+    expect(page.get_by_text("Saved. The next backup deletes")).to_be_visible()
+    expect(rows.nth(2)).to_contain_text("Newest")
+    page.reload()
+    expect(form.get_by_label("Newest backups")).to_have_value("3")
     assert console_errors == []

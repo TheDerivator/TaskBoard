@@ -19,6 +19,7 @@ from taskboard.identity.providers import IdentityProviders
 from taskboard.identity.sessions import SESSION_COOKIE
 from taskboard.services.attachments import AttachmentStore
 from taskboard.services.auth import AuthService
+from taskboard.services.backup_admin import BackupAdminService
 from taskboard.services.changes import ChangeService
 from taskboard.services.conversation import ConversationService
 from taskboard.services.knowledge import KnowledgeService
@@ -164,6 +165,12 @@ def get_organization(session: DbSession, principal: CurrentPrincipal) -> Organiz
     return OrganizationService(session, principal)  # refuses without people.manage
 
 
+def get_backup_admin(
+    session: DbSession, principal: CurrentPrincipal, settings: AppSettings
+) -> BackupAdminService:
+    return BackupAdminService(session, principal, settings.resolved_backup_dir)  # users.manage
+
+
 def get_sso_service(session: DbSession, settings: AppSettings, providers: Providers) -> SsoService:
     return SsoService(session, settings, providers)
 
@@ -176,3 +183,4 @@ Tokens = Annotated[TokenService, Depends(get_token_service)]
 UserAdmin = Annotated[UserAdminService, Depends(get_user_admin)]
 Sso = Annotated[SsoService, Depends(get_sso_service)]
 Organization = Annotated[OrganizationService, Depends(get_organization)]
+BackupAdmin = Annotated[BackupAdminService, Depends(get_backup_admin)]

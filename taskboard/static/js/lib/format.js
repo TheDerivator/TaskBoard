@@ -21,10 +21,11 @@ export function initials(name) {
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-/** "12 Sep" (local time); `withTime` adds ", 14:02". Accepts an ISO string or a Date. */
-export function formatDate(value, { withTime = false } = {}) {
+/** "12 Sep" (local time); `withYear` makes it "12 Sep 2026", `withTime` adds ", 14:02".
+ * Accepts an ISO string or a Date. */
+export function formatDate(value, { withTime = false, withYear = false } = {}) {
   const date = value instanceof Date ? value : new Date(value);
-  const day = `${date.getDate()} ${MONTHS[date.getMonth()]}`;
+  const day = `${date.getDate()} ${MONTHS[date.getMonth()]}${withYear ? ` ${date.getFullYear()}` : ""}`;
   if (!withTime) return day;
   const hh = String(date.getHours()).padStart(2, "0");
   const mm = String(date.getMinutes()).padStart(2, "0");

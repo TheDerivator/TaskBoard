@@ -48,6 +48,7 @@ def user_id(database: Database, username: str) -> int:
         ("GET", "/api/admin/roles"),
         ("GET", "/api/admin/audit"),
         ("GET", "/api/admin/people"),
+        ("GET", "/api/admin/backups"),
     ],
 )
 def test_only_administrators_reach_the_admin_api(

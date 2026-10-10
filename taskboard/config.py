@@ -40,6 +40,11 @@ class Settings(BaseSettings):
     # folder in production, e.g. C:\ProgramData\TaskBoard or /var/lib/taskboard.
     data_dir: Path = PROJECT_ROOT / "var"
 
+    # Where `python -m taskboard backup` puts its zips and deletes the ones no longer kept
+    # (Administration › Backups shows them). Defaults to <data_dir>/backups. A network share must
+    # be a UNC path (\\server\share\TaskBoard): services and scheduled tasks have no drive letters.
+    backup_dir: Path | None = None
+
     # Any SQLAlchemy URL. Defaults to <data_dir>/taskboard.sqlite3.
     # MS SQL example: mssql+pyodbc://user:pass@host/db?driver=ODBC+Driver+18+for+SQL+Server
     database_url: str | None = None
@@ -134,6 +139,10 @@ class Settings(BaseSettings):
     @property
     def uploads_dir(self) -> Path:
         return self.data_dir / "uploads"
+
+    @property
+    def resolved_backup_dir(self) -> Path:
+        return self.backup_dir or self.data_dir / "backups"
 
     def current_date(self) -> date:
         """Today on the server (in its own time zone), unless `today` pins it."""
