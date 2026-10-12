@@ -26,6 +26,7 @@ gate's own tests). Keep the status table and the checkboxes current as work land
 | M21 | API tokens for AI agents (beyond the design)            | ☑ done        |
 | M22 | Full-width drawers, image lightbox (beyond the design)  | ☑ done        |
 | M23 | Backups: what to keep, the Backups page (beyond the design) | ☑ done (server setup: owner) |
+| M24 | Tasks instead of Priority, rank numbers on request (beyond the design) | ☑ done |
 
 Legend: ☐ not started · ◐ in progress · ☑ done
 
@@ -510,6 +511,24 @@ test from the list to saving the numbers; axe clean on the page in both themes.
 Met (2026-10-10): `tests/unit/test_backup_retention.py`, `tests/integration/test_backup.py`,
 `tests/api/test_backups.py`, `tests/js/backups.test.mjs`, `tests/e2e/test_admin.py` (backups),
 `tests/e2e/test_accessibility.py` (`admin/backups`).
+
+### M24 · Tasks instead of Priority, rank numbers on request (beyond the design)
+Asked for on 2026-10-12: make the priority number less prominent (D-103).
+- [x] The Priority view is called *Tasks* (sidebar, heading, page title, links) at `/tasks`;
+      `/priority` forwards to it.
+- [x] `users.show_ranks` and migration; `PATCH /api/auth/preferences` (not for visitors, not
+      through a token); `preferences` in `GET /api/auth/me` and the bootstrap.
+- [x] Profile › Display: *Show rank numbers*. Without it there are no rank numbers in the task
+      list (no Rank column, at any width), on People cards, in project outlines or in the task
+      drawer; the order and reordering stay as they were.
+
+**Acceptance gate**: API tests for the preference (visitors, tokens, kept across sessions and
+browsers, a wrong value); JS route tests; browser tests for the numbers hidden by default,
+switching them on and off on the profile (every view, another browser) and the old address; axe
+clean on the profile.
+Met (2026-10-12): `tests/api/test_auth.py`, `tests/api/test_tokens.py`, `tests/js/routes.test.mjs`,
+`tests/e2e/test_shell.py`, `tests/e2e/test_boards.py`, `tests/e2e/test_tasks.py`,
+`tests/e2e/test_accessibility.py` (profile).
 
 ---
 

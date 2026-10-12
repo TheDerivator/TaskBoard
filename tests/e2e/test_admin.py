@@ -23,7 +23,7 @@ def other(browser: Browser) -> Iterator[Page]:
 
 
 def open_admin(page: Page, live_server: str) -> None:
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     log_in(page, "admin", TEST_ADMIN_PASSWORD)
     page.get_by_role("link", name="Administration").click()
     expect(page.get_by_role("heading", name="Accounts")).to_be_visible()
@@ -52,7 +52,7 @@ def test_create_an_account_and_its_first_login(
     row = page.locator(".data-table tbody tr", has_text="Nina Vos")
     expect(row).to_contain_text("Editor · STL")
 
-    other.goto(f"{live_server}priority")
+    other.goto(f"{live_server}tasks")
     log_in(other, "nina.vos", password)
     dialog = other.get_by_role("dialog", name="Choose a new password")
     dialog.get_by_label("Current password").fill(password)
@@ -66,7 +66,7 @@ def test_create_an_account_and_its_first_login(
 def test_suspending_an_account_logs_it_out(live_server: str, page: Page, other: Page) -> None:
     open_admin(page, live_server)
     password = create_account(page, "sam", "Sam")
-    other.goto(f"{live_server}priority")
+    other.goto(f"{live_server}tasks")
     log_in(other, "sam", password)
     expect(other.get_by_role("dialog", name="Choose a new password")).to_be_visible()
 
@@ -81,7 +81,7 @@ def test_suspending_an_account_logs_it_out(live_server: str, page: Page, other: 
 def test_revoking_anonymous_access_requires_login(
     live_server: str, page: Page, other: Page
 ) -> None:
-    other.goto(f"{live_server}priority")
+    other.goto(f"{live_server}tasks")
     expect(other.locator(".task-row").first).to_be_visible()
 
     open_admin(page, live_server)

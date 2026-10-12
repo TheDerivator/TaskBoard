@@ -211,6 +211,9 @@ def test_tokens_are_managed_on_the_board_not_through_a_token(
         "/api/auth/password", json={"current_password": "x", "new_password": "y" * 20}
     )
     assert response.status_code == 403
+    response = agent.patch("/api/auth/preferences", json={"show_ranks": True})
+    assert response.status_code == 403
+    assert agent.get("/api/auth/me").json()["preferences"] == {"show_ranks": False}
 
 
 def test_visitors_cannot_have_tokens(board: TestClient) -> None:
@@ -289,7 +292,13 @@ def test_the_agent_guide(board: TestClient) -> None:
     assert "- `POST /api/tasks`: New tasks start at the bottom of the ranking." in guide
     assert "`title`* string" in guide and "`status` idea|started|done|archived" in guide
     assert "- `GET /api/auth/me`" in guide
-    for hidden in ("/api/admin/", "/api/auth/login", "/api/auth/tokens", "/api/auth/password"):
+    for hidden in (
+        "/api/admin/",
+        "/api/auth/login",
+        "/api/auth/tokens",
+        "/api/auth/password",
+        "/api/auth/preferences",
+    ):
         assert hidden not in guide, hidden
 
 

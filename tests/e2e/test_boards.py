@@ -1,5 +1,7 @@
 """People lanes and the Projects view in a real browser (milestone M6)."""
 
+import re
+
 from playwright.sync_api import Locator, Page, expect
 
 from tests.conftest import TEST_ADMIN_PASSWORD
@@ -10,8 +12,23 @@ def lane(page: Page, name: str) -> Locator:
     return page.get_by_role("region", name=name)
 
 
-def ranks(lane_locator: Locator) -> Locator:
-    return lane_locator.locator(".card__rank")
+# The sample board's tasks by rank (cards show no rank numbers unless asked for, D-103).
+TITLES = {
+    1: "Root-cause analysis of surface defects on line 2",
+    2: "Agree inspection criteria with customer panel",
+    5: "Operator training: defect classification",
+    7: "Roadmap workshop for next year",
+    10: "Audit of coil handling damage",
+    11: "Clean up old non-conformance records",
+}
+
+
+def titles(lane_locator: Locator) -> Locator:
+    return lane_locator.locator(".card__title")
+
+
+def by_rank(*ranks: int) -> list[str]:
+    return [TITLES[rank] for rank in ranks]
 
 
 OUTLINE_TEXT = """rows => rows.map(row => [...row.querySelectorAll(
@@ -20,7 +37,7 @@ OUTLINE_TEXT = """rows => rows.map(row => [...row.querySelectorAll(
 
 
 def outline_rows(page: Page) -> list[str]:
-    """Outline rows as "number name" for sections and "#rank title" for tasks."""
+    """Outline rows as "number name" for sections and "title" (or "#rank title") for tasks."""
     expect(page.locator(".outline-row").first).to_be_visible()
     return page.locator(".outline-row").evaluate_all(OUTLINE_TEXT)
 
@@ -35,17 +52,18 @@ def test_one_lane_per_person_with_lead_and_helping_cards(
     expect(page.locator(".lane")).to_have_count(6)
     anna = lane(page, "Anna Claes")
     expect(anna.locator(".lane__counts")).to_have_text("2 lead · 2 helping")
-    expect(ranks(anna)).to_have_text(["#01", "#02", "#07", "#10"])
+    expect(titles(anna)).to_have_text(by_rank(1, 2, 7, 10))
+    expect(anna.locator(".card__rank")).to_have_count(0)  # rank numbers only on request
     expect(anna.locator(".card--lead")).to_have_count(2)
     expect(anna.locator(".card--helping")).to_have_count(2)
 
     page.get_by_role("button", name="Lead only").click()
-    expect(ranks(anna)).to_have_text(["#01", "#10"])
+    expect(titles(anna)).to_have_text(by_rank(1, 10))
     expect(anna.locator(".lane__counts")).to_have_text("2 lead · 2 helping")
     page.get_by_role("button", name="Lead + helping").click()
 
     page.get_by_role("searchbox", name="Search title or description").fill("coil")
-    expect(ranks(anna)).to_have_text(["#10"])
+    expect(titles(anna)).to_have_text(by_rank(10))
     expect(lane(page, "Bram Peeters").locator(".card")).to_have_count(1)
     assert console_errors == []
 
@@ -53,17 +71,17 @@ def test_one_lane_per_person_with_lead_and_helping_cards(
 def test_archived_tasks_only_on_request(live_server: str, page: Page) -> None:
     page.goto(f"{live_server}people")
     eva = lane(page, "Eva Janssens")
-    expect(ranks(eva)).to_have_text(["#05", "#10"])
+    expect(titles(eva)).to_have_text(by_rank(5, 10))
     page.get_by_role("button", name="Show archived").click()
-    expect(ranks(eva)).to_have_text(["#05", "#10", "#11"])
+    expect(titles(eva)).to_have_text(by_rank(5, 10, 11))
 
 
 def test_dragging_within_a_lane_changes_the_team_ranking(live_server: str, page: Page) -> None:
     page.goto(f"{live_server}people")
     log_in(page, "admin", TEST_ADMIN_PASSWORD)
     anna = lane(page, "Anna Claes")
-    source = anna.locator(".card").nth(3).bounding_box()  # #10 Audit of coil handling damage
-    target = anna.locator(".card").nth(0).bounding_box()  # #01
+    source = anna.locator(".card").nth(3).bounding_box()  # rank 10: Audit of coil handling damage
+    target = anna.locator(".card").nth(0).bounding_box()  # rank 1
     assert source and target
     page.mouse.move(source["x"] + 20, source["y"] + 30)
     page.mouse.down()
@@ -71,7 +89,7 @@ def test_dragging_within_a_lane_changes_the_team_ranking(live_server: str, page:
     page.mouse.move(target["x"] + 20, target["y"] + 20, steps=10)
     page.mouse.up()
     expect(anna.locator(".card__title").first).to_have_text("Audit of coil handling damage")
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     expect(page.locator(".task-row .task-key").first).to_have_text("T-075")
 
 
@@ -95,7 +113,7 @@ def test_a_team_view_shows_only_its_people_and_has_its_own_link(
     )
     expect(page).to_have_title("People · STL · Quality · Team Tasks")
     # The team picks the people; their lanes still hold all their tasks, whatever the section.
-    expect(ranks(lane(page, "Anna Claes"))).to_have_text(["#01", "#02", "#07", "#10"])
+    expect(titles(lane(page, "Anna Claes"))).to_have_text(by_rank(1, 2, 7, 10))
 
     team.select_option(label="STL (whole department)")
     expect(page).to_have_url(f"{live_server}people/STL")
@@ -126,7 +144,7 @@ def test_a_bookmarked_team_opens_directly(live_server: str, page: Page) -> None:
     page.keyboard.press("Escape")
     expect(page).to_have_url(f"{live_server}people/STL/Process")
     sidebar = page.get_by_role("navigation", name="Main")
-    sidebar.get_by_role("link", name="Priority").click()
+    sidebar.get_by_role("link", name=re.compile("^Tasks")).click()
     sidebar.get_by_role("link", name="People").click()
     expect(page).to_have_url(f"{live_server}people/STL/Process")
 
@@ -153,18 +171,18 @@ def test_projects_unfold_as_numbered_outlines(
     assert outline_rows(page) == [
         "1 Measurement & inspection",
         "1.1 Inspection criteria",
-        "#02 Agree inspection criteria with customer panel",
+        "Agree inspection criteria with customer panel",
         "1.2 Camera system",
-        "#06 Budget proposal for inline camera system",
+        "Budget proposal for inline camera system",
         "2 Line 2 defects",
-        "#10 Audit of coil handling damage",
+        "Audit of coil handling damage",
         "2.1 Root cause",
-        "#01 Root-cause analysis of surface defects on line 2",
+        "Root-cause analysis of surface defects on line 2",
         "2.2 Roll maintenance",
         "2.2.1 Grinding",
-        "#03 Tonnage-based work-roll regrinding",
+        "Tonnage-based work-roll regrinding",
         "3 People & training",
-        "#05 Operator training: defect classification",
+        "Operator training: defect classification",
     ]
     expect(page.locator(".outline-row", has_text="Budget proposal")).to_contain_text(
         "also in Projects 2026"
@@ -184,7 +202,7 @@ def test_selecting_a_section_shows_its_subtree(live_server: str, page: Page) -> 
     assert outline_rows(page) == [
         "2.2 Roll maintenance",
         "2.2.1 Grinding",
-        "#03 Tonnage-based work-roll regrinding",
+        "Tonnage-based work-roll regrinding",
     ]
     page.get_by_role("navigation", name="Breadcrumb").get_by_role(
         "link", name="2 Line 2 defects"

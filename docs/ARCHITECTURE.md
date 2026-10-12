@@ -82,8 +82,9 @@ static/js/
   views/              one module per screen
 ```
 
-- **Routes** (`lib/routes.js`): `/priority`, `/people`, `/people/{department}[/{section}]` (team
-  views, D-078), `/projects/{key}?node={id}`, `/t/{key}`, `/t/{key}/conversation`; process
+- **Routes** (`lib/routes.js`): `/tasks` (the old `/priority` forwards to it, D-103), `/people`,
+  `/people/{department}[/{section}]` (team views, D-078), `/projects/{key}?node={id}`, `/t/{key}`,
+  `/t/{key}/conversation`; process
   changes `/changes/{department}/{process}[/timeline | /{KEY}[/conversation]]`; process knowledge
   `/knowledge/{department}/{process}[/{box}]`, `/fmea/{department}/{process}?box=&release=`,
   `/cpl/{department}[/{defect}[/{cause}]]?process=&release=`, `/box/{key}` (the full table is in
@@ -199,7 +200,8 @@ From `team-tasks-design/DESIGN.md`, plus access control.
     unsaved objects (`services/frozen.py`): `?release=N` on the map and the control plan.
 - `events(id, task_id, actor_user_id?, api_token_id?, created_at, kind, data JSON)`: lifecycle
   changes, lead changes, helpers added or removed, placement changes.
-- Identity: `users`, `external_identities(provider, subject)`, `roles`, `role_permissions`,
+- Identity: `users` (with the display preference `show_ranks`, D-103),
+  `external_identities(provider, subject)`, `roles`, `role_permissions`,
   `role_assignments(user_id, role_id, department_id?, section_id?)` (both NULL = global scope),
   `sessions` (server-side, so suspending a user takes effect immediately), `audit_log`,
   `api_tokens(user_id, name, token_hash, prefix, scope, expires_at?, last_used_at?, revoked_at?)`

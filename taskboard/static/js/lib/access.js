@@ -3,7 +3,7 @@ import { canSomewhere } from "./lookup.js";
 
 // The permission each view needs somewhere. Administration checks its own tabs.
 const NEEDS = {
-  priority: "task.view",
+  tasks: "task.view",
   people: "task.view",
   projects: "task.view",
   task: "task.view",
@@ -25,8 +25,8 @@ export function routeAllowed(me, routeName) {
 
 /** The first view the visitor may use: tasks, then process changes, then process knowledge. */
 export function homeRoute(me) {
-  if (canSomewhere(me, "task.view")) return "priority";
+  if (canSomewhere(me, "task.view")) return "tasks";
   if (canSomewhere(me, "change.view")) return "changes";
   if (canSomewhere(me, "knowledge.view")) return "knowledge";
-  return "priority"; // shows "log in" or "no access"
+  return "tasks"; // shows "log in" or "no access"
 }

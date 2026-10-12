@@ -1,6 +1,6 @@
 """Serve the single-page frontend: static files, and index.html for every app route.
 
-App routes (`/priority`, `/t/K7Q2MX`, ...) all return index.html so links and reloads work; the
+App routes (`/tasks`, `/t/K7Q2MX`, ...) all return index.html so links and reloads work; the
 browser-side router picks the view. The page's `<base href>` is set from the configured base path,
 so the app also works when published under a prefix such as `/taskboard/`.
 """
@@ -19,7 +19,8 @@ STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 APP_ROUTES = frozenset(
     {
         "",
-        "priority",
+        "tasks",
+        "priority",  # the task list's old address, forwarded to /tasks
         "people",
         "projects",
         "t",

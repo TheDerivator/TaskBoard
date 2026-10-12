@@ -73,7 +73,7 @@ Invoke-RestMethod -Method Post -Uri "{{api_url}}tasks/K7Q2MX/posts" -Headers $h 
 - Be easy on the server: no polling loops; read a list once and work from it.
 - Common jobs:
   - Find anything: `GET {{api_url}}search?q=...` (tasks, process changes, knowledge, defects).
-  - The priority list: `GET {{api_url}}tasks` (filters: `statuses`, `department_id`,
+  - The task list, in priority order: `GET {{api_url}}tasks` (filters: `statuses`, `department_id`,
     `section_id`, `project_id`, `person_id`, `q`); one task: `GET {{api_url}}tasks/{key}`; its conversation:
     `GET {{api_url}}tasks/{key}/conversation`.
   - New task: `POST {{api_url}}tasks` with `title`, `lead_id` (a person) and `section_id`; it

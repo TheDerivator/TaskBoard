@@ -65,7 +65,9 @@ export function parseRoute(pathname, search = "", base = "/") {
   const [head, ...rest] = parts;
 
   if (parts.length === 0) return { name: "home", params: {} };
-  if (head === "priority" && rest.length === 0) return { name: "priority", params: {} };
+  if (head === "tasks" && rest.length === 0) return { name: "tasks", params: {} };
+  // The task list was called Priority until October 2026 (D-103): old bookmarks still lead to it.
+  if (head === "priority" && rest.length === 0) return { name: "redirect", params: { to: "tasks" } };
   if (head === "profile" && rest.length === 0) return { name: "profile", params: {} };
   if (head === "people" && rest.length <= 2) {
     return { name: "people", params: { department: rest[0] ?? null, section: rest[1] ?? null } };
@@ -197,6 +199,6 @@ export function routePath(route) {
     case "box":
       return boxLinkPath(route.params.key);
     default:
-      return "priority";
+      return "tasks";
   }
 }

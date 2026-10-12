@@ -20,7 +20,7 @@ taskboard/                                  TaskBoard: a team task board with a 
   api/                                      HTTP API layer: thin FastAPI routers, request dependencies, error mapping. Mounted at `/api`.
     routers/                                One module per API resource. Routers parse input, call a service and shape the output.
       admin.py                              Administration endpoints: users, passwords, role assignments, roles, organization, audit log,
-      auth.py                               Authentication endpoints: current user, password login, logout, change own password.
+      auth.py                               Authentication endpoints: current user, password login, logout, own password and preferences.
       changes.py                            Process-change endpoints: a process's changes, one change, its conversation and periods.
       conversation.py                       Conversation endpoints: a task's timeline and posts, editing and history of any post, image
       knowledge.py                          Process-knowledge endpoints: a process's map, boxes (with links, controls, external links),
@@ -49,6 +49,7 @@ taskboard/                                  TaskBoard: a team task board with a 
         20261004_d8d4a375aeac_releases.py   releases
         20261006_743649b1221b_api_tokens.py  api tokens (and which token wrote each event, post, revision and release)
         20261010_30378bcdd59a_backup_settings.py  backup settings (how many backups to keep, set under Administration › Backups)
+        20261012_998b5763788b_user_preferences.py  user preferences (rank numbers shown or not, set on the profile page)
       env.py                                Alembic environment: migrates the database named in the config (or in TASKBOARD_ settings).
       script.py.mako
     models/                                 All tables. Importing this package registers every model on `Base.metadata`.
@@ -111,7 +112,7 @@ taskboard/                                  TaskBoard: a team task board with a 
     agent_guide.py                          The guide for AI agents (D-097): Markdown that tells an agent how to use the board's API with a
     attachments.py                          Uploaded images: type sniffing, size limits, atomic writes, deletion, and their rows and links.
     audit.py                                Append-only audit trail of security-relevant actions (account, role and login events).
-    auth.py                                 Authentication use cases: who is calling, log in, log out, change password.
+    auth.py                                 Authentication use cases: who is calling, log in, log out, change password, own preferences.
     backup.py                               Back up and restore everything TaskBoard stores: the database and the uploaded images.
     backup_admin.py                         Administration › Backups: what the backup folder holds, and how many backups to keep (D-100).
     catalog.py                              Reference data loaded once per request: sections, people, projects and their outlines.
@@ -148,7 +149,7 @@ taskboard/                                  TaskBoard: a team task board with a 
       processes.css                         Process changes and Process knowledge: the shared bar with department, process tabs and page switch.
       task.css                              Task drawer and task page: header, tabs, detail form, people and placements; drag states.
       tokens.css                            Design tokens (DESIGN.md "Visual system") for the light theme, with dark-theme overrides.
-      views.css                             View-specific styles: Priority list (ranked table that becomes cards on narrow screens), Profile.
+      views.css                             View-specific styles: Tasks list (a table that becomes cards on narrow screens), Profile.
     img/
     js/
       components/
@@ -221,11 +222,11 @@ taskboard/                                  TaskBoard: a team task board with a 
           settings.js                       "Kinds & link types" (the MapSettings mockup): the box kinds and link types every map uses.
           switch.js                         The Knowledge / FMEA / CPL switch of Process knowledge, and each view's path for a process.
         people.js                           People view: one lane per person of a team (everyone, a department or a section), cards in team priority order.
-        priority.js                         Priority view: every visible task in one team-wide ranked list, with search and filters.
-        profile.js                          Profile: your account, and API tokens that let an AI agent or a script work on the board as you
+        profile.js                          Profile: your account, display preferences (D-103), and API tokens that let an AI agent or a
         projects.js                         Projects view: project tree on the left, the selected project or section unfolded as an outline.
         simple.js                           Small full-page views: not found, login required, no access, error.
         task.js                             The task: a drawer over the list, or its own page at /t/{key}; plus the "New task" drawer.
+        tasks.js                            Tasks view: every visible task in one team-wide list in priority order, with search and filters;
       api.js                                HTTP client for /api: JSON in and out, CSRF header on writes, errors as ApiError.
       app.js                                The application: loads the bootstrap document, lays out sidebar + view, routes, dialogs.
       drag.js                               Reordering ranked lists: pointer drag-and-drop (mouse, touch, pen) and the keyboard.
@@ -291,9 +292,9 @@ tests/                                      Test suite: unit/ (pure logic), api/
     test_scale.py                           A board with 5,000 extra tasks in a real browser (milestone M10).
     test_scale_processes.py                 2,000 process changes and a 2,000-box map in a real browser (milestone M20).
     test_search.py                          Search everything and stable links in a browser (milestone M19).
-    test_shell.py                           The app shell and the Priority view in a real browser: filters, theme, sidebar, login.
+    test_shell.py                           The app shell and the Tasks view in a real browser: filters, theme, sidebar, login, rank
     test_sso.py                             SSO sign-in in a real browser (milestone M9): the full redirect round trip.
-    test_tasks.py                           Priority interactions and the task drawer in a real browser (milestone M5).
+    test_tasks.py                           Tasks view interactions and the task drawer in a real browser (milestone M5).
     test_tokens.py                          API tokens in a real browser (D-097): create one on the profile page, let an "agent" use it, see
     test_windows_signin.py                  Windows sign-in in a real browser: Chromium answers the Negotiate challenge through SSPI.
   fixtures/

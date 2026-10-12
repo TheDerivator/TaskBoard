@@ -1,4 +1,4 @@
-"""Authentication use cases: who is calling, log in, log out, change password.
+"""Authentication use cases: who is calling, log in, log out, change password, own preferences.
 
 Order of identification for a request: an API token (`Authorization: Bearer`), which then
 decides alone; else a valid session cookie; else an ambient SSO provider (trusted proxy header),
@@ -23,6 +23,7 @@ from taskboard.identity import api_tokens, password_login, provisioning, session
 from taskboard.identity.passwords import hash_password, password_problems, verify_password
 from taskboard.identity.principal import Principal, anonymous_principal, principal_for_user
 from taskboard.identity.providers import IdentityProviders
+from taskboard.schemas.auth import Preferences
 from taskboard.services import audit
 
 
@@ -153,3 +154,16 @@ class AuthService:
             target_id=user.id,
         )
         self.session.commit()
+
+    def update_preferences(self, principal: Principal, *, show_ranks: bool | None) -> Preferences:
+        """Change the caller's own display preferences (the profile page, D-103). Not audited:
+        they change only how the board looks to the caller."""
+        if principal.token_id is not None:
+            raise PermissionDeniedError("an API token cannot change its owner's preferences")
+        user = self.session.get(User, principal.user_id)
+        if user is None or principal.is_anonymous:
+            raise AuthenticationRequiredError("log in to keep preferences")
+        if show_ranks is not None:
+            user.show_ranks = show_ranks
+        self.session.commit()
+        return Preferences(show_ranks=user.show_ranks)

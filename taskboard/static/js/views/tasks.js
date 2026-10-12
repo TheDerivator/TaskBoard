@@ -1,4 +1,5 @@
-/** Priority view: every visible task in one team-wide ranked list, with search and filters. */
+/** Tasks view: every visible task in one team-wide list in priority order, with search and filters;
+ * rank numbers only for those who ask for them on their profile (D-103). */
 import { api } from "../api.js";
 import { Avatar, ProjectChip, StatusPill, statusLabel } from "../components/badges.js";
 import { GripIcon, PlusIcon, SearchIcon } from "../components/icons.js";
@@ -103,13 +104,13 @@ function Filters({ filters, setFilters, boot, lookup }) {
   `;
 }
 
-export function TaskRow({ task, lookup, draggable = false }) {
+export function TaskRow({ task, lookup, draggable = false, showRank = false }) {
   const lead = lookup.people.get(task.lead_id);
   const section = lookup.sections.get(task.section_id);
   const department = lookup.departments.get(task.department_id);
   return html`
     <li class="task-row" data-key=${task.key} data-draggable=${draggable ? "true" : "false"}>
-      <span class=${`rank${task.rank <= 3 ? " rank--top" : ""}`} aria-label=${`Rank ${task.rank}`}>${padRank(task.rank)}</span>
+      ${showRank && html`<span class=${`rank${task.rank <= 3 ? " rank--top" : ""}`} aria-label=${`Rank ${task.rank}`}>${padRank(task.rank)}</span>`}
       ${draggable
         ? html`<button type="button" class="grip" aria-label=${`Move ${task.ref}, rank ${task.rank}`} aria-describedby="reorder-help" title="Drag, or use the arrow keys, to reorder"><${GripIcon} /></button>`
         : html`<span class="grip"></span>`}
@@ -144,8 +145,8 @@ export function TaskRow({ task, lookup, draggable = false }) {
   `;
 }
 
-export function PriorityView({ boot, lookup }) {
-  useTitle("Priority");
+export function TasksView({ boot, lookup }) {
+  useTitle("Tasks");
   const [filters, setFiltersState] = useState(rememberedFilters);
   const setFilters = (next) => {
     rememberedFilters = next;
@@ -159,6 +160,7 @@ export function PriorityView({ boot, lookup }) {
   const shown = useMemo(() => filterTasks(tasks, filters), [tasks, filters]);
   const canCreate = canSomewhere(boot.me, "task.edit");
   const canDrag = (task) => canIn(boot.me, "task.edit", task.section_id);
+  const showRanks = boot.me.preferences.show_ranks;
 
   // Moves are saved one at a time, in order, so quick key presses cannot overtake each other;
   // the board reloads once they are all saved (or one failed: then it shows the server's order).
@@ -180,11 +182,11 @@ export function PriorityView({ boot, lookup }) {
   });
 
   return html`
-    <section class="page" aria-labelledby="priority-title">
+    <section class="page" aria-labelledby="tasks-title">
       <header class="view-head">
         <div class="view-head__text">
-          <h1 id="priority-title">Priority</h1>
-          <p>Every task the team owns, ranked.${canCreate ? " Drag a row to change its priority." : ""}</p>
+          <h1 id="tasks-title">Tasks</h1>
+          <p>Every task the team owns, in priority order.${canCreate ? " Drag a row to change its priority." : ""}</p>
           <p id="reorder-help" class="visually-hidden">Arrow Up and Arrow Down move the task one place, Home and End to the top or bottom of the list.</p>
         </div>
         ${canCreate && html`<button type="button" class="btn btn--primary" onClick=${() => setCreating(true)}><${PlusIcon} />New task</button>`}
@@ -192,9 +194,9 @@ export function PriorityView({ boot, lookup }) {
 
       <${Filters} filters=${filters} setFilters=${setFilters} boot=${boot} lookup=${lookup} />
 
-      <div class="panel task-table">
+      <div class=${`panel task-table${showRanks ? " task-table--ranks" : ""}`}>
         <div class="task-table__head" aria-hidden="true">
-          <span>Rank</span><span></span><span>Task</span><span>Projects</span><span>Lead · team</span>
+          ${showRanks && html`<span>Rank</span>`}<span></span><span>Task</span><span>Projects</span><span>Lead · team</span>
           <span>Dept · section</span><span>Lifecycle</span>
         </div>
         ${error && html`<div class="empty-state" role="alert">${error.message}</div>`}
@@ -205,13 +207,13 @@ export function PriorityView({ boot, lookup }) {
           ? html`<div class="empty-state">No tasks match this search and lifecycle filter.</div>`
           : html`
               <ol ref=${sortableRef} class=${`task-list${canCreate ? " task-list--sortable" : ""}`} aria-label="Tasks by team priority">
-                ${shown.map((task) => html`<${TaskRow} key=${task.key} task=${task} lookup=${lookup} draggable=${canDrag(task)} />`)}
+                ${shown.map((task) => html`<${TaskRow} key=${task.key} task=${task} lookup=${lookup} draggable=${canDrag(task)} showRank=${showRanks} />`)}
               </ol>
             `)}
       </div>
       ${data &&
       html`<div class="row count-note">
-        <p aria-live="polite">Showing ${shown.length} of ${data.total} tasks · rank is team-wide, filters never change it</p>
+        <p aria-live="polite">Showing ${shown.length} of ${data.total} tasks · the order is team-wide, filters never change it</p>
         ${isFiltered(filters) &&
         html`<button type="button" class="link-button" onClick=${() => setFilters(emptyFilters())}>Reset filters</button>`}
       </div>`}

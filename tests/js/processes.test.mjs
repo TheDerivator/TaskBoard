@@ -66,10 +66,10 @@ test("without a process in the URL: the one used last, else the department's fir
 test("each view needs its module's view right; home is the first module the visitor may use", () => {
   const knowledgeOnly = me({ "knowledge.view": reach(false, [12]) });
   assert.ok(routeAllowed(knowledgeOnly, "knowledge") && routeAllowed(knowledgeOnly, "cpl"));
-  assert.ok(!routeAllowed(knowledgeOnly, "priority") && !routeAllowed(knowledgeOnly, "change"));
+  assert.ok(!routeAllowed(knowledgeOnly, "tasks") && !routeAllowed(knowledgeOnly, "change"));
   assert.ok(routeAllowed(knowledgeOnly, "notFound"));
   assert.equal(homeRoute(knowledgeOnly), "knowledge");
   assert.equal(homeRoute(me({ "change.view": reach(true), "knowledge.view": reach(true) })), "changes");
-  assert.equal(homeRoute(me({ "task.view": reach(true) })), "priority");
+  assert.equal(homeRoute(me({ "task.view": reach(true) })), "tasks");
   assert.ok(!routeAllowed(me({}), "admin"));
 });

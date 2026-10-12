@@ -48,7 +48,7 @@ def test_updates_only(live_server: str, page: Page) -> None:
 
 
 def test_a_task_reference_opens_that_task(live_server: str, page: Page) -> None:
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     page.get_by_role("link", name="Root-cause analysis of surface defects on line 2").click()
     page.get_by_role("link", name="Conversation").click()
     page.locator(".md .task-ref", has_text="T-117").click()
@@ -59,7 +59,7 @@ def test_a_task_reference_opens_that_task(live_server: str, page: Page) -> None:
 def test_an_image_opens_full_size_over_the_page_and_a_click_closes_it(
     live_server: str, page: Page, console_errors: list[str]
 ) -> None:
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     page.get_by_role("link", name="Root-cause analysis of surface defects on line 2").click()
     drawer = page.get_by_role("dialog", name="Task 104")
     drawer.get_by_role("link", name="Conversation").click()

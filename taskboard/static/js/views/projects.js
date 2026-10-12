@@ -79,12 +79,12 @@ function ProjectTree({ projects, selectedKey, selectedNode, canManage, onNewProj
 
 // ---------------------------------------------------------------- outline (right)
 
-function TaskLine({ task, indent, projectId, lookup }) {
+function TaskLine({ task, indent, projectId, lookup, showRank }) {
   const others = task.placements.filter((p) => p.project_id !== projectId).map((p) => lookup.projects.get(p.project_id)?.name);
   const lead = lookup.people.get(task.lead_id);
   return html`
     <a class="outline-row outline-row--task" style=${{ "--indent": indent }} href=${href(taskPath(task.key))}>
-      <span class=${`outline-row__rank${task.rank <= 3 ? " outline-row__rank--top" : ""}`}>#${padRank(task.rank)}</span>
+      ${showRank && html`<span class=${`outline-row__rank${task.rank <= 3 ? " outline-row__rank--top" : ""}`}>#${padRank(task.rank)}</span>`}
       <span class="outline-row__title">${task.title}</span>
       ${others.length > 0 && html`<span class="outline-row__also" title="Also placed in another project">also in ${others.join(", ")}</span>`}
       <${Avatar} person=${lead} title=${lead ? `Lead: ${lead.name}` : "Lead"} />
@@ -93,11 +93,13 @@ function TaskLine({ task, indent, projectId, lookup }) {
   `;
 }
 
-function Outline({ outline, lookup }) {
+function Outline({ outline, lookup, showRanks }) {
   const base = outline.node ? outline.node.depth : 1;
   const rows = [];
   for (const task of outline.top_level_tasks) {
-    rows.push(html`<${TaskLine} key=${`t${task.key}`} task=${task} indent=${-1} projectId=${outline.project.id} lookup=${lookup} />`);
+    rows.push(
+      html`<${TaskLine} key=${`t${task.key}`} task=${task} indent=${-1} projectId=${outline.project.id} lookup=${lookup} showRank=${showRanks} />`,
+    );
   }
   for (const { node, tasks } of outline.sections) {
     const indent = node.depth - base;
@@ -109,7 +111,9 @@ function Outline({ outline, lookup }) {
       </div>
     `);
     for (const task of tasks) {
-      rows.push(html`<${TaskLine} key=${`t${task.key}`} task=${task} indent=${indent} projectId=${outline.project.id} lookup=${lookup} />`);
+      rows.push(
+        html`<${TaskLine} key=${`t${task.key}`} task=${task} indent=${indent} projectId=${outline.project.id} lookup=${lookup} showRank=${showRanks} />`,
+      );
     }
   }
   if (rows.length === 0) {
@@ -377,7 +381,7 @@ export function ProjectsView({ boot, lookup, route }) {
       <div class="panel">
         ${editing && editedProject
           ? html`<${SectionEditor} project=${editedProject} onDone=${() => setEditing(false)} />`
-          : html`<${Outline} outline=${data} lookup=${lookup} />`}
+          : html`<${Outline} outline=${data} lookup=${lookup} showRanks=${boot.me.preferences.show_ranks} />`}
       </div>
       ${creatingTask &&
       html`<${NewTaskDrawer} onClose=${() => setCreatingTask(false)} initialPlacements=${[{ project_id: data.project.id, node_id: node ?? null }]} />`}

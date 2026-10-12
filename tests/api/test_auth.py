@@ -169,6 +169,39 @@ def test_changing_the_password_logs_out_other_sessions(settings: Settings, db: S
         generator.close()
 
 
+def test_preferences_are_kept_with_the_account(settings: Settings, db: Session) -> None:
+    """Rank numbers are hidden until the user asks for them, then shown in every browser (D-103)."""
+    make_user(db, "ria")
+    app = create_app(settings)
+    laptop, phone = start_client(app), start_client(app)
+    laptop_client, phone_client = next(laptop), next(phone)
+    assert laptop_client.get("/api/auth/me").json()["preferences"] == {"show_ranks": False}
+    refused = laptop_client.patch("/api/auth/preferences", json={"show_ranks": True})
+    assert refused.status_code == 401  # visitors have no preferences to keep
+
+    login(laptop_client, "ria")
+    assert laptop_client.get("/api/auth/me").json()["preferences"] == {"show_ranks": False}
+    response = laptop_client.patch("/api/auth/preferences", json={"show_ranks": True})
+    assert response.status_code == 200 and response.json() == {"show_ranks": True}
+    assert laptop_client.patch("/api/auth/preferences", json={}).json() == {"show_ranks": True}
+
+    login(phone_client, "ria")
+    assert phone_client.get("/api/bootstrap").json()["me"]["preferences"] == {"show_ranks": True}
+    assert (
+        phone_client.patch("/api/auth/preferences", json={"show_ranks": False}).status_code == 200
+    )
+    assert laptop_client.get("/api/auth/me").json()["preferences"] == {"show_ranks": False}
+    assert phone_client.get("/api/auth/me").json()["preferences"] == {"show_ranks": False}
+    for generator in (laptop, phone):
+        generator.close()
+
+
+def test_preferences_take_a_boolean(client: TestClient) -> None:
+    login(client, "admin", TEST_ADMIN_PASSWORD)
+    response = client.patch("/api/auth/preferences", json={"show_ranks": "sometimes"})
+    assert response.status_code == 422
+
+
 def test_the_first_response_hands_out_a_csrf_cookie(settings: Settings) -> None:
     with TestClient(create_app(settings)) as fresh:
         response = fresh.get("/api/health")

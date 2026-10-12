@@ -126,6 +126,10 @@
   gap: 6px;
 }
 
+.card__top > .pill {
+  margin-left: auto; /* on the right, also when the rank is not shown (D-103) */
+}
+
 .card__rank {
   font-family: var(--font-mono);
   font-size: 12px;

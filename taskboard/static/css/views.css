@@ -1,4 +1,4 @@
-/* View-specific styles: Priority list (ranked table that becomes cards on narrow screens), Profile. */
+/* View-specific styles: Tasks list (a table that becomes cards on narrow screens), Profile. */
 
 /* ---------------------------------------------------------------- filters */
 
@@ -21,12 +21,17 @@
   color: var(--ink-2);
 }
 
-/* ---------------------------------------------------------------- priority table */
+/* ---------------------------------------------------------------- tasks table */
 
+/* Rank numbers are a column of their own only for those who asked for them (D-103). */
 .task-table {
-  --columns: 52px 20px minmax(0, 1fr) 250px 170px 140px 104px;
+  --columns: 20px minmax(0, 1fr) 250px 170px 140px 104px;
   display: flex;
   flex-direction: column;
+}
+
+.task-table--ranks {
+  --columns: 52px 20px minmax(0, 1fr) 250px 170px 140px 104px;
 }
 
 .task-table__head,
@@ -197,6 +202,10 @@ button.grip:focus-visible {
 
 @media (max-width: 1360px) {
   .task-table {
+    --columns: 16px minmax(0, 1fr) 200px 150px 120px 96px;
+  }
+
+  .task-table--ranks {
     --columns: 44px 16px minmax(0, 1fr) 200px 150px 120px 96px;
   }
 
@@ -208,19 +217,27 @@ button.grip:focus-visible {
   }
 }
 
-/* Narrow: every row becomes a card with the rank on the left. */
+/* Narrow: every row becomes a card (with the rank on the left, if shown). */
 @media (max-width: 1100px) {
   .task-table__head {
     display: none;
   }
 
   .task-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "main status"
+      "projects projects"
+      "people org";
+    row-gap: 10px;
+  }
+
+  .task-table--ranks .task-row {
     grid-template-columns: 44px minmax(0, 1fr) auto;
     grid-template-areas:
       "rank main status"
       "rank projects projects"
       "rank people org";
-    row-gap: 10px;
   }
 
   .task-row > .rank {
@@ -266,6 +283,16 @@ button.grip:focus-visible {
 
 @media (max-width: 560px) {
   .task-row {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "main"
+      "status"
+      "projects"
+      "people"
+      "org";
+  }
+
+  .task-table--ranks .task-row {
     grid-template-columns: 36px minmax(0, 1fr);
     grid-template-areas:
       "rank main"
@@ -324,6 +351,15 @@ button.grip:focus-visible {
 }
 
 .profile-section .section-head p {
+  max-width: 72ch;
+}
+
+.profile-pref {
+  padding: 12px 16px 14px;
+}
+
+.profile-pref .field__hint {
+  margin: 0 0 0 26px; /* under the label, past the checkbox */
   max-width: 72ch;
 }
 

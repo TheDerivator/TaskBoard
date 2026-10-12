@@ -20,7 +20,7 @@ def _search(page: Page, query: str) -> Locator:
 def test_ctrl_k_finds_mould_powder_and_enter_opens_the_box(
     live_server: str, page: Page, console_errors: list[str]
 ) -> None:
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     expect(page.locator(".task-row").first).to_be_visible()
     page.keyboard.press("Control+k")
     dialog = _search(page, "mould powder")
@@ -43,7 +43,7 @@ def test_ctrl_k_finds_mould_powder_and_enter_opens_the_box(
 
 
 def test_filters_and_the_arrow_keys(live_server: str, page: Page) -> None:
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     page.locator(".sidebar").get_by_role("button", name=re.compile("Search everything")).click()
     dialog = _search(page, "mould powder")
     dialog.get_by_role("button", name=re.compile(r"^Process changes · 1$")).click()
@@ -64,7 +64,7 @@ def test_filters_and_the_arrow_keys(live_server: str, page: Page) -> None:
 
 
 def test_ctrl_enter_opens_a_new_tab(live_server: str, page: Page) -> None:
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     page.keyboard.press("Control+k")
     dialog = _search(page, "LM-07")
     with page.context.expect_page() as opened:

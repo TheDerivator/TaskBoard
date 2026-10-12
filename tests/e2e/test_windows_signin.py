@@ -86,7 +86,7 @@ def test_logging_out_lasts_and_the_admin_account_still_works(
     windows_server: str, windows_page: Page
 ) -> None:
     page = windows_page
-    page.goto(f"{windows_server}priority")
+    page.goto(f"{windows_server}tasks")
     page.get_by_role("button", name="Log out").click()
     expect(log_in_button(page)).to_be_visible()
     page.reload()  # not signed in again behind the user's back
@@ -111,7 +111,7 @@ def test_the_guides_first_steps_refused_then_prepared_then_signed_in(
     del sample_database
     page = windows_page
     for base in _serve(settings, sso_unknown_users=UnknownUserPolicy.REJECT):
-        page.goto(f"{base}priority")
+        page.goto(f"{base}tasks")
         expect(page.get_by_role("status")).to_contain_text(
             "Windows sign-in: no account has been set up for you"
         )
@@ -144,7 +144,7 @@ def test_with_automatic_sign_in_off_it_takes_a_click(
     del sample_database
     page = windows_page
     for base in _serve(settings, windows_auth_automatic=False):
-        page.goto(f"{base}priority")
+        page.goto(f"{base}tasks")
         expect(page.locator(".task-row")).to_have_count(10)
         expect(log_in_button(page)).to_be_visible()
         log_in_button(page).click()
@@ -156,7 +156,7 @@ def test_a_browser_that_does_not_answer_leaves_the_visitor_anonymous(
     windows_server: str, page: Page, console_errors: list[str]
 ) -> None:
     """Playwright's ordinary (incognito-like) page: Chromium keeps the Windows login to itself."""
-    page.goto(f"{windows_server}priority")
+    page.goto(f"{windows_server}tasks")
     expect(page.locator(".task-row")).to_have_count(10)  # the board, as any visitor sees it
     expect(log_in_button(page)).to_be_visible()
     log_in_button(page).click()

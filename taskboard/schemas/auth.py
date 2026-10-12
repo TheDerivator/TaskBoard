@@ -18,6 +18,18 @@ class PasswordChangeRequest(BaseModel):
     new_password: str = Field(max_length=1000)
 
 
+class Preferences(BaseModel):
+    """How the board looks for you, set on the profile page; kept with the account (D-103)."""
+
+    show_ranks: bool  # rank numbers in the task list, people lanes, project outlines, task drawer
+
+
+class PreferencesUpdate(BaseModel):
+    """The preferences to change; those left out stay as they are."""
+
+    show_ranks: bool | None = None
+
+
 class PermissionReach(BaseModel):
     """Where a permission applies. The frontend uses this to show or hide controls only; the
     server enforces every rule itself."""
@@ -53,6 +65,7 @@ class Me(BaseModel):
     signed_in_by: str | None = None
     # The API token this request came with (D-097); None in a browser.
     api_token: TokenInfo | None = None
+    preferences: Preferences
     permissions: dict[Permission, PermissionReach]
     login: LoginOptions
 
@@ -77,6 +90,7 @@ class Me(BaseModel):
             api_token=TokenInfo(name=principal.token_name, scope=principal.token_scope)
             if principal.token_name is not None and principal.token_scope is not None
             else None,
+            preferences=Preferences(show_ranks=principal.show_ranks),
             permissions=permissions,
             login=LoginOptions(
                 password=True,

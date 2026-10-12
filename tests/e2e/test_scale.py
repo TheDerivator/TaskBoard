@@ -1,6 +1,6 @@
 """A board with 5,000 extra tasks in a real browser (milestone M10).
 
-Measured on a laptop: Priority ~1.3 s to show every row, search ~0.1 s, People ~1.2 s. The
+Measured on a laptop: Tasks ~1.3 s to show every row, search ~0.1 s, People ~1.2 s. The
 limits are several times that, so they catch regressions, not slow machines.
 """
 
@@ -20,7 +20,7 @@ def test_a_big_board_stays_usable(
     rows = page.locator(".task-row")
 
     start = time.perf_counter()
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     expect(page.locator(".count-note")).to_contain_text("of 5011 tasks", timeout=15_000)
     shown = rows.count()
     assert shown > 3000

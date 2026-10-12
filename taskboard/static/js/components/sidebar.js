@@ -21,10 +21,10 @@ import {
   LogoutIcon,
   MoonIcon,
   PeopleIcon,
-  PriorityIcon,
   ProjectsIcon,
   SearchIcon,
   SunIcon,
+  TasksIcon,
 } from "./icons.js";
 import { showError, showToast } from "./toasts.js";
 
@@ -57,7 +57,7 @@ function UserBlock({ boot, lookup, onLogin, collapsed, current }) {
   const via = me.signed_in_by ? `Signed in through ${me.signed_in_by}` : null;
   const title = collapsed ? [`${me.display_name} (${meta})`, via].filter(Boolean).join("\n") : via;
   return html`
-    <a class="sidebar__user" href=${href("profile")} title=${title ?? "Your profile and API tokens"} aria-current=${current ? "page" : undefined}>
+    <a class="sidebar__user" href=${href("profile")} title=${title ?? "Your profile: display preferences and API tokens"} aria-current=${current ? "page" : undefined}>
       <${Avatar} person=${person} name=${me.display_name} />
       <div class="sidebar__user-text">
         <span class="sidebar__user-name">${me.display_name}</span>
@@ -91,7 +91,7 @@ export function Sidebar({ boot, lookup, route, collapsed, onToggleCollapsed, onL
   return html`
     <nav class="sidebar" aria-label="Main">
       <div class="sidebar__brand">
-        <a class="sidebar__logo" href=${href("priority")} aria-label="Team Tasks home"><${LogoIcon} /></a>
+        <a class="sidebar__logo" href=${href("tasks")} aria-label="Team Tasks home"><${LogoIcon} /></a>
         <span class="sidebar__name">Team Tasks</span>
         <button
           type="button"
@@ -114,7 +114,7 @@ export function Sidebar({ boot, lookup, route, collapsed, onToggleCollapsed, onL
         <div class="sidebar__heading">Views</div>
         ${tasks &&
         html`
-          <${NavItem} path="priority" label="Priority" icon=${html`<${PriorityIcon} />`} count=${boot.task_total} current=${route.name === "priority"} />
+          <${NavItem} path="tasks" label="Tasks" icon=${html`<${TasksIcon} />`} count=${boot.task_total} current=${route.name === "tasks"} />
           <${NavItem} path=${peopleLink} label="People" icon=${html`<${PeopleIcon} />`} count=${activePeople} current=${route.name === "people"} />
           <${NavItem}
             path="projects"

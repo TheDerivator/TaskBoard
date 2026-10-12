@@ -1,5 +1,5 @@
-/** Profile: your account, and API tokens that let an AI agent or a script work on the board as you
- * (D-097), with the guide to give the agent. */
+/** Profile: your account, display preferences (D-103), and API tokens that let an AI agent or a
+ * script work on the board as you (D-097), with the guide to give the agent. */
 import { api } from "../api.js";
 import { Avatar } from "../components/badges.js";
 import { copyText } from "../components/copy-link.js";
@@ -10,7 +10,8 @@ import { useApi, useTitle } from "../hooks.js";
 import { formatDate } from "../lib/format.js";
 import { DEFAULT_EXPIRY, EXPIRY_CHOICES, SCOPES, envCommands, expiryText, lastUsedText, scopeLabel } from "../lib/tokens.js";
 import { href } from "../router.js";
-import { html, useState } from "../ui.js";
+import { refreshBoot } from "../store.js";
+import { html, useEffect, useState } from "../ui.js";
 
 const GUIDE_FILE = "taskboard-agent-guide.md";
 
@@ -146,6 +147,54 @@ function TokenTable({ tokens, onRevoke }) {
   `;
 }
 
+/** How the board looks for you, kept with your account (D-103). */
+function DisplayPreferences({ me }) {
+  const saved = me.preferences.show_ranks;
+  const [showRanks, setShowRanks] = useState(saved);
+  const [busy, setBusy] = useState(false);
+  useEffect(() => setShowRanks(saved), [saved]);
+  const change = async (show) => {
+    setShowRanks(show);
+    setBusy(true);
+    try {
+      await api.patch("/auth/preferences", { show_ranks: show });
+      await refreshBoot();
+      showToast(show ? "Rank numbers are shown." : "Rank numbers are hidden.");
+    } catch (error) {
+      setShowRanks(!show);
+      showError(error);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return html`
+    <section class="stack profile-section" aria-labelledby="display-title">
+      <div class="section-head">
+        <div>
+          <h2 id="display-title">Display</h2>
+          <p>How the board looks for you, in every browser you sign in with.</p>
+        </div>
+      </div>
+      <div class="panel profile-pref">
+        <label class="check">
+          <input
+            type="checkbox"
+            checked=${showRanks}
+            disabled=${busy}
+            aria-describedby="show-ranks-hint"
+            onChange=${(e) => change(e.currentTarget.checked)}
+          />
+          <strong>Show rank numbers</strong>
+        </label>
+        <p id="show-ranks-hint" class="field__hint">
+          The team-wide rank (01, 02, …) next to every task: in Tasks, People and Projects, and on the task itself. Tasks are in
+          priority order either way, and you can still drag them into a new order.
+        </p>
+      </div>
+    </section>
+  `;
+}
+
 function AgentAccess() {
   const tokens = useApi("/auth/tokens");
   const [creating, setCreating] = useState(false);
@@ -207,7 +256,7 @@ export function ProfileView({ boot, lookup }) {
       <header class="view-head">
         <div class="view-head__text">
           <h1 id="profile-title">Profile</h1>
-          <p>Your account, and access for your AI assistant.</p>
+          <p>Your account, how the board looks for you, and access for your AI assistant.</p>
         </div>
       </header>
       <div class="panel profile-card">
@@ -219,6 +268,7 @@ export function ProfileView({ boot, lookup }) {
           </div>
         </div>
       </div>
+      <${DisplayPreferences} me=${me} />
       <${AgentAccess} />
     </section>
   `;

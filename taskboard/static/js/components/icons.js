@@ -19,7 +19,7 @@ const svg = (children, { size = 18, width = 2, fill = "none" } = {}) => html`
 `;
 
 export const LogoIcon = () => svg(html`<path d="M4 6h16M4 12h10M4 18h6" />`, { size: 16, width: 2.4 });
-export const PriorityIcon = () => svg(html`<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" />`);
+export const TasksIcon = () => svg(html`<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" />`);
 export const PeopleIcon = () =>
   svg(html`<rect x="3" y="4" width="5" height="16" rx="1" /><rect x="10" y="4" width="5" height="11" rx="1" /><rect x="17" y="4" width="4" height="14" rx="1" />`);
 export const ProjectsIcon = () =>
@@ -58,7 +58,7 @@ export const MenuIcon = () => svg(html`<path d="M4 6h16M4 12h16M4 18h16" />`, { 
 export const LoginIcon = () => svg(html`<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" />`, { size: 16 });
 export const LogoutIcon = () => svg(html`<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />`);
 
-/** The six-dot drag handle from the Priority mockup. */
+/** The six-dot drag handle from the Priority mockup (the Tasks view). */
 export const GripIcon = () => html`
   <svg width="14" height="20" viewBox="0 0 14 20" fill="currentColor" aria-hidden="true" focusable="false">
     <circle cx="4" cy="4" r="1.6" /><circle cx="10" cy="4" r="1.6" /><circle cx="4" cy="10" r="1.6" />

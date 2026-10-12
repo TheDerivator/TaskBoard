@@ -18,7 +18,7 @@ from tests.e2e.conftest import log_in
 from tests.helpers import fake_backups
 
 VIEWS = [
-    "priority",
+    "tasks",
     "people",
     "people/STL/Quality",
     "projects",
@@ -82,9 +82,9 @@ def test_every_view(live_server: str, settings: Settings, themed: Page) -> None:
     fake_backups(
         settings.resolved_backup_dir, "2025-03-06", "2025-03-05", "2025-03-04", "2025-03-03"
     )
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     expect(page.locator(".task-row").first).to_be_visible()
-    assert_accessible(page, "priority, as a visitor")
+    assert_accessible(page, "tasks, as a visitor")
     log_in(page, "admin", TEST_ADMIN_PASSWORD)
     for path in VIEWS:
         page.goto(f"{live_server}{path}")
@@ -94,7 +94,7 @@ def test_every_view(live_server: str, settings: Settings, themed: Page) -> None:
 
 def test_the_full_width_drawer_and_the_image_lightbox(live_server: str, themed: Page) -> None:
     page = themed
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     page.get_by_role("link", name="Root-cause analysis of surface defects on line 2").click()
     drawer = page.get_by_role("dialog", name="Task 104")
     drawer.get_by_role("button", name="Full width").click()
@@ -108,7 +108,7 @@ def test_the_full_width_drawer_and_the_image_lightbox(live_server: str, themed: 
 
 def test_dialogs_and_drawers(live_server: str, themed: Page) -> None:
     page = themed
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     page.locator(".sidebar").get_by_role("button", name="Log in").click()
     expect(page.get_by_role("dialog", name="Log in")).to_be_visible()
     assert_accessible(page, "login dialog")
@@ -123,7 +123,7 @@ def test_dialogs_and_drawers(live_server: str, themed: Page) -> None:
     expect(page.get_by_role("dialog", name="Add to another project")).to_be_visible()
     assert_accessible(page, "placement dialog")
 
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     page.get_by_role("button", name="New task").click()
     expect(page.get_by_role("button", name="Create task")).to_be_visible()
     assert_accessible(page, "new task drawer")
@@ -226,7 +226,7 @@ def test_small_screens_and_the_collapsed_sidebar(live_server: str, themed: Page)
     assert_accessible(page, "collapsed sidebar")
 
     page.set_viewport_size({"width": 390, "height": 844})
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     page.get_by_role("button", name="Open navigation").click()
     expect(page.get_by_role("link", name="People")).to_be_visible()
     assert_accessible(page, "phone navigation")

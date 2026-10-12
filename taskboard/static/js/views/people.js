@@ -42,13 +42,13 @@ function TeamPicker({ departments, team, requested }) {
   `;
 }
 
-function Card({ task, role, lookup, draggable }) {
+function Card({ task, role, lookup, draggable, showRank }) {
   const top = task.rank <= 3;
   return html`
     <li data-key=${task.key} data-draggable=${draggable ? "true" : "false"}>
       <a class=${`card card--${role}`} href=${href(taskPath(task.key))} draggable="false" data-drag-surface>
         <span class="card__top">
-          <span class=${`card__rank${top ? " card__rank--top" : ""}`}>#${padRank(task.rank)}</span>
+          ${showRank && html`<span class=${`card__rank${top ? " card__rank--top" : ""}`}>#${padRank(task.rank)}</span>`}
           <${StatusPill} status=${task.status} small />
         </span>
         <span class="card__title">${task.title}</span>
@@ -67,6 +67,7 @@ function Card({ task, role, lookup, draggable }) {
 }
 
 function Lane({ lane, lookup, me, allTasks, setOptimistic, reload }) {
+  const showRanks = me.preferences.show_ranks;
   const editable = (task) => canIn(me, "task.edit", task.section_id);
   const sortableRef = useSortable({
     enabled: lane.cards.some((c) => editable(c.task)),
@@ -97,7 +98,8 @@ function Lane({ lane, lookup, me, allTasks, setOptimistic, reload }) {
         : html`
             <ol ref=${sortableRef} class="lane__cards lane__cards--sortable">
               ${lane.cards.map(
-                (c) => html`<${Card} key=${c.task.key} task=${c.task} role=${c.role} lookup=${lookup} draggable=${editable(c.task)} />`,
+                (c) =>
+                  html`<${Card} key=${c.task.key} task=${c.task} role=${c.role} lookup=${lookup} draggable=${editable(c.task)} showRank=${showRanks} />`,
               )}
             </ol>
           `}

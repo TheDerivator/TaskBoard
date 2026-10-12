@@ -1,4 +1,4 @@
-"""Authentication endpoints: current user, password login, logout, change own password."""
+"""Authentication endpoints: current user, password login, logout, own password and preferences."""
 
 from fastapi import APIRouter, Request, Response, status
 
@@ -6,7 +6,13 @@ from taskboard.api.client import client_ip
 from taskboard.api.cookies import set_session_cookie
 from taskboard.api.deps import AppSettings, Auth, CurrentPrincipal, Providers
 from taskboard.identity.sessions import SESSION_COOKIE
-from taskboard.schemas.auth import LoginRequest, Me, PasswordChangeRequest
+from taskboard.schemas.auth import (
+    LoginRequest,
+    Me,
+    PasswordChangeRequest,
+    Preferences,
+    PreferencesUpdate,
+)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -53,3 +59,11 @@ def change_password(
         new_password=body.new_password,
         session_token=request.cookies.get(SESSION_COOKIE),
     )
+
+
+@router.patch("/preferences")
+def update_preferences(
+    body: PreferencesUpdate, principal: CurrentPrincipal, auth: Auth
+) -> Preferences:
+    """Change how the board looks for you (the profile page); the same in every browser."""
+    return auth.update_preferences(principal, show_ranks=body.show_ranks)

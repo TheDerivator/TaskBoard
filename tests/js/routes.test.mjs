@@ -19,7 +19,9 @@ import {
 
 test("views", () => {
   assert.deepEqual(parseRoute("/"), { name: "home", params: {} });
-  assert.deepEqual(parseRoute("/priority"), { name: "priority", params: {} });
+  assert.deepEqual(parseRoute("/tasks"), { name: "tasks", params: {} });
+  // The task list's old address (D-103) still leads to it.
+  assert.deepEqual(parseRoute("/priority"), { name: "redirect", params: { to: "tasks" } });
   assert.deepEqual(parseRoute("/people/"), { name: "people", params: { department: null, section: null } });
 });
 
@@ -61,6 +63,7 @@ test("administration tabs", () => {
 
 test("unknown paths", () => {
   assert.equal(parseRoute("/nope").name, "notFound");
+  assert.equal(parseRoute("/tasks/extra").name, "notFound");
   assert.equal(parseRoute("/priority/extra").name, "notFound");
 });
 
@@ -85,11 +88,11 @@ test("building paths", () => {
 
 test("routePath inverts parseRoute", async () => {
   const { routePath } = await import("../../taskboard/static/js/lib/routes.js");
-  for (const path of ["priority", "people", "people/STL", "people/R%26D/Coatings", "projects/ASQ?node=7", "projects", "t/104/conversation", "admin/roles"]) {
+  for (const path of ["tasks", "people", "people/STL", "people/R%26D/Coatings", "projects/ASQ?node=7", "projects", "t/104/conversation", "admin/roles"]) {
     const [pathname, search = ""] = path.split("?");
     assert.equal(routePath(parseRoute(`/${pathname}`, search ? `?${search}` : "")), path);
   }
-  assert.equal(routePath({ name: "notFound", params: {} }), "priority");
+  assert.equal(routePath({ name: "notFound", params: {} }), "tasks");
 });
 
 test("process changes: list, timeline and one change (DESIGN 'Stable links')", () => {

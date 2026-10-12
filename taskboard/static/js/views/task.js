@@ -127,7 +127,7 @@ export function TaskPanel({ taskKey, tab, onClose, layout, dirtyRef }) {
         </div>
         <div class="task-panel__body">
           <p role="alert">${missing ? "This task doesn't exist, or you don't have access to it." : error.message}</p>
-          <a href=${href("priority")}>Go to the priority list</a>
+          <a href=${href("tasks")}>Go to the task list</a>
         </div>
       </div>
     `;
@@ -180,7 +180,7 @@ export function TaskPanel({ taskKey, tab, onClose, layout, dirtyRef }) {
       dataChanged();
       refreshBoot();
       showToast(`${task.ref} deleted.`);
-      onClose ? onClose() : navigate("priority");
+      onClose ? onClose() : navigate("tasks");
     } catch (err) {
       showError(err);
     }
@@ -206,7 +206,7 @@ export function TaskPanel({ taskKey, tab, onClose, layout, dirtyRef }) {
           <${layout === "page" ? "h1" : "h2"} class="task-panel__heading">
             <span class="task-panel__key">${task.ref}</span><span class="visually-hidden">: ${task.title}</span>
           <//>
-          <span class="rank-badge">Rank ${padRank(task.rank)} of ${task.rank_total}</span>
+          ${boot.me.preferences.show_ranks && html`<span class="rank-badge">Rank ${padRank(task.rank)} of ${task.rank_total}</span>`}
         </div>
         <div class="task-panel__tools">
           <${CopyLinkButton} path=${taskPath(task.key)} label="Copy link to this task" />
@@ -391,7 +391,7 @@ export function NewTaskDrawer({ onClose, initialPlacements }) {
 export function TaskPage({ taskKey, tab }) {
   return html`
     <section class="page task-page">
-      <a class="task-page__back" href=${href("priority")}>← Priority</a>
+      <a class="task-page__back" href=${href("tasks")}>← Tasks</a>
       <div class="panel task-page__panel">
         <${TaskPanel} taskKey=${taskKey} tab=${tab} layout="page" />
       </div>

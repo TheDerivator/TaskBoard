@@ -11,7 +11,7 @@ export function NotFoundView() {
       <div class="center-card">
         <h1>Page not found</h1>
         <p class="muted">This address doesn't lead anywhere on the board.</p>
-        <a class="btn" href=${href("priority")}>Go to the priority list</a>
+        <a class="btn" href=${href("tasks")}>Go to the task list</a>
       </div>
     </section>
   `;

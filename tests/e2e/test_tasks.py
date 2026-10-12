@@ -1,4 +1,4 @@
-"""Priority interactions and the task drawer in a real browser (milestone M5)."""
+"""Tasks view interactions and the task drawer in a real browser (milestone M5)."""
 
 import re
 
@@ -11,7 +11,7 @@ from taskboard.db.models import Task
 from taskboard.db.session import Database
 from taskboard.web import create_app
 from tests.conftest import TEST_ADMIN_PASSWORD, start_client
-from tests.e2e.conftest import log_in
+from tests.e2e.conftest import log_in, show_ranks
 from tests.helpers import login, revoke_anonymous_access
 
 
@@ -34,7 +34,7 @@ def drag(page: Page, source_index: int, target_index: int) -> None:
 def test_dragging_a_row_changes_the_team_ranking(
     live_server: str, page: Page, sample_database: Database, console_errors: list[str]
 ) -> None:
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     log_in(page, "admin", TEST_ADMIN_PASSWORD)
     expect(page.locator(".task-list--sortable")).to_be_visible()
     drag(page, 4, 1)  # T-089 (rank 5) dropped on T-117 (rank 2): upwards → before it
@@ -50,7 +50,7 @@ def test_dragging_a_row_changes_the_team_ranking(
 def test_reordering_with_the_keyboard(
     live_server: str, page: Page, sample_database: Database, console_errors: list[str]
 ) -> None:
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     log_in(page, "admin", TEST_ADMIN_PASSWORD)
     grip = page.get_by_role("button", name="Move T-089, rank 5")
     grip.focus()
@@ -78,15 +78,18 @@ def test_reordering_with_the_keyboard(
 
 
 def test_visitors_cannot_drag(live_server: str, page: Page) -> None:
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     expect(page.locator(".task-row").first).to_be_visible()
     expect(page.locator(".task-list--sortable")).to_have_count(0)
     drag(page, 4, 1)
     assert keys(page)[:2] == ["T-104", "T-117"]
 
 
-def test_edit_a_task_in_the_drawer(live_server: str, page: Page, console_errors: list[str]) -> None:
-    page.goto(f"{live_server}priority")
+def test_edit_a_task_in_the_drawer(
+    live_server: str, page: Page, sample_database: Database, console_errors: list[str]
+) -> None:
+    show_ranks(sample_database, "admin")
+    page.goto(f"{live_server}tasks")
     log_in(page, "admin", TEST_ADMIN_PASSWORD)
     page.get_by_role("link", name="Coating adhesion trial, batch 3").click()
     expect(page).to_have_url(f"{live_server}t/130")
@@ -105,7 +108,7 @@ def test_edit_a_task_in_the_drawer(live_server: str, page: Page, console_errors:
     save.click()
 
     expect(drawer).to_be_hidden()
-    expect(page).to_have_url(f"{live_server}priority")
+    expect(page).to_have_url(f"{live_server}tasks")
     row = page.locator(".task-row", has_text="Coating adhesion trial, batch 4")
     expect(row.locator(".pill")).to_have_text("Done")
     expect(row.locator(".avatar-stack .avatar")).to_have_text(["EJ"])
@@ -125,7 +128,7 @@ def test_choosing_a_new_lead(live_server: str, page: Page) -> None:
 
 
 def test_a_concurrent_edit_is_detected(live_server: str, page: Page, settings: Settings) -> None:
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     log_in(page, "admin", TEST_ADMIN_PASSWORD)
     page.get_by_role("link", name="Guard rail check at the coiler").click()
     drawer = page.get_by_role("dialog", name="Task 110")
@@ -178,7 +181,7 @@ def test_add_the_task_to_another_project(live_server: str, page: Page) -> None:
 
 
 def test_visitors_see_a_read_only_task(live_server: str, page: Page) -> None:
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     page.get_by_role("link", name="Root-cause analysis of surface defects on line 2").click()
     drawer = page.get_by_role("dialog", name="Task 104")
     expect(
@@ -191,7 +194,7 @@ def test_visitors_see_a_read_only_task(live_server: str, page: Page) -> None:
     expect(drawer.get_by_role("button", name="+ Add to another project")).to_have_count(0)
     page.keyboard.press("Escape")
     expect(drawer).to_be_hidden()
-    expect(page).to_have_url(f"{live_server}priority")
+    expect(page).to_have_url(f"{live_server}tasks")
 
 
 def test_the_drawer_can_take_the_full_width(live_server: str, page: Page) -> None:
@@ -202,7 +205,7 @@ def test_the_drawer_can_take_the_full_width(live_server: str, page: Page) -> Non
         assert box is not None
         return round(box["x"]), round(box["x"] + box["width"])
 
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     screen = page.evaluate("document.documentElement.clientWidth")
     page.get_by_role("link", name="Root-cause analysis of surface defects on line 2").click()
     drawer = page.get_by_role("dialog", name="Task 104")
@@ -239,7 +242,7 @@ def test_the_permalink_opens_the_task_page_and_can_be_copied(live_server: str, p
     page.context.grant_permissions(["clipboard-read", "clipboard-write"])
     page.goto(f"{live_server}t/t-098")
     expect(page.locator(".task-page .task-panel__key")).to_have_text("T-098")
-    expect(page.locator(".task-page .rank-badge")).to_have_text("Rank 03 of 11")
+    expect(page.locator(".task-page .rank-badge")).to_have_count(0)  # only on request (D-103)
     page.get_by_role("button", name="Copy link to this task").click()
     expect(page.get_by_role("status")).to_contain_text("Link copied.")
     assert page.evaluate("navigator.clipboard.readText()") == f"{live_server}t/098"
@@ -266,8 +269,11 @@ def test_unknown_tasks_say_so(live_server: str, page: Page) -> None:
     )
 
 
-def test_create_a_new_task(live_server: str, page: Page, console_errors: list[str]) -> None:
-    page.goto(f"{live_server}priority")
+def test_create_a_new_task(
+    live_server: str, page: Page, sample_database: Database, console_errors: list[str]
+) -> None:
+    show_ranks(sample_database, "admin")
+    page.goto(f"{live_server}tasks")
     log_in(page, "admin", TEST_ADMIN_PASSWORD)
     page.get_by_role("button", name="New task").click()
     drawer = page.get_by_role("dialog", name="New task")
@@ -295,7 +301,7 @@ def test_create_a_new_task(live_server: str, page: Page, console_errors: list[st
 
 
 def test_unsaved_changes_are_not_lost_by_accident(live_server: str, page: Page) -> None:
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     log_in(page, "admin", TEST_ADMIN_PASSWORD)
     page.get_by_role("link", name="Update SPC dashboards for thickness").click()
     drawer = page.get_by_role("dialog", name="Task 126")

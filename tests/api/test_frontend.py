@@ -18,7 +18,8 @@ from taskboard.web import create_app, frontend
     "path",
     [
         "/",
-        "/priority",
+        "/tasks",
+        "/priority",  # the old address of /tasks
         "/people",
         "/people/STL/Quality",
         "/projects/ASQ",

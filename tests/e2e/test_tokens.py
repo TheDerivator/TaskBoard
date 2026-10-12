@@ -12,7 +12,7 @@ from tests.e2e.conftest import log_in
 def test_a_token_from_the_profile_page(
     live_server: str, page: Page, playwright: Playwright, console_errors: list[str]
 ) -> None:
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     log_in(page, "admin", TEST_ADMIN_PASSWORD)
     page.locator(".sidebar__user").click()
     expect(page).to_have_url(re.compile(r"/profile$"))

@@ -88,10 +88,10 @@ def test_a_refused_sign_in_is_explained(
     sso_server: str, sign_in_as: dict[str, object], page: Page
 ) -> None:
     sign_in_as.update(oid="oid-stranger", email="stranger@example.com")
-    page.goto(f"{sso_server}priority")
+    page.goto(f"{sso_server}tasks")
     page.locator(".sidebar").get_by_role("button", name="Log in").click()
     page.get_by_role("link", name="Sign in with Microsoft").click()
     expect(page.get_by_role("status")).to_contain_text(
         "Sign-in failed: no account has been set up for you"
     )
-    expect(page).to_have_url(f"{sso_server}priority")  # the error parameter is tidied away
+    expect(page).to_have_url(f"{sso_server}tasks")  # the error parameter is tidied away

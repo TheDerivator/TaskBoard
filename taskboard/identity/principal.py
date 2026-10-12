@@ -47,6 +47,7 @@ class Principal:
     must_change_password: bool
     grants: GrantSet
     sections: Mapping[int, SectionRef]  # every organizational section, to resolve scopes
+    show_ranks: bool = False  # the user's display preference (D-103)
     # Set when a trusted proxy identifies the user on every request (there is no logging out).
     ambient_provider: str | None = None
     # Set when the request carries an API token (D-097): the grants are already narrowed to it.
@@ -152,6 +153,7 @@ def principal_for_user(session: Session, user: User) -> Principal:
         must_change_password=user.must_change_password,
         grants=grants,
         sections=load_sections(session),
+        show_ranks=user.show_ranks,
     )
 
 

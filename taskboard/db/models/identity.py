@@ -11,6 +11,7 @@ from sqlalchemy import (
     Index,
     Unicode,
     UniqueConstraint,
+    false,
     text,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
@@ -61,6 +62,8 @@ class User(Base):
     person_id: Mapped[int | None] = mapped_column(ForeignKey("people.id"))
     password_hash: Mapped[str | None] = mapped_column(Unicode(255))  # None: no local login
     must_change_password: Mapped[bool] = mapped_column(default=False)
+    # Display preference set on the profile page: rank numbers shown next to tasks (D-103).
+    show_ranks: Mapped[bool] = mapped_column(default=False, server_default=false())
     status: Mapped[UserStatus] = mapped_column(str_enum(UserStatus), default=UserStatus.ACTIVE)
     kind: Mapped[UserKind] = mapped_column(str_enum(UserKind), default=UserKind.REGULAR)
     is_builtin: Mapped[bool] = mapped_column(default=False)

@@ -18,7 +18,7 @@ def _heading(page: Page) -> str:
 def test_the_sidebar_leads_to_both_modules_which_share_the_process(
     live_server: str, page: Page, console_errors: list[str]
 ) -> None:
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     sidebar = page.locator(".sidebar")
     sidebar.get_by_role("link", name="Process changes").click()
     expect(page).to_have_url(f"{live_server}changes/STL/CV")
@@ -67,14 +67,14 @@ def test_someone_who_may_only_read_process_knowledge(
     expect(page).to_have_url(re.compile(r"knowledge/STL/CV$"))
     sidebar = page.locator(".sidebar")
     expect(sidebar.get_by_role("link", name="Process knowledge")).to_be_visible()
-    expect(sidebar.get_by_role("link", name="Priority")).to_have_count(0)
+    expect(sidebar.get_by_role("link", name=re.compile("^Tasks"))).to_have_count(0)
     expect(sidebar.get_by_role("link", name="Process changes")).to_have_count(0)
     page.goto(f"{live_server}changes/STL/LM")
     expect(page.locator("#content h1")).to_have_text("No access yet")
 
 
 def test_an_administrator_adds_a_process(live_server: str, page: Page) -> None:
-    page.goto(f"{live_server}priority")
+    page.goto(f"{live_server}tasks")
     log_in(page, "admin", TEST_ADMIN_PASSWORD)
     page.goto(f"{live_server}admin/organization")
     page.get_by_label("New process code in STL").fill("hm")

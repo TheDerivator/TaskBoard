@@ -16,11 +16,11 @@ import { ChangesView } from "./views/changes/index.js";
 import { BoxLinkView } from "./views/knowledge/box-link.js";
 import { KnowledgeView } from "./views/knowledge/index.js";
 import { PeopleView } from "./views/people.js";
-import { PriorityView } from "./views/priority.js";
 import { ProfileView } from "./views/profile.js";
 import { ProjectsView } from "./views/projects.js";
 import { ErrorView, LoginRequiredView, NoAccessView, NotFoundView } from "./views/simple.js";
 import { TaskDrawer, TaskPage } from "./views/task.js";
+import { TasksView } from "./views/tasks.js";
 
 /** A task opened from a list shows as a drawer over that list; opened directly, as its own page. */
 function TaskRoute({ route, background, boot, lookup }) {
@@ -54,8 +54,8 @@ function View({ route, boot, lookup, background = null }) {
       : html`<${NoAccessView} />`;
   }
   switch (route.name) {
-    case "priority":
-      return html`<${PriorityView} boot=${boot} lookup=${lookup} />`;
+    case "tasks":
+      return html`<${TasksView} boot=${boot} lookup=${lookup} />`;
     case "people":
       return html`<${PeopleView} boot=${boot} lookup=${lookup} route=${route} />`;
     case "projects":
@@ -77,6 +77,7 @@ function View({ route, boot, lookup, background = null }) {
     case "task":
       return html`<${TaskRoute} route=${route} background=${background} boot=${boot} lookup=${lookup} />`;
     case "home":
+    case "redirect":
       return null;
     default:
       return html`<${NotFoundView} />`;
@@ -106,7 +107,8 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    if (route.name === "home" && boot) navigate(homeRoute(boot.me), { replace: true });
+    if (route.name === "redirect") navigate(route.params.to, { replace: true });
+    else if (route.name === "home" && boot) navigate(homeRoute(boot.me), { replace: true });
     else if (!DETAIL_ROUTES.has(route.name)) setBackground(route.name === "notFound" ? null : route);
     setNavOpen(false);
   }, [route, boot]);

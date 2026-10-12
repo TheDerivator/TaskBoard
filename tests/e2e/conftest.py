@@ -13,9 +13,11 @@ from pathlib import Path
 import pytest
 import uvicorn
 from playwright.sync_api import ConsoleMessage, Page
+from sqlalchemy import update
 from starlette.types import ASGIApp
 
 from taskboard.config import Settings
+from taskboard.db.models import User
 from taskboard.db.session import Database
 from taskboard.web import create_app
 
@@ -85,6 +87,12 @@ def console_errors(page: Page) -> list[str]:
     page.on("pageerror", lambda error: errors.append(str(error)))
     page.set_default_timeout(10_000)
     return errors
+
+
+def show_ranks(database: Database, username: str) -> None:
+    """Turn on the user's "Show rank numbers" preference (D-103), as the profile page would."""
+    with database.session(write=True) as s:
+        s.execute(update(User).where(User.username == username).values(show_ranks=True))
 
 
 def log_in(page: Page, username: str, password: str) -> None:
