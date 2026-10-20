@@ -1,4 +1,4 @@
-/* View-specific styles: Tasks list (a table that becomes cards on narrow screens), Profile. */
+/* View-specific styles: Tasks list (a table that becomes cards on narrow screens), Recent activity, Profile. */
 
 /* ---------------------------------------------------------------- filters */
 
@@ -318,6 +318,93 @@ button.grip:focus-visible {
   .filters__selects .field {
     flex: 1;
   }
+}
+
+/* ---------------------------------------------------------------- Recent activity (D-104) */
+
+.activity-day {
+  margin: 0;
+  padding: 10px 20px;
+  background: var(--surface-header);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.activity-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--divider);
+}
+
+.activity-list:last-child .activity-item:last-child {
+  border-bottom: 0;
+}
+
+.activity-item:hover {
+  background: color-mix(in oklab, var(--surface), var(--ink) 2.5%);
+}
+
+.activity-item__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.activity-item__head .task-title {
+  max-width: 100%;
+}
+
+.activity-item__post {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.activity-item__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.activity-item__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.activity-item__author {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.activity-item__count {
+  white-space: nowrap; /* the "·" wraps with the count, never alone at the end of a line */
+}
+
+.activity-item__excerpt {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink);
+  overflow-wrap: anywhere;
 }
 
 /* ---------------------------------------------------------------- placeholder views */

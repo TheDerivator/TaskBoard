@@ -83,7 +83,8 @@ static/js/
 ```
 
 - **Routes** (`lib/routes.js`): `/tasks` (the old `/priority` forwards to it, D-103), `/people`,
-  `/people/{department}[/{section}]` (team views, D-078), `/projects/{key}?node={id}`, `/t/{key}`,
+  `/people/{department}[/{section}]` (team views, D-078), `/projects/{key}?node={id}`,
+  `/activity[/{project key}]?node={id}` (recent activity, D-104), `/t/{key}`,
   `/t/{key}/conversation`; process
   changes `/changes/{department}/{process}[/timeline | /{KEY}[/conversation]]`; process knowledge
   `/knowledge/{department}/{process}[/{box}]`, `/fmea/{department}/{process}?box=&release=`,
@@ -120,6 +121,12 @@ static/js/
   the release bar and dialog (`release.js`, wording in `lib/releases.js`): the version shown,
   the draft (blue dots on the boxes), a version picker (`?release=v3`, read only) and "Review &
   release".
+- **Recent activity** (`views/activity.js`, day headings and times in `lib/activity.js`, D-104):
+  `GET /api/activity` (`services/activity.py`, rules in `domain/activity.py`) lists tasks and
+  process changes by their newest post, found for every conversation in one query (a window
+  function); pages continue from a cursor (`next` → `before`). The view asks for tasks only, in
+  one project or section if the address names one (the Projects view's *Recent activity* button),
+  and opens a task's conversation as a drawer over the list.
 - **Search everything** (`components/search-dialog.js`, wording in `lib/search.js`): Ctrl K anywhere
   or the sidebar entry opens it; `GET /api/search` (`services/search.py`, rules in
   `domain/search.py`, D-094) returns the best hits per type with their stable links. The input is

@@ -6,6 +6,7 @@ const NEEDS = {
   tasks: "task.view",
   people: "task.view",
   projects: "task.view",
+  activity: "task.view", // tasks only for now; the API also lists process changes (D-104)
   task: "task.view",
   changes: "change.view",
   change: "change.view",

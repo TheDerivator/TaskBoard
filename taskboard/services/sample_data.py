@@ -2,7 +2,8 @@
 changes, the Continuous casting map and the defect catalogue) into an empty board.
 
 The sample is set on 3 Oct 2026 (`SAMPLE_TODAY`). Loaded with another `today`, the process
-changes' dates move by the difference, so a demo shows tests running and changes planned.
+changes' dates and the task conversations move by the difference, so a demo shows tests running,
+changes planned and recent activity.
 
 Each sample person also gets a user account (e.g. `anna.claes`) linked to their person record,
 with *Editor* rights on their own department. Accounts can log in only when a demo password is
@@ -168,6 +169,113 @@ SAMPLE_CHANGE_EXTRAS: dict[str, dict[str, Any]] = {
     },
 }
 
+# Posts beyond sample-data.json (only T-104 has any there), so Recent activity has something to
+# show (M25): (task, author, written, status update?, Markdown). Partly lorem ipsum, as agreed.
+SAMPLE_TASK_POSTS: list[tuple[str, str, str, bool, str]] = [
+    (
+        "T-075",
+        "AC",
+        "2026-09-08T13:30",
+        True,
+        "**Audit closed**\n\nReport sent to the plant manager: most damage comes from the second "
+        "crane hook. Follow-up actions are in the maintenance plan.",
+    ),
+    (
+        "T-110",
+        "DW",
+        "2026-09-10T07:45",
+        True,
+        "**Done**\n\nAll guard rails at the coiler checked, two bolts replaced. Photos are in the "
+        "maintenance log.",
+    ),
+    (
+        "T-098",
+        "DW",
+        "2026-09-16T08:20",
+        False,
+        "Collected the tonnage per roll set since January. Grinding intervals vary between 18 and "
+        "41 kt, with no clear reason in the logs.",
+    ),
+    (
+        "T-121",
+        "BP",
+        "2026-09-18T15:00",
+        False,
+        "Two suppliers have quoted so far. The third quote is expected at the end of the month.",
+    ),
+    (
+        "T-130",
+        "CM",
+        "2026-09-24T11:30",
+        True,
+        "**Trial plan**\n\n- Batch 3 panels coated on 23 Sep\n- Cross-hatch and bend tests next "
+        "week\n- Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+    ),
+    (
+        "T-089",
+        "EJ",
+        "2026-09-25T10:00",
+        True,
+        "**Sessions planned**\n\n- Shift A: 6 Oct\n- Shift B: 8 Oct\n- Shifts C and D: to be "
+        "confirmed",
+    ),
+    (
+        "T-133",
+        "BP",
+        "2026-09-26T09:30",
+        False,
+        "Proposed date: 12 Nov, a full day. Please keep it free.\n\nLorem ipsum dolor sit amet, "
+        "consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna "
+        "aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut "
+        "aliquip ex ea commodo consequat.",
+    ),
+    (
+        "T-133",
+        "AC",
+        "2026-09-26T10:12",
+        False,
+        "Works for me. Duis aute irure dolor in reprehenderit in voluptate velit esse.",
+    ),
+    (
+        "T-098",
+        "BP",
+        "2026-09-29T13:05",
+        False,
+        "Could we try a fixed 30 kt interval on line 2 as a pilot? Excepteur sint occaecat "
+        "cupidatat non proident.",
+    ),
+    (
+        "T-089",
+        "CM",
+        "2026-09-30T16:20",
+        False,
+        "I'll bring the reference samples from the customer panel.",
+    ),
+    (
+        "T-130",
+        "FM",
+        "2026-10-01T14:45",
+        False,
+        "Bend tests done: no flaking at 2T. Cross-hatch results follow tomorrow.",
+    ),
+    (
+        "T-130",
+        "CM",
+        "2026-10-02T09:10",
+        True,
+        "**Week 40 status**\n\nAll panels pass cross-hatch class 0. Report drafted; review with "
+        "R&D on Monday.",
+    ),
+    (
+        "T-121",
+        "BP",
+        "2026-10-02T11:40",
+        False,
+        "The third quote is in. Comparison table: `camera-quotes.xlsx`. Sed ut perspiciatis unde "
+        "omnis iste natus error sit voluptatem.",
+    ),
+]
+
 
 def username_for(name: str) -> str:
     """`Chloé Martens` → `chloe.martens`."""
@@ -186,7 +294,8 @@ def load_sample_data(
     """Load the sample into an empty board. Returns False (and changes nothing) if tasks exist.
 
     With a `store`, the sample post's defect map becomes a real (generated) image attachment.
-    With a `today`, process changes are moved in time so the sample's 3 Oct 2026 is that day.
+    With a `today`, process changes and task conversations are moved in time so the sample's
+    3 Oct 2026 is that day.
     """
     if session.scalar(select(func.count()).select_from(Task)):
         return False
@@ -209,11 +318,16 @@ def load_sample_data(
                 node_id=node.id if node else None,
             )
         )
-    for p in data["posts"]:
+    extra_posts: list[dict[str, Any]] = [
+        {"task_id": task, "author": author, "created_at": at, "is_update": update, "body_md": body}
+        for task, author, at, update, body in SAMPLE_TASK_POSTS
+        if task in tasks
+    ]
+    for p in [*data["posts"], *extra_posts]:
         post = Post(
             task_id=tasks[p["task_id"]].id,
             author_user_id=users[p["author"]].id,
-            created_at=_timestamp(p["created_at"]),
+            created_at=_sample_time(datetime.fromisoformat(p["created_at"]), shift),
             body_md=p["body_md"],
             is_update=p["is_update"],
         )
@@ -227,7 +341,7 @@ def load_sample_data(
                 Event(
                     task_id=tasks[e["task_id"]].id,
                     actor_user_id=users[e["actor"]].id,
-                    created_at=_timestamp(e["created_at"]),
+                    created_at=_sample_time(datetime.fromisoformat(e["created_at"]), shift),
                     kind=EventKind.STATUS_CHANGED,
                     data={"from": e["from"], "to": e["to"]},
                 )
@@ -291,10 +405,6 @@ def defect_map_png(width: int = 520, height: int = 200) -> bytes:
 
 
 SAMPLE_TIMEZONE = timezone(timedelta(hours=2))  # the sample's times are Belgian summer time
-
-
-def _timestamp(text: str) -> datetime:
-    return datetime.fromisoformat(text).replace(tzinfo=SAMPLE_TIMEZONE).astimezone(UTC)
 
 
 def _load_org(

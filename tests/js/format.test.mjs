@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { formatDate, initials, padRank, plural, shortName } from "../../taskboard/static/js/lib/format.js";
+import { formatDate, formatTime, initials, padRank, plural, shortName } from "../../taskboard/static/js/lib/format.js";
 import { canIn, canSomewhere, indexBoot } from "../../taskboard/static/js/lib/lookup.js";
 
 test("ranks are two digits", () => {
@@ -26,6 +26,8 @@ test("dates", () => {
   assert.equal(formatDate(date), "19 Sep");
   assert.equal(formatDate(date, { withTime: true }), "19 Sep, 14:02");
   assert.equal(formatDate(date, { withTime: true, withYear: true }), "19 Sep 2026, 14:02");
+  assert.equal(formatTime(date), "14:02");
+  assert.equal(formatTime(new Date(2026, 8, 19, 7, 5)), "07:05");
   assert.equal(plural(1, "task"), "1 task");
   assert.equal(plural(3, "task"), "3 tasks");
 });

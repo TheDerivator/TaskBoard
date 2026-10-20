@@ -22,6 +22,8 @@ VIEWS = [
     "people",
     "people/STL/Quality",
     "projects",
+    "activity",
+    "activity/ASQ",
     "t/104",
     "t/104/conversation",
     "changes/STL/LM",

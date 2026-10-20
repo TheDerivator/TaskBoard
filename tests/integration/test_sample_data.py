@@ -30,7 +30,12 @@ from taskboard.db.models import (
 from taskboard.db.session import Database
 from taskboard.domain.outline import Outline, TreeNode
 from taskboard.domain.task_keys import normalize_key
-from taskboard.services.sample_data import SAMPLE_FILE, load_sample_data, username_for
+from taskboard.services.sample_data import (
+    SAMPLE_FILE,
+    SAMPLE_TASK_POSTS,
+    load_sample_data,
+    username_for,
+)
 from tests.helpers import assert_revisions_match_rows
 
 SAMPLE = json.loads(SAMPLE_FILE.read_text(encoding="utf-8"))
@@ -48,7 +53,7 @@ def test_everything_is_loaded(sample_database: Database) -> None:
         assert _count(s, ProjectNode) == len(SAMPLE["project_nodes"])
         assert _count(s, Placement) == len(SAMPLE["placements"])
         task_posts = select(func.count()).where(Post.task_id.is_not(None))
-        assert s.scalar(task_posts) == len(SAMPLE["posts"])
+        assert s.scalar(task_posts) == len(SAMPLE["posts"]) + len(SAMPLE_TASK_POSTS)
         assert _count(s, Event) == len(SAMPLE["events"])
 
 

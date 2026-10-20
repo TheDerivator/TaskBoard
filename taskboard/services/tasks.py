@@ -99,6 +99,41 @@ def with_card_data[*Ts](query: Select[*Ts]) -> Select[*Ts]:
     return query.options(selectinload(Task.helpers), selectinload(Task.placements))
 
 
+def filtered_tasks[*Ts](query: Select[*Ts], f: TaskFilter, catalog: Catalog) -> Select[*Ts]:
+    """Narrow a query on Task to the tasks that pass the list filters (they never change ranks)."""
+    if f.q and f.q.strip():
+        needle = f.q.strip()
+        query = query.where(
+            or_(contains_ci(Task.title, needle), contains_ci(Task.description, needle))
+        )
+    if f.statuses is not None:
+        query = query.where(Task.status.in_(f.statuses))
+    if f.department_id is not None:
+        query = query.where(Task.section_id.in_(catalog.section_ids_of_department(f.department_id)))
+    if f.section_id is not None:
+        query = query.where(Task.section_id == f.section_id)
+    if f.project_id is not None or f.node_id is not None:
+        placed = select(Placement.task_id)
+        if f.project_id is not None:
+            placed = placed.where(Placement.project_id == f.project_id)
+        if f.node_id is not None:
+            tree = next((t for t in catalog.projects.values() if f.node_id in t.nodes), None)
+            subtree = tree.outline.subtree(f.node_id) if tree else set[int]()
+            placed = placed.where(Placement.node_id.in_(subtree))
+        query = query.where(Task.id.in_(placed))
+    if f.person_id is not None:
+        leads = Task.lead_person_id == f.person_id
+        helps = Task.id.in_(select(TaskHelper.task_id).where(TaskHelper.person_id == f.person_id))
+        query = query.where(
+            {
+                PersonRole.LEAD: leads,
+                PersonRole.HELPER: helps,
+                PersonRole.ANY: or_(leads, helps),
+            }[f.person_role]
+        )
+    return query
+
+
 class TaskService:
     def __init__(
         self, session: Session, principal: Principal, store: AttachmentStore | None = None
@@ -113,49 +148,12 @@ class TaskService:
         catalog = Catalog.load(self.session)
         visible = visible_tasks(select(Task), self.principal)
         total = self.session.scalar(select(func.count()).select_from(visible.subquery())) or 0
-        query = with_card_data(self._filtered(visible, filters, catalog).order_by(Task.rank))
+        query = with_card_data(filtered_tasks(visible, filters, catalog).order_by(Task.rank))
         tasks = self.session.scalars(query).all()
         return TaskList(tasks=[summarize(t, catalog) for t in tasks], total=total)
 
     def get(self, key: str) -> TaskDetail:
         return self._detail(self.find(key), Catalog.load(self.session))
-
-    def _filtered(self, query: Select[Task], f: TaskFilter, catalog: Catalog) -> Select[Task]:
-        if f.q and f.q.strip():
-            needle = f.q.strip()
-            query = query.where(
-                or_(contains_ci(Task.title, needle), contains_ci(Task.description, needle))
-            )
-        if f.statuses is not None:
-            query = query.where(Task.status.in_(f.statuses))
-        if f.department_id is not None:
-            query = query.where(
-                Task.section_id.in_(catalog.section_ids_of_department(f.department_id))
-            )
-        if f.section_id is not None:
-            query = query.where(Task.section_id == f.section_id)
-        if f.project_id is not None or f.node_id is not None:
-            placed = select(Placement.task_id)
-            if f.project_id is not None:
-                placed = placed.where(Placement.project_id == f.project_id)
-            if f.node_id is not None:
-                tree = next((t for t in catalog.projects.values() if f.node_id in t.nodes), None)
-                subtree = tree.outline.subtree(f.node_id) if tree else set[int]()
-                placed = placed.where(Placement.node_id.in_(subtree))
-            query = query.where(Task.id.in_(placed))
-        if f.person_id is not None:
-            leads = Task.lead_person_id == f.person_id
-            helps = Task.id.in_(
-                select(TaskHelper.task_id).where(TaskHelper.person_id == f.person_id)
-            )
-            query = query.where(
-                {
-                    PersonRole.LEAD: leads,
-                    PersonRole.HELPER: helps,
-                    PersonRole.ANY: or_(leads, helps),
-                }[f.person_role]
-            )
-        return query
 
     def find(self, key: str) -> Task:
         """A task the principal can see; invisible tasks are reported as not found."""

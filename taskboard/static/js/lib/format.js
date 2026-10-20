@@ -26,10 +26,13 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 export function formatDate(value, { withTime = false, withYear = false } = {}) {
   const date = value instanceof Date ? value : new Date(value);
   const day = `${date.getDate()} ${MONTHS[date.getMonth()]}${withYear ? ` ${date.getFullYear()}` : ""}`;
-  if (!withTime) return day;
-  const hh = String(date.getHours()).padStart(2, "0");
-  const mm = String(date.getMinutes()).padStart(2, "0");
-  return `${day}, ${hh}:${mm}`;
+  return withTime ? `${day}, ${formatTime(date)}` : day;
+}
+
+/** "14:02" (local time). Accepts an ISO string or a Date. */
+export function formatTime(value) {
+  const date = value instanceof Date ? value : new Date(value);
+  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 }
 
 /** "Anna Claes", or "Anna Claes via Claude Code" for what was done through an API token (D-097). */

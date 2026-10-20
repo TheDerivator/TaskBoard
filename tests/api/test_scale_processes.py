@@ -1,9 +1,9 @@
 """2,000 process changes and a 2,000-box map (milestone M20): the API stays fast.
 
 Measured on a laptop: the map ~0.5 s, the draft and a release ~0.25 s, a change list ~0.25 s,
-search ~0.1 s. The limits are several times that, so they catch regressions such as a query per
-object, not slow machines. Every statement also stays within MS SQL's 2,100 parameters
-(tests/conftest.py).
+search ~0.1 s, a page of recent activity ~0.1 s. The limits are several times that, so they
+catch regressions such as a query per object, not slow machines. Every statement also stays
+within MS SQL's 2,100 parameters (tests/conftest.py).
 """
 
 import time
@@ -44,6 +44,18 @@ def test_process_changes_and_search(admin: TestClient) -> None:
     groups = {g["type"]: g for g in found["groups"]}
     assert groups["changes"]["total"] > 100 and groups["knowledge"]["total"] > 100
     assert len(groups["changes"]["hits"]) == 20
+
+
+def test_recent_activity_over_thousands_of_posts(admin: TestClient) -> None:
+    """Every change has posts: each conversation's newest is found in one query (M25)."""
+    first = timed(admin, "GET", "/api/activity", limit=1.0, params={"limit": 100})
+    assert len(first["items"]) == 100 and first["next"]
+    older = timed(
+        admin, "GET", "/api/activity", limit=1.0, params={"limit": 100, "before": first["next"]}
+    )
+    assert len(older["items"]) == 100
+    times = [i["last_post"]["created_at"] for i in first["items"] + older["items"]]
+    assert times == sorted(times, reverse=True)
 
 
 def test_the_map_its_documents_and_a_release(admin: TestClient) -> None:

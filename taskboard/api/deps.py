@@ -17,6 +17,7 @@ from taskboard.identity import api_tokens
 from taskboard.identity.principal import Principal
 from taskboard.identity.providers import IdentityProviders
 from taskboard.identity.sessions import SESSION_COOKIE
+from taskboard.services.activity import ActivityService
 from taskboard.services.attachments import AttachmentStore
 from taskboard.services.auth import AuthService
 from taskboard.services.backup_admin import BackupAdminService
@@ -146,6 +147,15 @@ def get_release_service(session: DbSession, principal: CurrentPrincipal) -> Rele
 
 
 Releases = Annotated[ReleaseService, Depends(get_release_service)]
+
+
+def get_activity_service(
+    session: DbSession, principal: CurrentPrincipal, settings: AppSettings
+) -> ActivityService:
+    return ActivityService(session, principal, today=settings.current_date())
+
+
+Activity = Annotated[ActivityService, Depends(get_activity_service)]
 
 
 def get_search_service(

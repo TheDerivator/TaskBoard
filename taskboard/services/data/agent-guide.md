@@ -76,6 +76,9 @@ Invoke-RestMethod -Method Post -Uri "{{api_url}}tasks/K7Q2MX/posts" -Headers $h 
   - The task list, in priority order: `GET {{api_url}}tasks` (filters: `statuses`, `department_id`,
     `section_id`, `project_id`, `person_id`, `q`); one task: `GET {{api_url}}tasks/{key}`; its conversation:
     `GET {{api_url}}tasks/{key}/conversation`.
+  - What happened lately: `GET {{api_url}}activity` (tasks and process changes by their newest
+    post, newest first; filters `types`, `project_id`, `node_id`, `process_id`, `department_id`,
+    `section_id`; for older items pass the page's `next` as `before`).
   - New task: `POST {{api_url}}tasks` with `title`, `lead_id` (a person) and `section_id`; it
     starts at the bottom of the ranking. Move it with `POST {{api_url}}tasks/{key}/move`.
   - Change status or fields: `PATCH {{api_url}}tasks/{key}` with `version` and the fields to change.

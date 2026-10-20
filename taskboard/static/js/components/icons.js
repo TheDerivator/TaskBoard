@@ -22,6 +22,7 @@ export const LogoIcon = () => svg(html`<path d="M4 6h16M4 12h10M4 18h6" />`, { s
 export const TasksIcon = () => svg(html`<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" />`);
 export const PeopleIcon = () =>
   svg(html`<rect x="3" y="4" width="5" height="16" rx="1" /><rect x="10" y="4" width="5" height="11" rx="1" /><rect x="17" y="4" width="4" height="14" rx="1" />`);
+export const ActivityIcon = () => svg(html`<path d="M3 12h4l3-8 4 16 3-8h4" />`);
 export const ProjectsIcon = () =>
   svg(html`<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />`);
 export const ChangesIcon = ({ size = 18 } = {}) =>

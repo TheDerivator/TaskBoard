@@ -27,6 +27,7 @@ gate's own tests). Keep the status table and the checkboxes current as work land
 | M22 | Full-width drawers, image lightbox (beyond the design)  | ☑ done        |
 | M23 | Backups: what to keep, the Backups page (beyond the design) | ☑ done (server setup: owner) |
 | M24 | Tasks instead of Priority, rank numbers on request (beyond the design) | ☑ done |
+| M25 | Recent activity (beyond the design)                     | ☑ done        |
 
 Legend: ☐ not started · ◐ in progress · ☑ done
 
@@ -529,6 +530,35 @@ clean on the profile.
 Met (2026-10-12): `tests/api/test_auth.py`, `tests/api/test_tokens.py`, `tests/js/routes.test.mjs`,
 `tests/e2e/test_shell.py`, `tests/e2e/test_boards.py`, `tests/e2e/test_tasks.py`,
 `tests/e2e/test_accessibility.py` (profile).
+
+
+### M25 · Recent activity (beyond the design)
+Asked for on 2026-10-20: see the tasks with the latest contributions to their conversation,
+everywhere or in one project (D-104).
+- [x] `GET /api/activity` (`services/activity.py`, rules in `domain/activity.py`): tasks and process
+      changes by their newest post (comments, status updates, periods; not events, not edits),
+      each with its summary, that post (kind, author, time, a plain-text excerpt) and the number
+      of posts. Filters `types`, `department_id`, `section_id`, `project_id`/`node_id` (tasks
+      only), `process_id` (process changes only); pages of up to 100 continue from a cursor
+      (`next` → `before`). One query (a window function) finds every conversation's newest post.
+- [x] *Recent activity* at `/activity` and `/activity/{project}[?node=]`: in the sidebar, and a
+      button in the Projects view's header (for the project or section shown). Tasks only for
+      now, grouped by day, 30 at a time with *Show older*; a task opens on its conversation as a
+      drawer over the list.
+- [x] Sample data: posts on seven more tasks (T-117, T-126 and T-062 stay without), partly lorem
+      ipsum, kept in `services/sample_data.py` (`SAMPLE_TASK_POSTS`: `sample-data.json` stays the
+      design's file); `seed --sample` moves task posts and events in time like process changes
+      (D-086).
+
+**Acceptance gate**: unit tests for cursors, excerpts and post kinds; API tests for the order
+(events and edits don't count), both types, every filter, pages without repeats, refusals and
+rights; JS tests for the routes, the view's right, day headings and times; browser tests for the
+list, a new post moving its task up, projects and sections, and *Show older*; a scale test over
+thousands of posts; axe clean on both addresses in both themes.
+Met (2026-10-20): `tests/unit/test_activity.py`, `tests/api/test_activity.py`,
+`tests/api/test_scale_processes.py`, `tests/js/activity.test.mjs`, `tests/js/routes.test.mjs`,
+`tests/js/processes.test.mjs`, `tests/e2e/test_activity.py`, `tests/e2e/test_accessibility.py`
+(`activity`, `activity/ASQ`).
 
 ---
 

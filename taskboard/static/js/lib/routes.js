@@ -79,6 +79,13 @@ export function parseRoute(pathname, search = "", base = "/") {
       params: { key: rest[0] ?? null, node: node && /^\d+$/.test(node) ? Number(node) : null },
     };
   }
+  if (head === "activity" && rest.length <= 1) {
+    const node = query.get("node");
+    return {
+      name: "activity",
+      params: { project: rest[0] ?? null, node: node && /^\d+$/.test(node) ? Number(node) : null },
+    };
+  }
   if (head === "admin" && rest.length <= 1) {
     const tab = rest[0] ?? "users";
     if (ADMIN_TABS.includes(tab)) return { name: "admin", params: { tab } };
@@ -104,6 +111,13 @@ export function taskPath(key, tab = "details") {
 export function projectPath(key, nodeId = null) {
   if (!key) return "projects";
   return nodeId == null ? `projects/${encodeURIComponent(key)}` : `projects/${encodeURIComponent(key)}?node=${nodeId}`;
+}
+
+/** Recent activity: everywhere, in one project, or in one of its sections (and those below it). */
+export function activityPath(projectKey = null, nodeId = null) {
+  if (!projectKey) return "activity";
+  const path = `activity/${encodeURIComponent(projectKey)}`;
+  return nodeId == null ? path : `${path}?node=${nodeId}`;
 }
 
 /** A team view: everyone, a department (by code) or one of its sections (by name). */
@@ -178,6 +192,8 @@ export function routePath(route) {
   switch (route.name) {
     case "projects":
       return projectPath(route.params.key, route.params.node);
+    case "activity":
+      return activityPath(route.params.project, route.params.node);
     case "task":
       return taskPath(route.params.key, route.params.tab);
     case "people":

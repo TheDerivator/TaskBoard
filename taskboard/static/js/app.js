@@ -10,6 +10,7 @@ import { readPref, writePref } from "./prefs.js";
 import { navigate, useRoute } from "./router.js";
 import { refreshBoot, startUp, useAppState } from "./store.js";
 import { html, useEffect, useState } from "./ui.js";
+import { ActivityView } from "./views/activity.js";
 import { AdminView } from "./views/admin/index.js";
 import { ChangeDrawer, ChangePage } from "./views/changes/change.js";
 import { ChangesView } from "./views/changes/index.js";
@@ -60,6 +61,8 @@ function View({ route, boot, lookup, background = null }) {
       return html`<${PeopleView} boot=${boot} lookup=${lookup} route=${route} />`;
     case "projects":
       return html`<${ProjectsView} boot=${boot} lookup=${lookup} route=${route} />`;
+    case "activity":
+      return html`<${ActivityView} boot=${boot} lookup=${lookup} route=${route} />`;
     case "admin":
       return html`<${AdminView} boot=${boot} lookup=${lookup} route=${route} />`;
     case "profile":

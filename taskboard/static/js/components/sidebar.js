@@ -11,6 +11,7 @@ import { holdWindowsSignIn } from "../windows-signin.js";
 import { Avatar } from "./badges.js";
 import { adminTabs } from "../views/admin/index.js";
 import {
+  ActivityIcon,
   AdminIcon,
   ChangesIcon,
   CollapseIcon,
@@ -123,6 +124,7 @@ export function Sidebar({ boot, lookup, route, collapsed, onToggleCollapsed, onL
             count=${boot.projects.length}
             current=${route.name === "projects"}
           />
+          <${NavItem} path="activity" label="Recent activity" icon=${html`<${ActivityIcon} />`} current=${route.name === "activity"} />
         `}
         ${changes &&
         html`<${NavItem}

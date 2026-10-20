@@ -67,6 +67,8 @@ test("each view needs its module's view right; home is the first module the visi
   const knowledgeOnly = me({ "knowledge.view": reach(false, [12]) });
   assert.ok(routeAllowed(knowledgeOnly, "knowledge") && routeAllowed(knowledgeOnly, "cpl"));
   assert.ok(!routeAllowed(knowledgeOnly, "tasks") && !routeAllowed(knowledgeOnly, "change"));
+  assert.ok(!routeAllowed(knowledgeOnly, "activity"));
+  assert.ok(routeAllowed(me({ "task.view": reach(false, [12]) }), "activity"));
   assert.ok(routeAllowed(knowledgeOnly, "notFound"));
   assert.equal(homeRoute(knowledgeOnly), "knowledge");
   assert.equal(homeRoute(me({ "change.view": reach(true), "knowledge.view": reach(true) })), "changes");

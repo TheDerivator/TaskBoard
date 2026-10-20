@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import {
+  activityPath,
   boxHomePath,
   boxLinkPath,
   changePath,
@@ -42,6 +43,16 @@ test("projects with optional key and node", () => {
     params: { key: "ASQ", node: 12 },
   });
   assert.deepEqual(parseRoute("/projects/ASQ", "?node=abc").params.node, null);
+});
+
+test("recent activity: everywhere, one project, or one of its sections", () => {
+  assert.deepEqual(parseRoute("/activity"), { name: "activity", params: { project: null, node: null } });
+  assert.deepEqual(parseRoute("/activity/ASQ", "?node=12"), { name: "activity", params: { project: "ASQ", node: 12 } });
+  assert.equal(parseRoute("/activity/ASQ", "?node=abc").params.node, null);
+  assert.equal(parseRoute("/activity/ASQ/more").name, "notFound");
+  assert.equal(activityPath(), "activity");
+  assert.equal(activityPath("ASQ"), "activity/ASQ");
+  assert.equal(activityPath("A&B", 7), "activity/A%26B?node=7");
 });
 
 test("task permalinks", () => {
@@ -88,7 +99,7 @@ test("building paths", () => {
 
 test("routePath inverts parseRoute", async () => {
   const { routePath } = await import("../../taskboard/static/js/lib/routes.js");
-  for (const path of ["tasks", "people", "people/STL", "people/R%26D/Coatings", "projects/ASQ?node=7", "projects", "t/104/conversation", "admin/roles"]) {
+  for (const path of ["tasks", "people", "people/STL", "people/R%26D/Coatings", "projects/ASQ?node=7", "projects", "t/104/conversation", "admin/roles", "activity", "activity/ASQ?node=7"]) {
     const [pathname, search = ""] = path.split("?");
     assert.equal(routePath(parseRoute(`/${pathname}`, search ? `?${search}` : "")), path);
   }

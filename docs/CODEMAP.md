@@ -19,6 +19,7 @@ app.py                                      ASGI entrypoint (`uvicorn app:app`).
 taskboard/                                  TaskBoard: a team task board with a team-wide priority list, people lanes and project trees.
   api/                                      HTTP API layer: thin FastAPI routers, request dependencies, error mapping. Mounted at `/api`.
     routers/                                One module per API resource. Routers parse input, call a service and shape the output.
+      activity.py                           Recent activity (M25): tasks and process changes you may see, by their newest post.
       admin.py                              Administration endpoints: users, passwords, role assignments, roles, organization, audit log,
       auth.py                               Authentication endpoints: current user, password login, logout, own password and preferences.
       changes.py                            Process-change endpoints: a process's changes, one change, its conversation and periods.
@@ -70,6 +71,7 @@ taskboard/                                  TaskBoard: a team task board with a 
     text.py                                 Case-insensitive text matching that works for all of Unicode on every backend.
   domain/                                   Domain layer: pure business rules (ranking, outlines, lifecycle, task keys).
     access.py                               Access-control vocabulary: permissions, built-in roles, scopes and account states.
+    activity.py                             Recent activity (M25, D-104): what is listed, which posts count, where a page ends, excerpts.
     backups.py                              Which backups to keep: the newest few, plus the first of each recent week and month (D-100).
     changes.py                              Process changes: keys (`LM-07`), period rules, scope tags, and the derived state of a change.
     errors.py                               Domain exceptions. The API layer maps each one to an HTTP status in a single place.
@@ -94,6 +96,7 @@ taskboard/                                  TaskBoard: a team task board with a 
     provisioning.py                         Map an external (SSO) identity to a local user, honouring what an admin set up in advance.
     sessions.py                             Server-side login sessions: the cookie carries a random token, the database only its hash.
   schemas/                                  Pydantic models for data going into and out of use cases; the API exposes them as-is.
+    activity.py                             Recent activity shapes (M25): what to list; tasks and process changes by their newest post.
     admin.py                                Administration shapes: users, passwords, role assignments, roles, organization, audit log,
     auth.py                                 Shapes for login, password change and the current-user ("me") document.
     changes.py                              Process-change shapes: changes with their periods and derived state, edit commands, periods.
@@ -108,6 +111,7 @@ taskboard/                                  TaskBoard: a team task board with a 
     data/
       agent-guide.md
       sample-data.json
+    activity.py                             Recent activity (M25, D-104): tasks and process changes by their newest post, newest first.
     actors.py                               Who did something, as shown in timelines and histories: the user, and the API token they did it
     agent_guide.py                          The guide for AI agents (D-097): Markdown that tells an agent how to use the board's API with a
     attachments.py                          Uploaded images: type sniffing, size limits, atomic writes, deletion, and their rows and links.
@@ -149,7 +153,7 @@ taskboard/                                  TaskBoard: a team task board with a 
       processes.css                         Process changes and Process knowledge: the shared bar with department, process tabs and page switch.
       task.css                              Task drawer and task page: header, tabs, detail form, people and placements; drag states.
       tokens.css                            Design tokens (DESIGN.md "Visual system") for the light theme, with dark-theme overrides.
-      views.css                             View-specific styles: Tasks list (a table that becomes cards on narrow screens), Profile.
+      views.css                             View-specific styles: Tasks list (a table that becomes cards on narrow screens), Recent activity, Profile.
     img/
     js/
       components/
@@ -175,6 +179,7 @@ taskboard/                                  TaskBoard: a team task board with a 
         toasts.js                           Transient notifications: `showToast(text)`, `showError(error)`, and the <Toasts/> outlet.
       lib/
         access.js                           Which views a visitor may open, and where "home" leads (pure; the server enforces the rules).
+        activity.js                         Recent activity (pure): day headings ("Today", "Yesterday", "19 Sep") and when each post was written.
         backups.js                          Administration › Backups wording: sizes, why a backup is kept, the state of the backups. Pure.
         controlplan.js                      The control plan (pure): a department's defects in their groups, what leads to each defect in
         dnd.js                              Drag-and-drop reordering rules (pure): drop side, and the optimistic local reorder.
@@ -221,6 +226,7 @@ taskboard/                                  TaskBoard: a team task board with a 
           release.js                        The release bar of the FMEA and the control plan (the FmeaMap and DefectView mockups) and the
           settings.js                       "Kinds & link types" (the MapSettings mockup): the box kinds and link types every map uses.
           switch.js                         The Knowledge / FMEA / CPL switch of Process knowledge, and each view's path for a process.
+        activity.js                         Recent activity: tasks by their newest comment or status update, everywhere or in one project
         people.js                           People view: one lane per person of a team (everyone, a department or a section), cards in team priority order.
         profile.js                          Profile: your account, display preferences (D-103), and API tokens that let an AI agent or a
         projects.js                         Projects view: project tree on the left, the selected project or section unfolded as an outline.
@@ -252,6 +258,7 @@ taskboard/                                  TaskBoard: a team task board with a 
 tests/                                      Test suite: unit/ (pure logic), api/ (HTTP), architecture/ (contracts), e2e/ (browser).
   api/                                      HTTP-level tests through FastAPI's TestClient.
     conftest.py                             Fixtures for API tests on the sample board: a client, id lookups, and users with given roles.
+    test_activity.py                        Recent activity API (milestone M25): tasks and process changes by their newest post, filters,
     test_admin.py                           Administration API: accounts, passwords, rights, roles, organization, audit, lockout guard.
     test_auth.py                            Password login, sessions, logout, throttling, CSRF, suspension and password changes over HTTP.
     test_backups.py                         Administration › Backups (D-100): who may see them, why each backup is kept, the retention.
@@ -280,6 +287,7 @@ tests/                                      Test suite: unit/ (pure logic), api/
   e2e/                                      Browser (end-to-end) tests with Playwright against a live server.
     conftest.py                             Browser tests: a real server on a free port with the sample board, driven by Playwright.
     test_accessibility.py                   Accessibility (milestone M10): axe-core finds no violations, in the light and the dark theme.
+    test_activity.py                        Recent activity in a real browser (milestone M25): tasks by their newest post, per project or
     test_admin.py                           Administration in a real browser (milestone M8), with a second browser for "the other person".
     test_boards.py                          People lanes and the Projects view in a real browser (milestone M6).
     test_changes.py                         Process changes in a real browser (milestone M13): list, drawer, conversation, timeline.
@@ -309,6 +317,7 @@ tests/                                      Test suite: unit/ (pure logic), api/
     test_seed.py                            Built-in roles and users: created once, idempotent, respectful of admin changes.
     test_session.py                         Engine setup: SQLite pragmas, UTC datetimes, serialized writers, long lists of ids.
   js/
+    activity.test.mjs                       Unit tests for static/js/lib/activity.js: day headings, grouping by day, and post times.
     backups.test.mjs                        Unit tests for static/js/lib/backups.js: sizes, why a backup is kept, the state of the backups
     controlplan.test.mjs                    Unit tests for static/js/lib/controlplan.js on the design's defects and Continuous casting map.
     conversation.test.mjs                   Unit tests for static/js/lib/events.js (event wording) and lib/editor.js (composer edits).
@@ -329,6 +338,7 @@ tests/                                      Test suite: unit/ (pure logic), api/
     tokens.test.mjs                         Unit tests for static/js/lib/tokens.js, the "via" wording of lib/format.js and lib/events.js, and
   unit/                                     Fast tests of pure logic: no database, no HTTP.
     test_access_policy.py                   The access policy matrix: who may view, edit, comment and manage, in which section.
+    test_activity.py                        Recent activity rules (milestone M25): which kind a post is, page cursors, and excerpts.
     test_agent_guide.py                     The agent guide's generated part: short types from OpenAPI schemas, and the endpoint list.
     test_backup_retention.py                Which backups to keep (D-100): the newest few, and the first of each recent week and month.
     test_changes.py                         Process changes: the derived state (the shared table of cases), period rules, tags and keys.

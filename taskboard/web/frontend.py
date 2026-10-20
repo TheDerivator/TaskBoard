@@ -23,6 +23,7 @@ APP_ROUTES = frozenset(
         "priority",  # the task list's old address, forwarded to /tasks
         "people",
         "projects",
+        "activity",
         "t",
         "admin",
         "changes",

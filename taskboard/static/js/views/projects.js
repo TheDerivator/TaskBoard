@@ -3,6 +3,7 @@ import { api } from "../api.js";
 import { Avatar, StatusPill } from "../components/badges.js";
 import { Dialog } from "../components/dialog.js";
 import {
+  ActivityIcon,
   ArrowDownIcon,
   ArrowUpIcon,
   ChevronIcon,
@@ -15,7 +16,7 @@ import { showError, showToast } from "../components/toasts.js";
 import { useApi, useTitle } from "../hooks.js";
 import { padRank, plural } from "../lib/format.js";
 import { canSomewhere } from "../lib/lookup.js";
-import { projectPath, taskPath } from "../lib/routes.js";
+import { activityPath, projectPath, taskPath } from "../lib/routes.js";
 import { href, navigate } from "../router.js";
 import { dataChanged, refreshBoot } from "../store.js";
 import { html, useEffect, useState } from "../ui.js";
@@ -371,6 +372,7 @@ export function ProjectsView({ boot, lookup, route }) {
           </div>
         </div>
         <div class="project-actions">
+          <a class="btn" href=${href(activityPath(data.project.key, node))}><${ActivityIcon} />Recent activity</a>
           <button type="button" class="toggle-chip" aria-pressed=${showArchived ? "true" : "false"} onClick=${() => setShowArchived(!showArchived)}>
             Show archived
           </button>
